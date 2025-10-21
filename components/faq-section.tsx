@@ -5,7 +5,7 @@ import { useState } from "react"
 
 const faqs = [
   {
-    question: "Why is it only £39? What's the catch?",
+    question: "Why is it only £59? What's the catch?",
     answer: "There's no catch. This is a launch special for the first 50 PT websites. I'm offering this introductory rate to help trainers who can't afford expensive agency prices (£2,000+) but need a professional online presence. After 50 sites, the price goes to £299. Simple as that."
   },
   {
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     question: "Is hosting really included?",
-    answer: "Yes. Your site will be hosted on enterprise-grade servers (Vercel/Netlify) with excellent uptime and security. Hosting is included in the £39 - no monthly fees. If your site grows massively and needs more resources, I'll let you know, but for 99% of PTs, you'll never need to pay extra."
+    answer: "Yes. Your site will be hosted on enterprise-grade servers (Vercel/Netlify) with excellent uptime and security. Hosting is included in the £59 - no monthly fees. If your site grows massively and needs more resources, I'll let you know, but for 99% of PTs, you'll never need to pay extra."
   },
   {
     question: "How long does it actually take?",
@@ -124,7 +124,7 @@ export function FAQSection() {
               </h3>
             </div>
             <p className="text-lg text-muted-foreground mb-6">
-              Lock in your spot at £39 before the price goes up to £299.
+              Lock in your spot at £59 before the price goes up to £299.
             </p>
             <button 
               onClick={() => {
@@ -135,7 +135,7 @@ export function FAQSection() {
               }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-lg font-bold rounded-full hover:scale-105 transition-all shadow-xl"
             >
-              Secure My £39 Website Now
+              Secure My £59 Website Now
               <ArrowRight className="h-5 w-5" />
             </button>
           </div>

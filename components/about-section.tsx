@@ -16,7 +16,7 @@ export function AboutSection() {
             <p>
               Most PTs can't justify spending thousands on a website when you're just starting to scale. But without one, 
               you're stuck competing on Instagram where the algorithm controls your business. 
-              <span className="font-bold text-foreground"> That's why I'm offering professional websites for just £39 — but only for the first 50 sites.</span>
+              <span className="font-bold text-foreground"> That's why I'm offering professional websites for just £59 — but only for the first 50 sites.</span>
             </p>
 
             <p className="text-xl font-bold text-foreground bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent">

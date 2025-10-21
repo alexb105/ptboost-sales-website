@@ -20,7 +20,7 @@ const testimonials = [
     name: "James K.",
     role: "Strength Coach, Birmingham",
     content:
-      "Took a chance on the £39 offer and I'm glad I did. The website actually looks better than some trainers charging £200+ per session. Already recommended to 2 other trainers.",
+      "Took a chance on the £59 offer and I'm glad I did. The website actually looks better than some trainers charging £200+ per session. Already recommended to 2 other trainers.",
     rating: 5,
   },
 ]

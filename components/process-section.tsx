@@ -55,7 +55,7 @@ export function ProcessSection() {
                   Purchase Your Website
                 </h3>
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Secure your spot with a one-time payment of just £39. No hidden fees, no subscriptions — pay once, own forever.
+                  Secure your spot with a one-time payment of just £59. No hidden fees, no subscriptions — pay once, own forever.
                 </p>
 
                 {/* Features */}

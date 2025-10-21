@@ -28,7 +28,7 @@ export function HeroSection() {
             {/* Limited Offer Badge - Enhanced */}
             <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent via-orange-500 to-red-500 px-8 py-3 text-sm font-extrabold text-white shadow-2xl animate-pulse border-2 border-white/30 hover:scale-105 transition-transform">
               <TrendingUp className="h-5 w-5" />
-              <span className="tracking-wide">LAUNCH SPECIAL: First 50 Sites Only £39</span>
+              <span className="tracking-wide">LAUNCH SPECIAL: First 50 Sites Only £59</span>
             </div>
 
             {/* Pain Point Headline - Younger Audience Hook */}
@@ -44,7 +44,7 @@ export function HeroSection() {
             {/* Subheadline - Younger Audience */}
             <p className="mb-10 text-pretty text-2xl text-foreground md:text-3xl lg:text-4xl leading-tight font-bold max-w-4xl mx-auto">
               Get a professional website that attracts <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent">local clients 24/7.</span>
-              Launch in 7 days. £39 one-time. No tech. No monthly fees.
+              Launch in 7 days. £59 one-time. No tech. No monthly fees.
             </p>
 
             {/* Value Proposition - Stats Grid */}
@@ -75,7 +75,7 @@ export function HeroSection() {
                     <Zap className="h-6 w-6 text-white fill-white" />
                   </div>
                 </div>
-                <p className="text-3xl font-black text-foreground mb-2">£39</p>
+                <p className="text-3xl font-black text-foreground mb-2">£59</p>
                 <p className="text-sm font-semibold text-muted-foreground">One-Time Payment</p>
               </div>
             </div>

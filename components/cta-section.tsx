@@ -226,7 +226,7 @@ export function CTASection() {
                               <div className="flex items-baseline">
                                 <span className="text-4xl font-bold text-foreground">£</span>
                                 <span className="text-8xl font-black bg-gradient-to-br from-accent via-orange-500 to-red-500 bg-clip-text text-transparent leading-none drop-shadow-2xl animate-pulse" style={{ animationDuration: '2s' }}>
-                                  39
+                                  59
                                 </span>
                               </div>
                             </div>
@@ -253,7 +253,7 @@ export function CTASection() {
                             >
                               <div className="flex items-center justify-center gap-2">
                                 <p className="text-center text-sm font-bold text-foreground">
-                                  <span className="text-blue-600 dark:text-blue-400">Why only £39?</span>
+                                  <span className="text-blue-600 dark:text-blue-400">Why only £59?</span>
                                 </p>
                                 <ChevronDown 
                                   className={`h-4 w-4 text-blue-600 transition-transform duration-300 ${isPricingOpen ? 'rotate-180' : ''}`}
@@ -288,7 +288,7 @@ export function CTASection() {
                                     onClick={handleCheckout}
                                   >
                                     <Sparkles className="mr-2 h-6 w-6 animate-pulse" />
-                                    Secure My £39 Website Now!
+                                    Secure My £59 Website Now!
                                     <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover/btn:translate-x-1" />
                                   </Button>
                                 </div>
@@ -433,7 +433,7 @@ export function CTASection() {
                                           </p>
                                           <p className="text-sm text-muted-foreground leading-relaxed">
                                             Once I hit my project limit, this button will be disabled and you'll need to wait 1-2 weeks 
-                                            for the next available spot. If you're ready now, secure your spot today at the £39 launch price.
+                                            for the next available spot. If you're ready now, secure your spot today at the £59 launch price.
                                           </p>
                                         </>
                                       )}

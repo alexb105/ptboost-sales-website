@@ -61,9 +61,9 @@ const caseStudies = {
     results: [
       { metric: "Live", label: "In Just 7 Days", icon: TrendingUp },
       { metric: "100%", label: "Custom Design", icon: Users },
-      { metric: "£39", label: "One-Time Cost", icon: Calendar },
+      { metric: "£59", label: "One-Time Cost", icon: Calendar },
     ],
-    testimonial: "This website doesn't just look good — it SELLS. The bold design matches my brand perfectly, and the psychology-driven layout pre-qualifies leads before they contact me. The 7-day turnaround was insane — I went from no site to fully live in a week. Best £39 I've ever spent.",
+    testimonial: "This website doesn't just look good — it SELLS. The bold design matches my brand perfectly, and the psychology-driven layout pre-qualifies leads before they contact me. The 7-day turnaround was insane — I went from no site to fully live in a week. Best £59 I've ever spent.",
     beforeAfter: {
       before: "No website at all. Just Instagram. When serious clients asked for more info, I had nowhere professional to send them. Lost deals to competitors with proper sites.",
       after: "A bold, mobile-optimized website that's on-brand. Smart lead capture qualifies prospects. Lightning-fast load times. Free hosting means it costs nothing to run.",
@@ -343,7 +343,7 @@ export function WebsiteShowcaseSection() {
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-accent" />
-                      <span>Only £39 one-time</span>
+                      <span>Only £59 one-time</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-accent" />
@@ -475,10 +475,10 @@ export function WebsiteShowcaseSection() {
                   onClick={() => setSelectedDemo(null)}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white font-black rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
-                  <span>Claim Your £39 Website Now</span>
+                  <span>Claim Your £59 Website Now</span>
                   <ArrowRight className="h-5 w-5" />
                 </a>
-                <p className="text-xs text-muted-foreground mt-3">Only £39 one-time • Live in 7 days • No monthly fees</p>
+                <p className="text-xs text-muted-foreground mt-3">Only £59 one-time • Live in 7 days • No monthly fees</p>
               </div>
             </div>
           )}

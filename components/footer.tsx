@@ -79,7 +79,7 @@ export function Footer() {
               © {new Date().getFullYear()} PTBoost. All rights reserved.
             </p>
             <p className="text-xs text-gray-600">
-              🔒 Secure payments via Stripe • 💯 100% Money-Back Guarantee • 🚀 38 spots left at £39
+              🔒 Secure payments via Stripe • 💯 100% Money-Back Guarantee • 🚀 38 spots left at £59
             </p>
           </div>
         </div>
