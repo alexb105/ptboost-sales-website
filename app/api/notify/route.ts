@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     // Send notification to you (business owner)
     await resend.emails.send({
-      from: 'PTBoost Notifications <onboarding@resend.dev>',
+      from: 'PTBoost Notifications <noreply@ptboost.co.uk>',
       to: 'ptboost.info@gmail.com',
       subject: '🔔 New Lead: Someone Wants to Be Notified!',
       html: `
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     // Send confirmation email to the user
     await resend.emails.send({
-      from: 'PTBoost <onboarding@resend.dev>',
+      from: 'PTBoost <noreply@ptboost.co.uk>',
       to: email,
       subject: 'You\'re on the List! 🎉',
       html: `
