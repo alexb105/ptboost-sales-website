@@ -41,8 +41,8 @@ export function CTASection() {
       setShowNotifyForm(true)
       return
     }
-    // TODO: Replace with your actual checkout/payment link
-    window.location.href = "https://your-payment-link.com"
+    // Redirect to Stripe payment link
+    window.location.href = "https://buy.stripe.com/00weVebce49t6VP5ZZ0co01"
   }
 
   const handleNotifySubmit = async (e: React.FormEvent) => {
