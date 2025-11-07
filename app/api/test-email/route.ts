@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   try {
     // Send test email
     const { data, error } = await resend.emails.send({
-      from: 'PTBoost Test <onboarding@resend.dev>',
+      from: 'PTBoost Test <noreply@ptboost.co.uk>',
       to: ['alexander.ptboost@gmail.com'],
       subject: 'Test Email - PTBoost Booking System',
       html: `
