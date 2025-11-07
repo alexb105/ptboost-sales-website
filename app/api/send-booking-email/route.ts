@@ -157,7 +157,7 @@ export async function POST(request: Request) {
     // Send notification email to admin
     console.log('Sending admin notification email...')
     const { data, error } = await resend.emails.send({
-      from: 'PT Website Bookings <noreply@ptboost.co.uk>',
+      from: 'PT Website Orders <noreply@ptboost.co.uk>',
       to: ['ptboost.info@gmail.com'],
       subject: `New Website Order - ${bookingData.businessName}`,
       html: `

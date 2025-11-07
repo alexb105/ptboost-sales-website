@@ -107,7 +107,7 @@ For production, you should verify your own domain:
 Once verified, update the "from" address in `app/api/send-booking-email/route.ts`:
 
 ```typescript
-from: 'Bookings <bookings@yourdomain.com>',  // Use your verified domain
+from: 'Orders <bookings@yourdomain.com>',  // Use your verified domain
 ```
 
 ### Test Email (Development)
