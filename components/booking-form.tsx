@@ -124,21 +124,11 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
 
       const { bookingId } = await response.json()
       
-      // Create Stripe checkout session with the booking ID
-      const checkoutResponse = await fetch("/api/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId })
-      })
+      // Store booking ID in localStorage so we can retrieve it after payment
+      localStorage.setItem('pending_booking_id', bookingId)
       
-      if (!checkoutResponse.ok) {
-        throw new Error("Failed to create checkout session")
-      }
-      
-      const { url } = await checkoutResponse.json()
-      
-      // Redirect to Stripe checkout
-      window.location.href = url
+      // Redirect to Stripe payment link
+      window.location.href = "https://buy.stripe.com/28E3cwgwy9tN0xrgED0co02"
     } catch (error) {
       console.error("Error:", error)
       toast.error("Something went wrong. Please try again.")

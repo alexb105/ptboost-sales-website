@@ -1,51 +1,19 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
-})
 
 export async function POST(request: Request) {
   try {
-    const { sessionId } = await request.json()
+    const { bookingId } = await request.json()
 
-    console.log('Complete booking called with session ID:', sessionId)
+    console.log('Complete booking called with ID:', bookingId)
 
-    if (!sessionId) {
-      console.error('No session ID provided')
-      return NextResponse.json(
-        { error: 'Session ID required' },
-        { status: 400 }
-      )
-    }
-
-    // Retrieve the checkout session from Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId)
-    
-    console.log('Stripe session retrieved:', session.id)
-    console.log('Payment status:', session.payment_status)
-    
-    if (session.payment_status !== 'paid') {
-      console.error('Payment not completed')
-      return NextResponse.json(
-        { error: 'Payment not completed' },
-        { status: 400 }
-      )
-    }
-
-    // Get booking ID from session metadata
-    const bookingId = session.metadata?.bookingId
-    
     if (!bookingId) {
-      console.error('No booking ID in session metadata')
+      console.error('No booking ID provided')
       return NextResponse.json(
-        { error: 'Invalid session' },
+        { error: 'Booking ID required' },
         { status: 400 }
       )
     }
-
-    console.log('Booking ID from metadata:', bookingId)
 
     // Get the booking data
     const { data: booking, error: fetchError } = await supabase

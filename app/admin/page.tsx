@@ -19,16 +19,11 @@ export default function AdminPage() {
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const [adminPassword, setAdminPassword] = useState("")
-  const [currentPrice, setCurrentPrice] = useState(2997)
-  const [newPrice, setNewPrice] = useState("")
-  const [priceUpdateStatus, setPriceUpdateStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [isPriceLoading, setIsPriceLoading] = useState(false)
 
-  // Fetch current capacity status and price
+  // Fetch current capacity status
   useEffect(() => {
     if (isAuthenticated) {
       fetchCapacityStatus()
-      fetchPrice()
     }
   }, [isAuthenticated])
 
@@ -41,67 +36,6 @@ export default function AdminPage() {
       setLastUpdated(data.updatedAt)
     } catch (error) {
       console.error('Error fetching capacity:', error)
-    }
-  }
-
-  const fetchPrice = async () => {
-    try {
-      const response = await fetch('/api/price')
-      if (response.ok) {
-        const data = await response.json()
-        setCurrentPrice(data.price)
-        setNewPrice(data.price.toString())
-      }
-    } catch (error) {
-      console.error('Error fetching price:', error)
-    }
-  }
-
-  const handleUpdatePrice = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsPriceLoading(true)
-    setPriceUpdateStatus('idle')
-
-    const price = parseFloat(newPrice)
-    if (isNaN(price) || price <= 0) {
-      setPriceUpdateStatus('error')
-      setTimeout(() => setPriceUpdateStatus('idle'), 3000)
-      setIsPriceLoading(false)
-      return
-    }
-
-    try {
-      const response = await fetch('/api/price', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          price: price,
-          adminPassword 
-        })
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setCurrentPrice(data.price)
-        setNewPrice(data.price.toString())
-        setPriceUpdateStatus('success')
-        setTimeout(() => setPriceUpdateStatus('idle'), 3000)
-      } else {
-        if (response.status === 401) {
-          setAuthError("Invalid password. Please log in again.")
-          setIsAuthenticated(false)
-          setPassword("")
-          setAdminPassword("")
-        }
-        setPriceUpdateStatus('error')
-        setTimeout(() => setPriceUpdateStatus('idle'), 3000)
-      }
-    } catch (error) {
-      console.error('Error updating price:', error)
-      setPriceUpdateStatus('error')
-      setTimeout(() => setPriceUpdateStatus('idle'), 3000)
-    } finally {
-      setIsPriceLoading(false)
     }
   }
 
@@ -219,98 +153,6 @@ export default function AdminPage() {
         </div>
 
         <div className="grid gap-6">
-          {/* Price Management Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Price Management</CardTitle>
-              <CardDescription>
-                Update the price for your website package
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <form onSubmit={handleUpdatePrice} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price" className="text-lg font-bold">
-                    Package Price (£)
-                  </Label>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Set the price for your Professional PT Website Package. Changes take effect immediately.
-                  </p>
-                  <div className="flex gap-3">
-                    <div className="relative flex-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-muted-foreground">£</span>
-                      <Input
-                        id="price"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={newPrice}
-                        onChange={(e) => setNewPrice(e.target.value)}
-                        className="text-lg font-bold h-12 pl-8"
-                        disabled={isPriceLoading}
-                        placeholder="2997.00"
-                      />
-                    </div>
-                    <Button 
-                      type="submit" 
-                      disabled={isPriceLoading}
-                      className="h-12 px-8"
-                    >
-                      {isPriceLoading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Updating...
-                        </>
-                      ) : (
-                        'Update Price'
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Quick Preset Buttons */}
-                <div className="flex flex-wrap gap-2">
-                  <p className="text-sm text-muted-foreground w-full mb-1">Quick presets:</p>
-                  {[997, 1497, 1997, 2497, 2997, 3497, 3997].map((price) => (
-                    <Button
-                      key={price}
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setNewPrice(price.toString())}
-                      disabled={isPriceLoading}
-                    >
-                      £{price.toLocaleString()}
-                    </Button>
-                  ))}
-                </div>
-              </form>
-
-              <div className="p-4 rounded-lg bg-muted">
-                <p className="text-sm font-medium mb-1">Current Price Display</p>
-                <p className="text-2xl font-bold text-accent">£{currentPrice.toLocaleString()}</p>
-              </div>
-
-              {priceUpdateStatus === 'success' && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Price updated successfully! Stripe checkout will use the new price.
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {priceUpdateStatus === 'error' && (
-                <Alert variant="destructive">
-                  <XCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Failed to update price. Please check your input and try again.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
           {/* Capacity Status Card */}
           <Card>
             <CardHeader>
