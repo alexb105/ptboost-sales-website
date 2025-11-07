@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     const bookingData = await request.json()
 
     console.log('Sending booking email for:', bookingData.businessName)
+    console.log('Customer email:', bookingData.email)
     
     if (!process.env.RESEND_API_KEY) {
       console.error('RESEND_API_KEY not configured!')
@@ -15,6 +16,7 @@ export async function POST(request: Request) {
     }
 
     // Send confirmation email to customer
+    console.log('Attempting to send customer confirmation email...')
     const customerEmail = await resend.emails.send({
       from: 'PTBoost <onboarding@resend.dev>',
       to: [bookingData.email],
@@ -144,11 +146,16 @@ export async function POST(request: Request) {
     })
 
     if (customerEmail.error) {
-      console.error('Error sending customer confirmation:', customerEmail.error)
-      // Continue even if customer email fails, we still want to notify admin
+      console.error('❌ FAILED to send customer confirmation email!')
+      console.error('Customer email error:', JSON.stringify(customerEmail.error, null, 2))
+      console.error('Attempted to send to:', bookingData.email)
+    } else {
+      console.log('✅ Customer confirmation email sent successfully!')
+      console.log('Customer email ID:', customerEmail.data?.id)
     }
 
     // Send notification email to admin
+    console.log('Sending admin notification email...')
     const { data, error } = await resend.emails.send({
       from: 'PT Website Bookings <onboarding@resend.dev>', // Update this with your verified domain
       to: ['alexander.ptboost@gmail.com'],
@@ -291,11 +298,16 @@ export async function POST(request: Request) {
     })
 
     if (error) {
-      console.error('Resend error:', error)
+      console.error('❌ FAILED to send admin notification email!')
+      console.error('Admin email error:', JSON.stringify(error, null, 2))
       return NextResponse.json({ error: 'Failed to send admin notification email' }, { status: 500 })
     }
 
-    console.log('Emails sent successfully - Customer:', customerEmail.data?.id, 'Admin:', data?.id)
+    console.log('✅ Admin notification email sent successfully!')
+    console.log('Admin email ID:', data?.id)
+    console.log('\n📊 Email Summary:')
+    console.log('- Customer Email ID:', customerEmail.data?.id || 'FAILED')
+    console.log('- Admin Email ID:', data?.id)
     
     return NextResponse.json({ 
       success: true, 
