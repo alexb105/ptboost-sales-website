@@ -16,6 +16,13 @@ export async function POST(request: Request) {
       )
     }
 
+    // Fetch current price from the price API
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const priceResponse = await fetch(`${baseUrl}/api/price`)
+    const priceData = await priceResponse.json()
+    const priceInPounds = priceData.price || 2997
+    const priceInPence = Math.round(priceInPounds * 100) // Convert pounds to pence
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -27,7 +34,7 @@ export async function POST(request: Request) {
               name: 'Professional PT Website Package',
               description: 'Custom website design + 1 year hosting included',
             },
-            unit_amount: 299700, // £2997.00 in pence
+            unit_amount: priceInPence, // Dynamic price in pence
           },
           quantity: 1,
         },
