@@ -23,7 +23,7 @@ A Next.js application for selling professional website packages to personal trai
 - Webhook handling for payment confirmation
 
 ### 📧 Email Notifications
-- Automated email to `alexander.ptboost@gmail.com` after successful payment
+- Automated email to `ptboost.info@gmail.com` after successful payment
 - Professional HTML email template
 - Includes all client information:
   - Personal details (name, email, phone)
@@ -232,5 +232,5 @@ Private project - All rights reserved
 
 ## Contact
 
-Email: alexander.ptboost@gmail.com
+Email: ptboost.info@gmail.com
 

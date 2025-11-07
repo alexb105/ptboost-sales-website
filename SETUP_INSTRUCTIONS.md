@@ -118,7 +118,7 @@ For development/testing, you can use the default Resend test domain:
 
 To receive test emails:
 1. Go to Resend Dashboard → Settings → Emails
-2. Add `alexander.ptboost@gmail.com` as a verified email
+2. Add `ptboost.info@gmail.com` as a verified email
 3. Check the inbox to verify
 
 ## 4. Install Dependencies
@@ -144,7 +144,7 @@ Visit `http://localhost:3000` to see the application.
    - Step 3: Website Preferences (colors, goals, notes)
 3. Click "Proceed to Payment"
 4. Complete the Stripe checkout with test card: `4242 4242 4242 4242`
-5. After successful payment, you should receive an email at `alexander.ptboost@gmail.com` with all the booking details
+5. After successful payment, you should receive an email at `ptboost.info@gmail.com` with all the booking details
 
 ## 7. Production Deployment
 
@@ -177,7 +177,7 @@ After deployment:
 ### Emails Not Sending
 
 1. Check Resend API key is correct
-2. Verify `alexander.ptboost@gmail.com` is added as a verified email in Resend
+2. Verify `ptboost.info@gmail.com` is added as a verified email in Resend
 3. Check Resend dashboard logs for errors
 4. For production, ensure your domain is verified
 

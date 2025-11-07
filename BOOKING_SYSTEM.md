@@ -9,7 +9,7 @@ The application now includes a comprehensive booking flow that:
 2. Saves booking data to Supabase
 3. Redirects to Stripe payment link for payment processing
 4. Retrieves booking data after successful payment
-5. Sends a formatted email notification with all booking details to `alexander.ptboost@gmail.com`
+5. Sends a formatted email notification with all booking details to `ptboost.info@gmail.com`
 
 ## Architecture
 
@@ -64,7 +64,7 @@ When user lands on success page:
 2. Calls `/api/complete-booking` endpoint with booking ID
 3. API retrieves booking data from Supabase
 4. Updates booking status to `completed`
-5. Sends email to `alexander.ptboost@gmail.com` via Resend
+5. Sends email to `ptboost.info@gmail.com` via Resend
 6. Marks `email_sent = true` in Supabase
 7. Shows success message to customer
 
@@ -178,7 +178,7 @@ Configure your Stripe Payment Link success URL:
 
 For development:
 - Resend requires verified email addresses
-- Add `alexander.ptboost@gmail.com` as verified in Resend dashboard
+- Add `ptboost.info@gmail.com` as verified in Resend dashboard
 - Or use a test email you have access to
 
 For production:
@@ -192,7 +192,7 @@ For production:
 2. Click the CTA button
 3. Fill out the form with test data
 4. Use Stripe test card: `4242 4242 4242 4242`
-5. Check `alexander.ptboost@gmail.com` for the booking notification email
+5. Check `ptboost.info@gmail.com` for the booking notification email
 
 ## Error Handling
 

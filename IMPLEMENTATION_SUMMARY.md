@@ -32,7 +32,7 @@ A complete booking system that collects customer information before payment, sto
 - Marks email_sent = true
 
 **`app/api/send-booking-email/route.ts`**
-- Sends professional HTML email to alexander.ptboost@gmail.com
+- Sends professional HTML email to ptboost.info@gmail.com
 - Includes all booking details
 
 ### 4. Enhanced Success Page
@@ -156,7 +156,7 @@ A complete booking system that collects customer information before payment, sto
          ▼
 ┌─────────────────────────────────┐
 │  Email sent to                  │
-│  alexander.ptboost@gmail.com    │
+│  ptboost.info@gmail.com    │
 │  with all booking details       │
 └────────┬────────────────────────┘
          │
@@ -237,7 +237,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 - [ ] Browser redirects to Stripe → Payment link loads
 - [ ] Complete payment with test card → Redirects to success
 - [ ] Success page shows loading → Then shows success message
-- [ ] Email received at alexander.ptboost@gmail.com
+- [ ] Email received at ptboost.info@gmail.com
 - [ ] Check Supabase → Booking status is 'completed'
 - [ ] Check Supabase → email_sent is true
 

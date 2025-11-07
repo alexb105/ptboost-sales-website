@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   try {
     const bookingData = await request.json()
 
-    console.log('Sending booking email for:', bookingData.businessName)
+    console.log('Sending order email for:', bookingData.businessName)
     console.log('Customer email:', bookingData.email)
     
     if (!process.env.RESEND_API_KEY) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const customerEmail = await resend.emails.send({
       from: 'PTBoost <noreply@ptboost.co.uk>',
       to: [bookingData.email],
-      subject: '🎉 Your Website Booking is Confirmed!',
+      subject: '🎉 Your Website Order is Confirmed!',
       html: `
         <!DOCTYPE html>
         <html>
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
           <body>
             <div class="header">
               <h1 style="margin: 0; font-size: 32px;">✨ Thank You ${bookingData.fullName}!</h1>
-              <p style="margin: 15px 0 0 0; font-size: 18px;">Your booking has been confirmed</p>
+              <p style="margin: 15px 0 0 0; font-size: 18px;">Your order has been confirmed</p>
             </div>
             
             <div class="content">
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
               </div>
 
               <div class="info-section">
-                <h3>📝 Your Booking Details</h3>
+                <h3>📝 Your Order Details</h3>
                 <p><strong>Business Name:</strong> ${bookingData.businessName}</p>
                 <p><strong>Location:</strong> ${bookingData.location}</p>
                 <p><strong>Specialization:</strong> ${bookingData.specialization}</p>
@@ -158,8 +158,8 @@ export async function POST(request: Request) {
     console.log('Sending admin notification email...')
     const { data, error } = await resend.emails.send({
       from: 'PT Website Bookings <noreply@ptboost.co.uk>',
-      to: ['alexander.ptboost@gmail.com'],
-      subject: `New Website Booking - ${bookingData.businessName}`,
+      to: ['ptboost.info@gmail.com'],
+      subject: `New Website Order - ${bookingData.businessName}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -222,7 +222,7 @@ export async function POST(request: Request) {
           </head>
           <body>
             <div class="header">
-              <h1 style="margin: 0; font-size: 28px;">🎉 New Website Booking!</h1>
+              <h1 style="margin: 0; font-size: 28px;">🎉 New Website Order!</h1>
               <p style="margin: 10px 0 0 0; font-size: 16px;">A new client has completed their payment</p>
             </div>
             
@@ -288,7 +288,7 @@ export async function POST(request: Request) {
               </div>
 
               <div class="footer">
-                <p style="margin: 0;">This is an automated notification from your PT Website Booking System</p>
+                <p style="margin: 0;">This is an automated notification from your PT Website Order System</p>
                 <p style="margin: 5px 0 0 0; font-size: 12px;">Respond to the customer at ${bookingData.email} to begin their project</p>
               </div>
             </div>
