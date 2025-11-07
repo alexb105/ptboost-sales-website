@@ -5,7 +5,10 @@ export async function POST(request: Request) {
   try {
     const { bookingId } = await request.json()
 
+    console.log('Complete booking called with ID:', bookingId)
+
     if (!bookingId) {
+      console.error('No booking ID provided')
       return NextResponse.json(
         { error: 'Booking ID required' },
         { status: 400 }
@@ -52,7 +55,12 @@ export async function POST(request: Request) {
 
     // Only send email if not already sent
     if (!booking.email_sent) {
-      const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/send-booking-email`, {
+      console.log('Attempting to send email...')
+      
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+      console.log('Using base URL:', baseUrl)
+      
+      const emailResponse = await fetch(`${baseUrl}/api/send-booking-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,7 +78,8 @@ export async function POST(request: Request) {
       })
 
       if (!emailResponse.ok) {
-        console.error('Failed to send email')
+        const emailError = await emailResponse.text()
+        console.error('Failed to send email:', emailResponse.status, emailError)
       } else {
         // Mark email as sent
         await supabase

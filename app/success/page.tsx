@@ -15,20 +15,31 @@ export default function SuccessPage() {
         // Get booking ID from localStorage
         const bookingId = localStorage.getItem('pending_booking_id')
         
+        console.log('Booking ID from localStorage:', bookingId)
+        
         if (bookingId) {
           // Complete the booking and send email
+          console.log('Calling complete-booking API...')
           const response = await fetch('/api/complete-booking', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ bookingId })
           })
 
+          console.log('API Response status:', response.status)
+          
           if (response.ok) {
             const data = await response.json()
+            console.log('API Response data:', data)
             setEmail(data.email)
             // Clear the booking ID from localStorage
             localStorage.removeItem('pending_booking_id')
+          } else {
+            const errorData = await response.json()
+            console.error('API Error:', errorData)
           }
+        } else {
+          console.warn('No booking ID found in localStorage')
         }
 
         // Also try to get email from URL if Stripe passes it

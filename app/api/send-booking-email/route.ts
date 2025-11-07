@@ -7,6 +7,13 @@ export async function POST(request: Request) {
   try {
     const bookingData = await request.json()
 
+    console.log('Sending booking email for:', bookingData.businessName)
+    
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY not configured!')
+      return NextResponse.json({ error: 'Email service not configured' }, { status: 500 })
+    }
+
     // Send email with booking information
     const { data, error } = await resend.emails.send({
       from: 'PT Website Bookings <onboarding@resend.dev>', // Update this with your verified domain
