@@ -9,29 +9,23 @@ export function CTASection() {
   const [isPricingOpen, setIsPricingOpen] = useState(false)
   const [isCapacityInfoOpen, setIsCapacityInfoOpen] = useState(false)
   const [isAtCapacity, setIsAtCapacity] = useState(false)
+  const [capacityCount, setCapacityCount] = useState(0)
   const [showNotifyForm, setShowNotifyForm] = useState(false)
   const [notifyEmail, setNotifyEmail] = useState('')
   const [notifyStatus, setNotifyStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   
-  // Fetch capacity status from Google Sheets
+  // Fetch capacity status from Supabase
   useEffect(() => {
-    const SHEET_ID = '108ri3HUzYoPBNbj7TlCmV_tUQiC8zZP-h_8SXebeEo4'
-    const RANGE = 'Sheet1!B3' // Cell B3 contains the isAtCapacity value
-    
-    // Public sheet URL (no API key needed)
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&range=${RANGE}`
-    
-    fetch(url)
-      .then(res => res.text())
-      .then(text => {
-        // Google Sheets returns JSONP, need to parse it
-        const json = JSON.parse(text.substr(47).slice(0, -2))
-        const value = json.table.rows[0]?.c[0]?.v
-        setIsAtCapacity(value === true || value === 'TRUE' || value === 'true')
+    fetch('/api/capacity')
+      .then(res => res.json())
+      .then(data => {
+        setCapacityCount(data.capacityCount || 0)
+        setIsAtCapacity(data.capacityCount <= 0)
       })
       .catch((err) => {
         console.error('Error fetching capacity:', err)
         setIsAtCapacity(false) // Default to available if fetch fails
+        setCapacityCount(0)
       })
   }, [])
 
@@ -42,7 +36,7 @@ export function CTASection() {
       return
     }
     // Redirect to Stripe payment link
-    window.location.href = "https://buy.stripe.com/00weVebce49t6VP5ZZ0co01"
+    window.location.href = "https://buy.stripe.com/28E3cwgwy9tN0xrgED0co02"
   }
 
   const handleNotifySubmit = async (e: React.FormEvent) => {
