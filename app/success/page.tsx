@@ -98,7 +98,7 @@ export default function SuccessPage() {
                 {email ? (
                   <>We've sent a confirmation to <span className="font-medium text-foreground">{email}</span></>
                 ) : (
-                  "We've sent a confirmation email with your receipt and next steps"
+                  "We've sent a confirmation email with your receipt. I will contact you within 24 hours from monday - friday with the next steps!"
                 )}
               </p>
             </div>
