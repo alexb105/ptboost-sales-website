@@ -39,6 +39,9 @@ export async function POST(request: Request) {
 
     console.log('Payment successful:', session.id)
 
+    // Note: For the static payment link, booking data is handled via the success page
+    // and stored in Supabase. The webhook just handles capacity decrement.
+
     // Decrement capacity count
     try {
       // First, get the current capacity

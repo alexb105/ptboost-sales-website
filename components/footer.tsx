@@ -54,7 +54,7 @@ export function Footer() {
               <p className="text-sm font-bold text-white mb-3">Questions Before You Buy?</p>
               <div className="space-y-2 text-sm text-gray-300">
                 <p>
-                  📧 Email: <a href="mailto:your@email.com" className="text-accent hover:underline font-semibold">your@email.com</a>
+                  📧 Email: <a href="mailto:ptboost.info@gmail.com" className="text-accent hover:underline font-semibold">ptboost.info@gmail.com</a>
                 </p>
                 <p className="text-xs text-gray-400 leading-relaxed">
                   I typically respond within 24 hours. Happy to answer anything!

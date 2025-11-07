@@ -1,25 +1,63 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle2, ArrowRight, Mail, Calendar } from "lucide-react"
+import { CheckCircle2, ArrowRight, Mail, Calendar, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
 export default function SuccessPage() {
   const [email, setEmail] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState(true)
 
   useEffect(() => {
-    // Get email from URL if Stripe passes it
-    const params = new URLSearchParams(window.location.search)
-    const customerEmail = params.get('email')
-    // Filter out the literal placeholder text that wasn't replaced
-    if (customerEmail && customerEmail !== '{CUSTOMER_EMAIL}' && !customerEmail.includes('{')) {
-      setEmail(customerEmail)
+    const completeBooking = async () => {
+      try {
+        // Get booking ID from localStorage
+        const bookingId = localStorage.getItem('pending_booking_id')
+        
+        if (bookingId) {
+          // Complete the booking and send email
+          const response = await fetch('/api/complete-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookingId })
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            setEmail(data.email)
+            // Clear the booking ID from localStorage
+            localStorage.removeItem('pending_booking_id')
+          }
+        }
+
+        // Also try to get email from URL if Stripe passes it
+        const params = new URLSearchParams(window.location.search)
+        const customerEmail = params.get('email')
+        if (customerEmail && customerEmail !== '{CUSTOMER_EMAIL}' && !customerEmail.includes('{')) {
+          setEmail(customerEmail)
+        }
+      } catch (error) {
+        console.error('Error completing booking:', error)
+      } finally {
+        setIsProcessing(false)
+      }
     }
+
+    completeBooking()
   }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/5 to-background flex items-center justify-center p-4">
+      {isProcessing ? (
+        <Card className="max-w-2xl w-full p-8 md:p-12 text-center space-y-6">
+          <div className="flex justify-center">
+            <Loader2 className="h-16 w-16 text-accent animate-spin" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">Processing your order...</h2>
+          <p className="text-muted-foreground">Please wait while we confirm your payment</p>
+        </Card>
+      ) : (
       <Card className="max-w-2xl w-full p-8 md:p-12 text-center space-y-6">
         {/* Success Icon */}
         <div className="flex justify-center">
@@ -110,6 +148,7 @@ export default function SuccessPage() {
           </a>
         </p>
       </Card>
+      )}
     </div>
   )
 }

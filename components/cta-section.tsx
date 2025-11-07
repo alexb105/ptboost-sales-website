@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowRight, Star, Check, Sparkles, ChevronDown, AlertCircle, Bell } from "lucide-react"
 import { useState, useEffect } from "react"
+import { BookingForm } from "@/components/booking-form"
 
 export function CTASection() {
   const [isPricingOpen, setIsPricingOpen] = useState(false)
@@ -13,6 +14,7 @@ export function CTASection() {
   const [showNotifyForm, setShowNotifyForm] = useState(false)
   const [notifyEmail, setNotifyEmail] = useState('')
   const [notifyStatus, setNotifyStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [showBookingForm, setShowBookingForm] = useState(false)
   
   // Fetch capacity status from Supabase
   useEffect(() => {
@@ -35,8 +37,8 @@ export function CTASection() {
       setShowNotifyForm(true)
       return
     }
-    // Redirect to Stripe payment link
-    window.location.href = "https://buy.stripe.com/28E3cwgwy9tN0xrgED0co02"
+    // Open the booking form dialog
+    setShowBookingForm(true)
   }
 
   const handleNotifySubmit = async (e: React.FormEvent) => {
@@ -335,7 +337,7 @@ export function CTASection() {
                                           <form onSubmit={handleNotifySubmit} className="space-y-3">
                                             <Input
                                               type="email"
-                                              placeholder="your@email.com"
+                                              placeholder="ptboost.info@gmail.com"
                                               value={notifyEmail}
                                               onChange={(e) => setNotifyEmail(e.target.value)}
                                               required
@@ -448,6 +450,9 @@ export function CTASection() {
           </div>
         </div>
       </div>
+
+      {/* Booking Form Dialog */}
+      <BookingForm open={showBookingForm} onOpenChange={setShowBookingForm} />
     </section>
   )
 }

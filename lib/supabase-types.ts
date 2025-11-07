@@ -1,0 +1,25 @@
+// Supabase database types
+
+export interface BookingData {
+  id?: string
+  created_at?: string
+  full_name: string
+  email: string
+  phone: string
+  business_name: string
+  location: string
+  specialization: string
+  preferred_colors: string
+  website_goals: string
+  additional_notes: string
+  payment_status: 'pending' | 'completed' | 'failed'
+  stripe_session_id?: string
+  email_sent?: boolean
+}
+
+export interface CapacityStatus {
+  id: number
+  capacity_count: number
+  updated_at: string
+}
+

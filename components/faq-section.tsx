@@ -71,7 +71,7 @@ export function FAQSection() {
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               Everything you need to know about the beta offer. Still have questions? 
-              <a href="mailto:your@email.com" className="text-accent font-semibold hover:underline ml-1">Just ask.</a>
+              <a href="mailto:ptboost.info@gmail.com" className="text-accent font-semibold hover:underline ml-1">Just ask.</a>
             </p>
           </div>
 
