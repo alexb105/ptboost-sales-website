@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     // Send confirmation email to customer
     console.log('Attempting to send customer confirmation email...')
     const customerEmail = await resend.emails.send({
-      from: 'PTBoost <bookings@ptboost.co.uk>', // Update after verifying domain in Resend
+      from: 'PTBoost <noreply@ptboost.co.uk>',
       to: [bookingData.email],
       subject: '🎉 Your Website Booking is Confirmed!',
       html: `
@@ -157,7 +157,7 @@ export async function POST(request: Request) {
     // Send notification email to admin
     console.log('Sending admin notification email...')
     const { data, error } = await resend.emails.send({
-      from: 'PT Website Bookings <bookings@ptboost.co.uk>',
+      from: 'PT Website Bookings <noreply@ptboost.co.uk>',
       to: ['alexander.ptboost@gmail.com'],
       subject: `New Website Booking - ${bookingData.businessName}`,
       html: `
