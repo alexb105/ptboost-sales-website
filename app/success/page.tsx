@@ -12,7 +12,8 @@ export default function SuccessPage() {
     // Get email from URL if Stripe passes it
     const params = new URLSearchParams(window.location.search)
     const customerEmail = params.get('email')
-    if (customerEmail) {
+    // Filter out the literal placeholder text that wasn't replaced
+    if (customerEmail && customerEmail !== '{CUSTOMER_EMAIL}' && !customerEmail.includes('{')) {
       setEmail(customerEmail)
     }
   }, [])
@@ -104,8 +105,8 @@ export default function SuccessPage() {
         {/* Support Text */}
         <p className="text-xs text-muted-foreground pt-4">
           Questions? Contact us at{" "}
-          <a href="mailto:your-email@example.com" className="text-accent hover:underline">
-            your-email@example.com
+          <a href="mailto:ptboost.info@gmail.com" className="text-accent hover:underline">
+            ptboost.info@gmail.com
           </a>
         </p>
       </Card>
