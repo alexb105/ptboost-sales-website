@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,7 +11,7 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
-export default function ManageSubscriptionPage() {
+function ManageSubscriptionContent() {
   const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -174,6 +174,24 @@ export default function ManageSubscriptionPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ManageSubscriptionPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/5 via-orange-500/5 to-red-500/5 p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <ManageSubscriptionContent />
+    </Suspense>
   )
 }
 
