@@ -60,9 +60,13 @@ export async function POST(request: Request) {
     // Create a portal session
     console.log('Creating portal session for customer:', booking.stripe_customer_id)
     
+    // Ensure base URL doesn't have trailing slash to avoid double slashes
+    const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')
+    const returnUrl = `${baseUrl}/manage-subscription?success=true`
+    
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: booking.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk'}/manage-subscription?success=true`,
+      return_url: returnUrl,
     })
 
     console.log('Portal session created successfully:', portalSession.id)

@@ -130,7 +130,7 @@ export async function POST(request: Request) {
                 <p style="margin: 10px 0; font-size: 14px; color: #666;">
                   <strong>Important:</strong> Save this password! You'll need it along with your email to access your subscription management portal.
                 </p>
-                <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk'}/manage-subscription" class="button" style="display: inline-block; margin-top: 15px;">
+                <a href="${(process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/manage-subscription" class="button" style="display: inline-block; margin-top: 15px;">
                   Manage Subscription
                 </a>
               </div>
