@@ -4,7 +4,7 @@ import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-10-29.clover',
 })
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     if (session.customer && session.customer_details?.email) {
       try {
         // First try to update pending bookings
-        const { data: pendingBooking, error: pendingError } = await supabase
+        const { data: pendingBooking } = await supabase
           .from('bookings')
           .update({
             stripe_customer_id: session.customer as string,
@@ -84,6 +84,37 @@ export async function POST(request: Request) {
         console.error('Error storing customer ID:', error)
       }
     }
+
+    // Decrement capacity count (only for successful checkouts)
+    try {
+      const { data: currentData, error: fetchError } = await supabase
+        .from('capacity_status')
+        .select('capacity_count')
+        .single()
+
+      if (fetchError) {
+        console.error('Error fetching capacity:', fetchError)
+      } else {
+        const newCapacity = Math.max(0, currentData.capacity_count - 1)
+
+        const { error: updateError } = await supabase
+          .from('capacity_status')
+          .update({
+            capacity_count: newCapacity,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', 1)
+
+        if (updateError) {
+          console.error('Error updating capacity:', updateError)
+        } else {
+          console.log(`Capacity decremented from ${currentData.capacity_count} to ${newCapacity}`)
+        }
+      }
+    } catch (error) {
+      console.error('Error handling capacity decrement:', error)
+      // Don't fail the webhook if capacity update fails
+    }
   }
 
   // Handle subscription created event (for Payment Links that create subscriptions)
@@ -117,49 +148,6 @@ export async function POST(request: Request) {
       } catch (error) {
         console.error('Error handling subscription created:', error)
       }
-    }
-  }
-
-    // Decrement capacity count
-    try {
-      // First, get the current capacity
-      const { data: currentData, error: fetchError } = await supabase
-        .from('capacity_status')
-        .select('capacity_count')
-        .single()
-
-      if (fetchError) {
-        console.error('Error fetching capacity:', fetchError)
-        return NextResponse.json(
-          { error: 'Failed to fetch capacity' },
-          { status: 500 }
-        )
-      }
-
-      const newCapacity = Math.max(0, currentData.capacity_count - 1)
-
-      // Update the capacity
-      const { error: updateError } = await supabase
-        .from('capacity_status')
-        .update({
-          capacity_count: newCapacity,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', 1)
-
-      if (updateError) {
-        console.error('Error updating capacity:', updateError)
-        return NextResponse.json(
-          { error: 'Failed to update capacity' },
-          { status: 500 }
-        )
-      }
-
-      console.log(`Capacity decremented from ${currentData.capacity_count} to ${newCapacity}`)
-    } catch (error) {
-      console.error('Error handling capacity decrement:', error)
-      // Don't fail the webhook if capacity update fails
-      // The payment still went through
     }
   }
 

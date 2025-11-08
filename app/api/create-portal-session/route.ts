@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: booking.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/manage-subscription?success=true`,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk'}/manage-subscription?success=true`,
     })
 
     console.log('Portal session created successfully:', portalSession.id)
