@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { generateSubscriptionPassword } from '@/lib/generate-password'
 
 export async function POST(request: Request) {
   try {
     const formData = await request.json()
+
+    // Generate unique subscription password
+    const subscriptionPassword = generateSubscriptionPassword()
 
     // Insert booking data into Supabase
     const { data, error } = await supabase
@@ -19,9 +23,10 @@ export async function POST(request: Request) {
         website_goals: formData.websiteGoals || 'Not specified',
         additional_notes: formData.additionalNotes || 'Not specified',
         payment_status: 'pending',
-        email_sent: false
+        email_sent: false,
+        subscription_password: subscriptionPassword
       })
-      .select('id')
+      .select('id, subscription_password')
       .single()
 
     if (error) {
@@ -32,7 +37,10 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json({ bookingId: data.id })
+    return NextResponse.json({ 
+      bookingId: data.id,
+      subscriptionPassword: data.subscription_password
+    })
   } catch (error) {
     console.error('Error in save-booking:', error)
     return NextResponse.json(

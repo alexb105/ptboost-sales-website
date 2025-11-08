@@ -73,7 +73,7 @@ export function AboutSection() {
                       you're stuck competing on Instagram where the algorithm controls your business.
                     </p>
                     <p className="font-bold text-foreground text-lg">
-                      ✅ That's why I'm offering professional websites for just <span className="text-accent">£59</span> — but only for the first 50 sites
+                      ✅ That's why I'm offering professional websites for just <span className="text-accent">£7.99/month</span> — limited time launch pricing
                     </p>
                   </div>
                 </div>
@@ -85,28 +85,28 @@ export function AboutSection() {
               {/* Stats cards */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gradient-to-br from-accent/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border-2 border-accent/30 text-center">
-                  <div className="text-4xl font-black text-accent mb-2">£59</div>
-                  <div className="text-sm font-semibold text-foreground">Startup Price</div>
-                  <div className="text-xs text-muted-foreground mt-1">(First 50 sites)</div>
+                  <div className="text-4xl font-black text-accent mb-2">£7.99</div>
+                  <div className="text-sm font-semibold text-foreground">Launch Price</div>
+                  <div className="text-xs text-muted-foreground mt-1">(Per Month)</div>
                 </div>
                 <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border-2 border-red-500/30 text-center">
-                  <div className="text-4xl font-black text-red-500 mb-2">£299</div>
+                  <div className="text-4xl font-black text-red-500 mb-2">£14.99</div>
                   <div className="text-sm font-semibold text-foreground">Regular Price</div>
-                  <div className="text-xs text-muted-foreground mt-1">(After 50 sites)</div>
+                  <div className="text-xs text-muted-foreground mt-1">(Per Month)</div>
                 </div>
               </div>
 
               {/* Value comparison */}
               <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-lg">
-                <h4 className="text-lg font-bold text-foreground mb-4 text-center">You Save Over 97%</h4>
+                <h4 className="text-lg font-bold text-foreground mb-4 text-center">Affordable & Flexible</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center pb-2 border-b border-border/50">
-                    <span className="text-muted-foreground line-through">Agency Price:</span>
+                    <span className="text-muted-foreground line-through">Agency Upfront:</span>
                     <span className="font-bold text-muted-foreground line-through">£2,000-5,000</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-foreground font-semibold">Your Price:</span>
-                    <span className="font-black text-2xl text-accent">£59</span>
+                    <span className="text-foreground font-semibold">Your Monthly:</span>
+                    <span className="font-black text-2xl text-accent">£7.99</span>
                   </div>
                 </div>
               </div>
@@ -140,7 +140,7 @@ export function AboutSection() {
           {/* Urgency banner */}
           <div className="mb-8 text-center px-4">
             <p className="text-lg md:text-2xl font-bold text-foreground bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent inline-block animate-pulse">
-              ⚡ After 50 sites, the price goes to £299. This is a one-time opportunity to get in early.
+              ⚡ Lock in £7.99/month before rates increase. This introductory pricing won't last forever.
             </p>
           </div>
 

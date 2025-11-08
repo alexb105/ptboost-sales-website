@@ -28,7 +28,7 @@ export function HeroSection() {
             {/* Limited Offer Badge - Enhanced */}
             <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent via-orange-500 to-red-500 px-6 md:px-8 py-3 text-xs md:text-sm font-extrabold text-white shadow-2xl animate-pulse border-2 border-white/30 hover:scale-105 transition-transform">
               <TrendingUp className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
-              <span className="tracking-wide break-words">LAUNCH SPECIAL: First 50 Sites Only £59</span>
+              <span className="tracking-wide break-words">LAUNCH SPECIAL: Just £7.99/Month</span>
             </div>
 
             {/* Pain Point Headline - Younger Audience Hook */}
@@ -44,7 +44,7 @@ export function HeroSection() {
             {/* Subheadline - Younger Audience */}
             <p className="mb-10 text-pretty text-2xl text-foreground md:text-3xl lg:text-4xl leading-tight font-bold max-w-4xl mx-auto">
               Get a professional website that attracts <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent">local clients 24/7.</span>
-              Launch in 7 days. £59 one-time. No tech. No monthly fees.
+              Launch in 7 days. Just £7.99/month. No tech skills needed.
             </p>
 
             {/* Value Proposition - Stats Grid */}
@@ -75,8 +75,8 @@ export function HeroSection() {
                     <Zap className="h-6 w-6 text-white fill-white" />
                   </div>
                 </div>
-                <p className="text-3xl font-black text-foreground mb-2">£59</p>
-                <p className="text-sm font-semibold text-muted-foreground">One-Time Payment</p>
+                <p className="text-3xl font-black text-foreground mb-2">£7.99</p>
+                <p className="text-sm font-semibold text-muted-foreground">Per Month</p>
               </div>
             </div>
 
@@ -95,7 +95,7 @@ export function HeroSection() {
                 </Button>
               </div>
               <p className="mt-4 text-xs md:text-sm font-bold text-muted-foreground break-words px-4">
-                🎯 Live in 7 days • No monthly fees • No tech skills needed
+                🎯 Live in 7 days • Cancel anytime • No tech skills needed
               </p>
             </div>
 

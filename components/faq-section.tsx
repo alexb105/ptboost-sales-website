@@ -5,8 +5,8 @@ import { useState } from "react"
 
 const faqs = [
   {
-    question: "Why is it only £59? What's the catch?",
-    answer: "There's no catch. This is a launch special for the first 50 PT websites. I'm offering this introductory rate to help trainers who can't afford expensive agency prices (£2,000+) but need a professional online presence. After 50 sites, the price goes to £299. Simple as that."
+    question: "Why is it only £7.99/month? What's the catch?",
+    answer: "There's no catch. This is a launch special to help trainers who can't afford expensive agency prices (£2,000+ upfront) but need a professional online presence. At £7.99/month, you get everything - website, hosting, maintenance, and updates. This introductory rate locks in your price forever, even when it increases for new subscribers. Cancel anytime, no contracts."
   },
   {
     question: "What if I don't like the design?",
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     question: "Is hosting really included?",
-    answer: "Yes. Your site will be hosted on enterprise-grade servers (Vercel/Netlify) with excellent uptime and security. Hosting is included in the £59 - no monthly fees. If your site grows massively and needs more resources, I'll let you know, but for 99% of PTs, you'll never need to pay extra."
+    answer: "Yes. Your site will be hosted on enterprise-grade servers (Vercel/Netlify) with excellent uptime and security. Hosting, maintenance, and ongoing updates are all included in your £7.99/month subscription. If your site grows massively and needs more resources, I'll let you know, but for 99% of PTs, the base subscription covers everything."
   },
   {
     question: "How long does it actually take?",
@@ -124,7 +124,7 @@ export function FAQSection() {
               </h3>
             </div>
             <p className="text-lg text-muted-foreground mb-6">
-              Lock in your spot at £59 before the price goes up to £299.
+              Lock in your £7.99/month rate before the price increases for new subscribers.
             </p>
             <button 
               onClick={() => {
@@ -136,7 +136,7 @@ export function FAQSection() {
               className="inline-flex items-center gap-2 px-6 md:px-8 py-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-base md:text-lg font-bold rounded-full hover:scale-105 transition-all shadow-xl"
             >
               <span className="md:hidden">Get Started</span>
-              <span className="hidden md:inline whitespace-nowrap">Secure My £59 Website Now</span>
+              <span className="hidden md:inline whitespace-nowrap">Start for £7.99/Month</span>
               <ArrowRight className="h-5 w-5 flex-shrink-0" />
             </button>
           </div>

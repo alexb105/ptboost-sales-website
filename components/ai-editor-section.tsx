@@ -143,7 +143,7 @@ export function AIEditorSection() {
               </p>
               <p className="text-lg text-muted-foreground mb-8">
                 This isn't just a website — it's a powerful tool you can control and customize whenever you need. 
-                <span className="block mt-2 font-semibold text-foreground">No monthly fees for updates. No begging developers for changes. Just pure freedom.</span>
+                <span className="block mt-2 font-semibold text-foreground">No extra fees for updates. No begging developers for changes. Just pure freedom.</span>
               </p>
 
               {/* CTA Button */}
@@ -161,7 +161,7 @@ export function AIEditorSection() {
                 >
                   <Sparkles className="mr-1 md:mr-2 h-5 w-5 md:h-6 md:w-6 animate-pulse flex-shrink-0" />
                   <span className="md:hidden">Get Started</span>
-                  <span className="hidden md:inline whitespace-nowrap">Secure My £59 Website Now</span>
+                  <span className="hidden md:inline whitespace-nowrap">Start for £7.99/Month</span>
                   <ArrowRight className="ml-1 md:ml-2 h-5 w-5 md:h-6 md:w-6 transition-transform group-hover:translate-x-1 flex-shrink-0" />
                 </Button>
               </div>

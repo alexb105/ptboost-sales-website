@@ -28,9 +28,9 @@ const benefits = [
   },
   {
     icon: Shield,
-    title: "Free Hosting Forever",
+    title: "Hosting & Maintenance Included",
     description:
-      "No monthly fees, no surprise bills. Your website is hosted on enterprise-grade servers with bulletproof security. Set it and forget it.",
+      "Everything included in one simple monthly price. Your website is hosted on enterprise-grade servers with bulletproof security, plus ongoing updates and maintenance.",
   },
   {
     icon: Rocket,

@@ -1,12 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle2, ArrowRight, Mail, Calendar, Loader2 } from "lucide-react"
+import { CheckCircle2, ArrowRight, Mail, Calendar, Loader2, Eye, EyeOff, Copy, Check, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { toast } from "sonner"
 
 export default function SuccessPage() {
   const [email, setEmail] = useState<string | null>(null)
+  const [subscriptionPassword, setSubscriptionPassword] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [copiedPassword, setCopiedPassword] = useState(false)
   const [isProcessing, setIsProcessing] = useState(true)
 
   useEffect(() => {
@@ -32,6 +36,7 @@ export default function SuccessPage() {
             const data = await response.json()
             console.log('API Response data:', data)
             setEmail(data.email)
+            setSubscriptionPassword(data.subscriptionPassword)
             // Clear the booking ID from localStorage
             localStorage.removeItem('pending_booking_id')
           } else {
@@ -57,6 +62,15 @@ export default function SuccessPage() {
 
     completeBooking()
   }, [])
+
+  const copyPassword = () => {
+    if (subscriptionPassword) {
+      navigator.clipboard.writeText(subscriptionPassword)
+      setCopiedPassword(true)
+      toast.success("Password copied to clipboard!")
+      setTimeout(() => setCopiedPassword(false), 2000)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/5 to-background flex items-center justify-center p-4">
@@ -87,6 +101,84 @@ export default function SuccessPage() {
             Thank you for your purchase
           </p>
         </div>
+
+        {/* Subscription Portal Access */}
+        {email && subscriptionPassword && (
+          <div className="bg-gradient-to-br from-orange-500/10 to-accent/10 border-2 border-accent/30 rounded-lg p-6 space-y-4">
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-foreground mb-2">🔐 Your Subscription Portal Access</h3>
+              <p className="text-sm text-muted-foreground">
+                Save these credentials to manage your subscription anytime
+              </p>
+            </div>
+
+            <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 space-y-4">
+              {/* Email */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  Email Address
+                </label>
+                <div className="flex items-center gap-2 bg-background border border-accent/20 rounded-md px-3 py-2.5">
+                  <Mail className="h-4 w-4 text-accent flex-shrink-0" />
+                  <span className="text-sm font-medium text-foreground flex-1 truncate">
+                    {email}
+                  </span>
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  Subscription Password
+                </label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 flex items-center gap-2 bg-background border border-accent/20 rounded-md px-3 py-2.5">
+                    <span className="text-lg font-mono font-bold text-accent tracking-widest flex-1">
+                      {showPassword ? subscriptionPassword : '•••-•••-••'}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="h-8 w-8 p-0 hover:bg-accent/10"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyPassword}
+                    className="h-9 px-3 border-accent/20 hover:bg-accent/10"
+                  >
+                    {copiedPassword ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  💡 You'll need this password along with your email to manage your subscription
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center pt-2">
+              <Button
+                onClick={() => window.location.href = '/manage-subscription'}
+                className="bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                Manage Subscription Now
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Order Details */}
         <div className="bg-accent/10 rounded-lg p-6 space-y-4">
@@ -157,6 +249,11 @@ export default function SuccessPage() {
           <a href="mailto:ptboost.info@gmail.com" className="text-accent hover:underline">
             ptboost.info@gmail.com
           </a>
+          {" "}• You can cancel or modify your subscription anytime from the{" "}
+          <a href="/manage-subscription" className="text-accent hover:underline">
+            Manage Subscription
+          </a>
+          {" "}page
         </p>
       </Card>
       )}

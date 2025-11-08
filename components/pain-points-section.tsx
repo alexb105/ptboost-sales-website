@@ -119,7 +119,7 @@ export function PainPointsSection() {
                   You don't need to hire an expensive agency (£2,000+). You don't need to learn web design. 
                   You don't need to spend weeks figuring this out. 
                   <span className="block mt-3 text-foreground font-semibold">
-                    Get a professional website for just £59 (launch special pricing), and you'll be live in 7 days.
+                    Get a professional website for just £7.99/month (launch special pricing), and you'll be live in 7 days.
                   </span>
                 </p>
               </div>
@@ -137,7 +137,7 @@ export function PainPointsSection() {
               </div>
               
               <p className="text-xs md:text-sm text-muted-foreground px-4">
-                ⚡ £59 launch pricing • 🚀 Live in 7 days • ✅ Money-back guarantee
+                ⚡ £7.99/month launch pricing • 🚀 Live in 7 days • ✅ Cancel anytime
               </p>
             </div>
           </div>

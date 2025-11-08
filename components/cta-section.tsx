@@ -99,7 +99,7 @@ export function CTASection() {
               Ready to Get Your Professional Website?
             </h2>
             <p className="text-pretty text-xl text-muted-foreground md:text-2xl leading-relaxed max-w-3xl mx-auto">
-              Lock in <span className="font-black text-accent">launch pricing</span> before I hit 50 sites and raise the price to £299
+              Lock in <span className="font-black text-accent">launch pricing</span> at just £7.99/month before rates increase
             </p>
           </div>
 
@@ -178,8 +178,8 @@ export function CTASection() {
                                   <Check className="h-4 w-4 text-white stroke-[3]" />
                                 </div>
                                 <div>
-                                  <p className="font-bold text-foreground text-sm">Free Hosting Forever</p>
-                                  <p className="text-xs text-muted-foreground leading-relaxed">Lightning-fast servers, bulletproof security, zero monthly fees</p>
+                                  <p className="font-bold text-foreground text-sm">Hosting & Maintenance Included</p>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">Lightning-fast servers, bulletproof security, ongoing updates</p>
                                 </div>
                               </div>
 
@@ -237,20 +237,21 @@ export function CTASection() {
                             <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
                               <div className="text-center relative">
                                 <div className="absolute -inset-2 bg-red-500/20 rounded-lg transform rotate-12"></div>
-                                <span className="relative text-2xl md:text-4xl font-black text-muted-foreground line-through decoration-4 decoration-red-500 block">£299</span>
-                                <span className="text-xs font-bold text-muted-foreground uppercase whitespace-nowrap">After 50 Sites</span>
+                                <span className="relative text-2xl md:text-4xl font-black text-muted-foreground line-through decoration-4 decoration-red-500 block">£14.99</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase whitespace-nowrap">Regular Price</span>
                               </div>
                               <ArrowRight className="h-6 w-6 md:h-8 md:w-8 text-accent animate-pulse flex-shrink-0" />
-                              <div className="flex items-baseline">
+                              <div className="flex items-baseline gap-1">
                                 <span className="text-2xl md:text-4xl font-bold text-foreground">£</span>
                                 <span className="text-5xl md:text-7xl lg:text-8xl font-black bg-gradient-to-br from-accent via-orange-500 to-red-500 bg-clip-text text-transparent leading-none drop-shadow-2xl animate-pulse" style={{ animationDuration: '2s' }}>
-                                  59
+                                  7.99
                                 </span>
+                                <span className="text-lg md:text-2xl font-bold text-muted-foreground self-end mb-2">/mo</span>
                               </div>
                             </div>
 
                             <p className="text-center text-sm font-bold text-muted-foreground">
-                              LAUNCH SPECIAL - LIMITED SPOTS
+                              LAUNCH SPECIAL - LIMITED TIME OFFER
                             </p>
 
                             {/* Launch Offer Badge */}
@@ -259,7 +260,7 @@ export function CTASection() {
                                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur animate-pulse"></div>
                                 <div className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-white/50 px-4 md:px-6 py-3 shadow-xl">
                                   <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white animate-spin flex-shrink-0" style={{ animationDuration: '3s' }} />
-                                  <span className="text-sm md:text-lg font-black text-white whitespace-nowrap">Save £260 - Launch Offer</span>
+                                  <span className="text-sm md:text-lg font-black text-white whitespace-nowrap">Save 47% - Launch Offer</span>
                                 </div>
                               </div>
                             </div>
@@ -271,7 +272,7 @@ export function CTASection() {
                             >
                               <div className="flex items-center justify-center gap-2">
                                 <p className="text-center text-sm font-bold text-foreground">
-                                  <span className="text-blue-600 dark:text-blue-400">Why only £59?</span>
+                                  <span className="text-blue-600 dark:text-blue-400">Why only £7.99/month?</span>
                                 </p>
                                 <ChevronDown 
                                   className={`h-4 w-4 text-blue-600 transition-transform duration-300 ${isPricingOpen ? 'rotate-180' : ''}`}
@@ -279,8 +280,8 @@ export function CTASection() {
                               </div>
                               {isPricingOpen && (
                                 <p className="text-center text-xs text-muted-foreground leading-relaxed mt-3 animate-in slide-in-from-top-2">
-                                  Limited introductory offer for the first 50 PT websites. This is a one-time 
-                                  pricing opportunity. Once I hit 50 sites, the price increases to £299.
+                                  Limited launch pricing to help PTs get started. This introductory rate locks in your 
+                                  monthly price forever — even when rates increase for new subscribers. Cancel anytime, no contracts.
                                 </p>
                               )}
                             </button>
@@ -288,10 +289,10 @@ export function CTASection() {
                             {/* Payment Info */}
                             <div className="border-t border-b border-accent/20 py-4">
                               <p className="text-center text-sm font-bold text-foreground mb-1">
-                                ✅ One-Time Payment • No Hidden Fees
+                                ✅ Monthly Subscription • Cancel Anytime
                               </p>
                               <p className="text-center text-xs text-muted-foreground">
-                                Hosting included • Pay once, own forever • Secure payment via Stripe
+                                Everything included • No setup fees • Secure payment via Stripe
                               </p>
                             </div>
 
@@ -307,7 +308,7 @@ export function CTASection() {
                                   >
                                     <Sparkles className="mr-1 md:mr-2 h-5 w-5 md:h-6 md:w-6 animate-pulse flex-shrink-0" />
                                     <span className="md:hidden">Get Started</span>
-                                    <span className="hidden md:inline">Secure My £59 Website Now!</span>
+                                    <span className="hidden md:inline">Start for £7.99/Month!</span>
                                     <ArrowRight className="ml-1 md:ml-2 h-5 w-5 md:h-6 md:w-6 transition-transform group-hover/btn:translate-x-1 flex-shrink-0" />
                                   </Button>
                                 </div>
@@ -511,7 +512,7 @@ export function CTASection() {
                                           </p>
                                           <p className="text-sm text-muted-foreground leading-relaxed">
                                             Once I hit my project limit, this button will be disabled and you'll need to wait 1-2 weeks 
-                                            for the next available spot. If you're ready now, secure your spot today at the £59 launch price.
+                                            for the next available spot. If you're ready now, secure your spot today at the £7.99/month launch price.
                                           </p>
                                         </>
                                       )}

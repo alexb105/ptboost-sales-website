@@ -119,6 +119,22 @@ export async function POST(request: Request) {
                 </ol>
               </div>
 
+              <div class="info-section" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
+                <h3 style="color: #f59e0b;">🔐 Your Subscription Password</h3>
+                <p style="margin: 10px 0;">
+                  To manage your subscription (cancel, update payment, view invoices), you'll need this password:
+                </p>
+                <p style="margin: 15px 0; text-align: center; font-size: 32px; font-weight: bold; font-family: 'Courier New', monospace; letter-spacing: 3px; color: #f59e0b;">
+                  ${bookingData.subscriptionPassword || 'N/A'}
+                </p>
+                <p style="margin: 10px 0; font-size: 14px; color: #666;">
+                  <strong>Important:</strong> Save this password! You'll need it along with your email to access your subscription management portal.
+                </p>
+                <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/manage-subscription" class="button" style="display: inline-block; margin-top: 15px;">
+                  Manage Subscription
+                </a>
+              </div>
+
               <div class="info-section">
                 <h3>📝 Your Order Details</h3>
                 <p><strong>Business Name:</strong> ${bookingData.businessName}</p>

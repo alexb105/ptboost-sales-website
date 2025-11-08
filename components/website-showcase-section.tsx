@@ -43,10 +43,10 @@ const caseStudies = {
     testimonial: "I was skeptical at first — how much could a website really change? But the vibrant design perfectly matches my brand, and the mobile-first approach is crucial since all my clients find me on their phones. The lead capture system makes it so easy to collect client info and the free hosting means no surprise bills.",
     beforeAfter: {
       before: "Only had Instagram. When people asked 'do you have a website?', I had to say no. Looked unprofessional and lost clients to trainers with proper sites.",
-      after: "A beautiful, mobile-optimized website with my link in bio. Lead capture forms collect every enquiry. Free hosting forever means no monthly costs eating into profits.",
+      after: "A beautiful, mobile-optimized website with my link in bio. Lead capture forms collect every enquiry. Hosting included for just £7.99/month — affordable and predictable.",
     },
     features: [
-      "Free hosting forever — zero monthly fees or hidden costs",
+      "Hosting & maintenance included — everything for £7.99/month",
       "Mobile-first design — 90% of my clients visit on phones",
       "Lead capture system collects client details automatically",
       "Psychology-driven layout turns browsers into bookers",
@@ -61,9 +61,9 @@ const caseStudies = {
     results: [
       { metric: "Live", label: "In Just 7 Days", icon: TrendingUp },
       { metric: "100%", label: "Custom Design", icon: Users },
-      { metric: "£59", label: "One-Time Cost", icon: Calendar },
+      { metric: "£7.99/mo", label: "All Inclusive", icon: Calendar },
     ],
-    testimonial: "This website doesn't just look good — it SELLS. The bold design matches my brand perfectly, and the psychology-driven layout pre-qualifies leads before they contact me. The 7-day turnaround was insane — I went from no site to fully live in a week. Best £59 I've ever spent.",
+    testimonial: "This website doesn't just look good — it SELLS. The bold design matches my brand perfectly, and the psychology-driven layout pre-qualifies leads before they contact me. The 7-day turnaround was insane — I went from no site to fully live in a week. Best £7.99/month I've ever spent.",
     beforeAfter: {
       before: "No website at all. Just Instagram. When serious clients asked for more info, I had nowhere professional to send them. Lost deals to competitors with proper sites.",
       after: "A bold, mobile-optimized website that's on-brand. Smart lead capture qualifies prospects. Lightning-fast load times. Free hosting means it costs nothing to run.",
@@ -72,7 +72,7 @@ const caseStudies = {
       "7-day turnaround — live and booking clients in a week",
       "Psychology-driven design pre-qualifies serious clients",
       "Lightning-fast & secure — built with modern tech",
-      "Free enterprise-grade hosting — no monthly fees ever",
+      "Hosting & maintenance included — everything for £7.99/month",
     ],
   },
 }
@@ -343,7 +343,7 @@ export function WebsiteShowcaseSection() {
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-accent" />
-                      <span>Only £59 one-time</span>
+                      <span>Just £7.99/month</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-accent" />
@@ -351,7 +351,7 @@ export function WebsiteShowcaseSection() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-accent" />
-                      <span>No monthly fees</span>
+                      <span>Cancel anytime</span>
                     </div>
                   </div>
                 </div>
@@ -476,10 +476,10 @@ export function WebsiteShowcaseSection() {
                   className="inline-flex items-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-sm md:text-base font-black rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
                   <span className="md:hidden">Get Started</span>
-                  <span className="hidden md:inline whitespace-nowrap">Claim Your £59 Website Now</span>
+                  <span className="hidden md:inline whitespace-nowrap">Start for £7.99/Month</span>
                   <ArrowRight className="h-5 w-5 flex-shrink-0" />
                 </a>
-                <p className="text-xs text-muted-foreground mt-3">Only £59 one-time • Live in 7 days • No monthly fees</p>
+                <p className="text-xs text-muted-foreground mt-3">Just £7.99/month • Live in 7 days • Cancel anytime</p>
               </div>
             </div>
           )}

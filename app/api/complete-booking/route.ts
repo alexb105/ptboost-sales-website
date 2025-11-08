@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import Stripe from 'stripe'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-10-29.clover',
+})
 
 export async function POST(request: Request) {
   try {
@@ -36,6 +41,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ 
         success: true,
         email: booking.email,
+        subscriptionPassword: booking.subscription_password,
         alreadyProcessed: true 
       })
     }
@@ -51,6 +57,42 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Error updating booking:', updateError)
+    }
+
+    // If customer ID is missing, try to fetch it from Stripe
+    if (!booking.stripe_customer_id) {
+      console.log('Customer ID missing, attempting to fetch from Stripe...')
+      try {
+        // Search for customer by email in Stripe
+        const customers = await stripe.customers.list({
+          email: booking.email,
+          limit: 1,
+        })
+
+        if (customers.data.length > 0) {
+          const customerId = customers.data[0].id
+          console.log(`Found customer ID ${customerId} for ${booking.email}`)
+          
+          // Update booking with customer ID
+          const { error: customerUpdateError } = await supabase
+            .from('bookings')
+            .update({ stripe_customer_id: customerId })
+            .eq('id', bookingId)
+
+          if (customerUpdateError) {
+            console.error('Error updating customer ID:', customerUpdateError)
+          } else {
+            console.log(`Successfully stored customer ID ${customerId}`)
+            // Update local booking object for return value
+            booking.stripe_customer_id = customerId
+          }
+        } else {
+          console.warn(`No customer found in Stripe for email: ${booking.email}`)
+        }
+      } catch (stripeError) {
+        console.error('Error fetching customer from Stripe:', stripeError)
+        // Don't fail the whole request if Stripe lookup fails
+      }
     }
 
     // Only send email if not already sent
@@ -74,6 +116,7 @@ export async function POST(request: Request) {
           websiteGoals: booking.website_goals,
           additionalNotes: booking.additional_notes,
           sessionId: bookingId,
+          subscriptionPassword: booking.subscription_password,
         }),
       })
 
@@ -95,7 +138,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ 
       success: true,
-      email: booking.email 
+      email: booking.email,
+      subscriptionPassword: booking.subscription_password
     })
   } catch (error) {
     console.error('Error completing booking:', error)

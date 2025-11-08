@@ -127,8 +127,8 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
       // Store booking ID in localStorage so we can retrieve it after payment
       localStorage.setItem('pending_booking_id', bookingId)
       
-      // Redirect to Stripe payment link
-      window.location.href = "https://buy.stripe.com/00weVebce49t6VP5ZZ0co01"
+      // Redirect to Stripe subscription payment link
+      window.location.href = "https://buy.stripe.com/4gMcN63JM9tN0xr1JJ0co04"
     } catch (error) {
       console.error("Error:", error)
       toast.error("Something went wrong. Please try again.")

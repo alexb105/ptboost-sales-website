@@ -77,18 +77,25 @@ export function Footer() {
 
           {/* Copyright & Trust */}
           <div className="flex flex-col items-center text-center w-full gap-3">
-            <div className="flex items-center gap-4 text-xs md:text-sm text-gray-500">
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 text-xs md:text-sm text-gray-500">
               <p>© {new Date().getFullYear()} PTBoost. All rights reserved.</p>
-              <span className="text-gray-700">•</span>
+              <span className="text-gray-700 hidden md:inline">•</span>
               <Link 
                 href="/terms" 
                 className="text-gray-400 hover:text-accent transition-colors underline underline-offset-2"
               >
                 Terms & Conditions
               </Link>
+              <span className="text-gray-700">•</span>
+              <Link 
+                href="/manage-subscription" 
+                className="text-gray-400 hover:text-accent transition-colors underline underline-offset-2"
+              >
+                Manage Subscription
+              </Link>
             </div>
             <p className="text-xs text-gray-600 max-w-2xl mx-auto">
-              🔒 Secure payments via Stripe • 💯 7-Day Satisfaction Guarantee • 🚀 First 50 sites at £59
+              🔒 Secure payments via Stripe • 💯 7-Day Satisfaction Guarantee • 🚀 Launch pricing at £7.99/month
             </p>
           </div>
         </div>
