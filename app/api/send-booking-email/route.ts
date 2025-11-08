@@ -404,7 +404,7 @@ export async function POST(request: Request) {
                 <div class="section" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #3b82f6;">
                   <h2 class="section-title" style="color: #1e40af;">💬 Need to Get in Touch?</h2>
                   <p style="margin: 0; font-size: 16px; color: #1e3a8a; line-height: 1.7; font-weight: 500;">
-                    If you have any questions or need to update your information, feel free to reply to this email. 
+                    If you have any questions or need to update your information, feel free to send your request to ptboost.info@gmail.com. 
                     We're here to help make your website perfect! 🚀
                   </p>
                 </div>
@@ -442,132 +442,330 @@ export async function POST(request: Request) {
         <!DOCTYPE html>
         <html>
           <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
+              * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+              }
               body {
-                font-family: Arial, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                 line-height: 1.6;
-                color: #333;
-                max-width: 600px;
-                margin: 0 auto;
+                color: #1a1a1a;
+                background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 50%, #ffe5e5 100%);
                 padding: 20px;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+              }
+              .email-container {
+                max-width: 650px;
+                margin: 0 auto;
+                background: #ffffff;
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
               }
               .header {
-                background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+                background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
                 color: white;
-                padding: 30px;
-                border-radius: 10px 10px 0 0;
+                padding: 50px 40px;
                 text-align: center;
+                position: relative;
+                overflow: hidden;
+              }
+              .header::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -20%;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                border-radius: 50%;
+              }
+              .header::after {
+                content: '';
+                position: absolute;
+                bottom: -30%;
+                left: -10%;
+                width: 250px;
+                height: 250px;
+                background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+                border-radius: 50%;
+              }
+              .header-content {
+                position: relative;
+                z-index: 1;
+              }
+              .header h1 {
+                font-size: 36px;
+                font-weight: 900;
+                margin: 0 0 15px 0;
+                letter-spacing: -0.5px;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+              }
+              .header p {
+                font-size: 20px;
+                font-weight: 600;
+                margin: 0;
+                opacity: 0.95;
               }
               .content {
-                background: #f9fafb;
-                padding: 30px;
-                border-radius: 0 0 10px 10px;
+                padding: 40px;
+                background: #ffffff;
+              }
+              .alert-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-weight: 700;
+                font-size: 14px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
               }
               .section {
-                background: white;
-                padding: 20px;
-                margin-bottom: 20px;
-                border-radius: 8px;
+                background: #ffffff;
+                padding: 30px;
+                border-radius: 16px;
+                margin-bottom: 25px;
+                border: 2px solid #f3f4f6;
+              }
+              .section-title {
+                font-size: 20px;
+                font-weight: 800;
+                color: #1a1a1a;
+                margin: 0 0 20px 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+              }
+              .section-title::before {
+                content: '';
+                width: 4px;
+                height: 24px;
+                background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+                border-radius: 2px;
+              }
+              .details-grid {
+                display: grid;
+                gap: 15px;
+                margin-top: 20px;
+              }
+              .detail-item {
+                padding: 18px;
+                background: #f9fafb;
+                border-radius: 12px;
                 border-left: 4px solid #f97316;
+                transition: all 0.2s;
               }
-              .section h2 {
-                margin-top: 0;
-                color: #f97316;
-                font-size: 18px;
+              .detail-item:hover {
+                background: #f3f4f6;
+                transform: translateX(2px);
               }
-              .field {
-                margin-bottom: 15px;
+              .detail-label {
+                font-size: 12px;
+                font-weight: 700;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 8px;
               }
-              .field-label {
-                font-weight: bold;
-                color: #666;
-                font-size: 14px;
-              }
-              .field-value {
-                color: #333;
+              .detail-value {
                 font-size: 16px;
-                margin-top: 4px;
+                font-weight: 600;
+                color: #1a1a1a;
+                word-break: break-word;
+              }
+              .detail-value a {
+                color: #f97316;
+                text-decoration: none;
+                font-weight: 700;
+              }
+              .detail-value a:hover {
+                text-decoration: underline;
+              }
+              .payment-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 50px;
+                font-weight: 700;
+                font-size: 14px;
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+              }
+              .session-id {
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+                color: #6b7280;
+                background: #f3f4f6;
+                padding: 8px 12px;
+                border-radius: 8px;
+                word-break: break-all;
+                margin-top: 8px;
               }
               .footer {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                color: white;
+                padding: 40px;
                 text-align: center;
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 2px solid #e5e7eb;
-                color: #666;
-                font-size: 14px;
+              }
+              .footer-brand {
+                font-size: 24px;
+                font-weight: 900;
+                background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 10px;
+              }
+              .footer-text {
+                font-size: 15px;
+                color: #d1d5db;
+                margin: 10px 0 0 0;
+                line-height: 1.6;
+              }
+              .footer-text a {
+                color: #f97316;
+                text-decoration: none;
+                font-weight: 700;
+              }
+              .footer-text a:hover {
+                text-decoration: underline;
+              }
+              @media only screen and (max-width: 600px) {
+                .email-container {
+                  border-radius: 0;
+                }
+                .header {
+                  padding: 40px 30px;
+                }
+                .header h1 {
+                  font-size: 28px;
+                }
+                .header p {
+                  font-size: 18px;
+                }
+                .content {
+                  padding: 30px 25px;
+                }
               }
             </style>
           </head>
           <body>
-            <div class="header">
-              <h1 style="margin: 0; font-size: 28px;">🎉 New Website Order!</h1>
-              <p style="margin: 10px 0 0 0; font-size: 16px;">A new client has completed their payment</p>
-            </div>
-            
-            <div class="content">
-              <div class="section">
-                <h2>👤 Personal Information</h2>
-                <div class="field">
-                  <div class="field-label">Full Name</div>
-                  <div class="field-value">${bookingData.fullName}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Email</div>
-                  <div class="field-value"><a href="mailto:${bookingData.email}">${bookingData.email}</a></div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Phone</div>
-                  <div class="field-value"><a href="tel:${bookingData.phone}">${bookingData.phone}</a></div>
+            <div class="email-container">
+              <div class="header">
+                <div class="header-content">
+                  <h1>🎉 New Website Order!</h1>
+                  <p>A new client has completed their payment</p>
                 </div>
               </div>
+              
+              <div class="content">
+                <div class="alert-badge">
+                  ⚡ Action Required
+                </div>
 
-              <div class="section">
-                <h2>💼 Business Information</h2>
-                <div class="field">
-                  <div class="field-label">Business Name</div>
-                  <div class="field-value">${bookingData.businessName}</div>
+                <div class="section">
+                  <h2 class="section-title">👤 Personal Information</h2>
+                  <div class="details-grid">
+                    <div class="detail-item">
+                      <div class="detail-label">Full Name</div>
+                      <div class="detail-value">${bookingData.fullName}</div>
+                    </div>
+                    <div class="detail-item">
+                      <div class="detail-label">Email</div>
+                      <div class="detail-value"><a href="mailto:${bookingData.email}">${bookingData.email}</a></div>
+                    </div>
+                    <div class="detail-item">
+                      <div class="detail-label">Phone</div>
+                      <div class="detail-value"><a href="tel:${bookingData.phone}">${bookingData.phone}</a></div>
+                    </div>
+                  </div>
                 </div>
-                <div class="field">
-                  <div class="field-label">Location</div>
-                  <div class="field-value">${bookingData.location}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Specialization</div>
-                  <div class="field-value">${bookingData.specialization}</div>
-                </div>
-              </div>
 
-              <div class="section">
-                <h2>🎨 Website Preferences</h2>
-                <div class="field">
-                  <div class="field-label">Preferred Colors</div>
-                  <div class="field-value">${bookingData.preferredColors}</div>
+                <div class="section">
+                  <h2 class="section-title">💼 Business Information</h2>
+                  <div class="details-grid">
+                    <div class="detail-item">
+                      <div class="detail-label">Business Name</div>
+                      <div class="detail-value">${bookingData.businessName}</div>
+                    </div>
+                    <div class="detail-item">
+                      <div class="detail-label">Location</div>
+                      <div class="detail-value">${bookingData.location}</div>
+                    </div>
+                    <div class="detail-item">
+                      <div class="detail-label">Specialization</div>
+                      <div class="detail-value">${bookingData.specialization}</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="field">
-                  <div class="field-label">Website Goals</div>
-                  <div class="field-value">${bookingData.websiteGoals}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Additional Notes</div>
-                  <div class="field-value">${bookingData.additionalNotes}</div>
-                </div>
-              </div>
 
-              <div class="section">
-                <h2>💰 Payment Information</h2>
-                <div class="field">
-                  <div class="field-label">Payment Status</div>
-                  <div class="field-value">✅ Completed</div>
+                <div class="section">
+                  <h2 class="section-title">🎨 Website Preferences</h2>
+                  <div class="details-grid">
+                    ${bookingData.preferredColors ? `
+                    <div class="detail-item">
+                      <div class="detail-label">Preferred Colors</div>
+                      <div class="detail-value">${bookingData.preferredColors || 'Not specified'}</div>
+                    </div>
+                    ` : ''}
+                    ${bookingData.websiteGoals ? `
+                    <div class="detail-item">
+                      <div class="detail-label">Website Goals</div>
+                      <div class="detail-value">${bookingData.websiteGoals || 'Not specified'}</div>
+                    </div>
+                    ` : ''}
+                    ${bookingData.additionalNotes ? `
+                    <div class="detail-item">
+                      <div class="detail-label">Additional Notes</div>
+                      <div class="detail-value">${bookingData.additionalNotes || 'None'}</div>
+                    </div>
+                    ` : ''}
+                    ${!bookingData.preferredColors && !bookingData.websiteGoals && !bookingData.additionalNotes ? `
+                    <div class="detail-item">
+                      <div class="detail-value" style="color: #6b7280; font-style: italic;">No preferences specified</div>
+                    </div>
+                    ` : ''}
+                  </div>
                 </div>
-                <div class="field">
-                  <div class="field-label">Session ID</div>
-                  <div class="field-value" style="font-size: 12px; font-family: monospace;">${bookingData.sessionId || 'N/A'}</div>
+
+                <div class="section" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #10b981;">
+                  <h2 class="section-title" style="color: #059669;">💰 Payment Information</h2>
+                  <div class="details-grid">
+                    <div class="detail-item" style="background: white; border-color: #10b981;">
+                      <div class="detail-label">Payment Status</div>
+                      <div class="detail-value">
+                        <span class="payment-badge">✅ Completed</span>
+                      </div>
+                    </div>
+                    ${bookingData.sessionId ? `
+                    <div class="detail-item" style="background: white; border-color: #10b981;">
+                      <div class="detail-label">Session ID</div>
+                      <div class="detail-value">
+                        <div class="session-id">${bookingData.sessionId}</div>
+                      </div>
+                    </div>
+                    ` : ''}
+                  </div>
                 </div>
               </div>
 
               <div class="footer">
-                <p style="margin: 0;">This is an automated notification from your PT Website Order System</p>
-                <p style="margin: 5px 0 0 0; font-size: 12px;">Respond to the customer at ${bookingData.email} to begin their project</p>
+                <div class="footer-brand">PTBoost</div>
+                <p class="footer-text">
+                  This is an automated notification from your PT Website Order System<br>
+                  <strong>Next Step:</strong> Contact the customer at <a href="mailto:${bookingData.email}">${bookingData.email}</a> to begin their project
+                </p>
               </div>
             </div>
           </body>
