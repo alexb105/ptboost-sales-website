@@ -156,11 +156,11 @@ export function WebsiteShowcaseSection() {
                   </div>
                   
                   {/* Card Info */}
-                  <div className="mt-6 text-center">
-                    <p className="font-black text-foreground text-lg mb-2 whitespace-nowrap">
+                  <div className="mt-6 text-center px-2">
+                    <p className="font-black text-foreground text-base md:text-lg mb-2">
                       Premium & Professional
                     </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3 min-h-[2.5rem] flex items-center justify-center">
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-3 min-h-[2.5rem] flex items-center justify-center">
                       Perfect for elite trainers & strength coaches
                     </p>
                     
@@ -216,11 +216,11 @@ export function WebsiteShowcaseSection() {
                   </div>
                   
                   {/* Card Info */}
-                  <div className="mt-6 text-center">
-                    <p className="font-black text-foreground text-lg mb-2 whitespace-nowrap">
+                  <div className="mt-6 text-center px-2">
+                    <p className="font-black text-foreground text-base md:text-lg mb-2">
                       Vibrant & Empowering
                     </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3 min-h-[2.5rem] flex items-center justify-center">
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-3 min-h-[2.5rem] flex items-center justify-center">
                       Perfect for female trainers & wellness coaches
                     </p>
                     
@@ -276,11 +276,11 @@ export function WebsiteShowcaseSection() {
                   </div>
                   
                   {/* Card Info */}
-                  <div className="mt-6 text-center">
-                    <p className="font-black text-foreground text-lg mb-2 whitespace-nowrap">
+                  <div className="mt-6 text-center px-2">
+                    <p className="font-black text-foreground text-base md:text-lg mb-2">
                       Bold & Impactful
                     </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3 min-h-[2.5rem] flex items-center justify-center">
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mb-3 min-h-[2.5rem] flex items-center justify-center">
                       Perfect for transformation specialists & bootcamps
                     </p>
                     
@@ -367,29 +367,29 @@ export function WebsiteShowcaseSection() {
           {selectedDemo && (
             <div className="space-y-6">
               {/* Header */}
-              <div className="text-center border-b pb-6">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-accent/20 via-orange-500/20 to-red-500/20 border border-accent/40 mb-4">
+              <DialogHeader className="text-center border-b pb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-accent/20 via-orange-500/20 to-red-500/20 border border-accent/40 mb-4 mx-auto w-fit">
                   <span className="text-xs font-bold tracking-wide uppercase">{caseStudies[selectedDemo].style}</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2">
+                <DialogTitle className="text-3xl md:text-4xl font-black text-foreground mb-2">
                   {caseStudies[selectedDemo].title}
-                </h2>
+                </DialogTitle>
                 <p className="text-lg text-muted-foreground">
                   {caseStudies[selectedDemo].clientName} • {caseStudies[selectedDemo].clientType}
                 </p>
                 <p className="text-sm text-muted-foreground">{caseStudies[selectedDemo].location}</p>
-              </div>
+              </DialogHeader>
 
               {/* Results Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {caseStudies[selectedDemo].results.map((result, idx) => {
                   const Icon = result.icon
                   return (
-                    <div key={idx} className="relative group">
+                    <div key={idx} className="relative group h-full">
                       <div className="absolute -inset-1 bg-gradient-to-r from-accent via-orange-500 to-red-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition-opacity" />
-                      <div className="relative bg-gradient-to-br from-accent/10 via-orange-500/10 to-red-500/10 border border-accent/30 rounded-xl p-6 text-center">
+                      <div className="relative h-full bg-gradient-to-br from-accent/10 via-orange-500/10 to-red-500/10 border border-accent/30 rounded-xl p-6 text-center flex flex-col items-center justify-center">
                         <Icon className="h-8 w-8 mx-auto mb-3 text-accent" />
-                        <p className="text-4xl font-black bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent mb-1">
+                        <p className="text-3xl md:text-4xl font-black bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent mb-1 leading-tight">
                           {result.metric}
                         </p>
                         <p className="text-sm font-medium text-muted-foreground">{result.label}</p>
@@ -473,10 +473,11 @@ export function WebsiteShowcaseSection() {
                 <a 
                   href="#cta" 
                   onClick={() => setSelectedDemo(null)}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white font-black rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                  className="inline-flex items-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-sm md:text-base font-black rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
-                  <span>Claim Your £59 Website Now</span>
-                  <ArrowRight className="h-5 w-5" />
+                  <span className="md:hidden">Get Started</span>
+                  <span className="hidden md:inline whitespace-nowrap">Claim Your £59 Website Now</span>
+                  <ArrowRight className="h-5 w-5 flex-shrink-0" />
                 </a>
                 <p className="text-xs text-muted-foreground mt-3">Only £59 one-time • Live in 7 days • No monthly fees</p>
               </div>

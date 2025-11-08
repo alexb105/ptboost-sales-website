@@ -26,9 +26,9 @@ export function HeroSection() {
           {/* Main Content - Centered */}
           <div className="text-center">
             {/* Limited Offer Badge - Enhanced */}
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent via-orange-500 to-red-500 px-8 py-3 text-sm font-extrabold text-white shadow-2xl animate-pulse border-2 border-white/30 hover:scale-105 transition-transform">
-              <TrendingUp className="h-5 w-5" />
-              <span className="tracking-wide">LAUNCH SPECIAL: First 50 Sites Only £59</span>
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent via-orange-500 to-red-500 px-6 md:px-8 py-3 text-xs md:text-sm font-extrabold text-white shadow-2xl animate-pulse border-2 border-white/30 hover:scale-105 transition-transform">
+              <TrendingUp className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
+              <span className="tracking-wide break-words">LAUNCH SPECIAL: First 50 Sites Only £59</span>
             </div>
 
             {/* Pain Point Headline - Younger Audience Hook */}
@@ -94,20 +94,20 @@ export function HeroSection() {
                   <ArrowRight className="ml-3 h-8 w-8 transition-transform group-hover:translate-x-2" />
                 </Button>
               </div>
-              <p className="mt-4 text-sm font-bold text-muted-foreground">
+              <p className="mt-4 text-xs md:text-sm font-bold text-muted-foreground break-words px-4">
                 🎯 Live in 7 days • No monthly fees • No tech skills needed
               </p>
             </div>
 
             {/* Trust Indicators - Redesigned */}
-            <div className="mb-8 flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto">
+            <div className="mb-16 md:mb-8 flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto">
               <div className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-br from-accent/10 to-orange-500/10 border-2 border-accent/40 backdrop-blur-sm hover:scale-105 transition-transform">
                 <Check className="h-5 w-5 text-accent" />
                 <span className="font-bold text-sm">7-Day Setup</span>
               </div>
               <div className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-2 border-green-500/40 backdrop-blur-sm hover:scale-105 transition-transform">
                 <Shield className="h-5 w-5 text-green-600" />
-                <span className="font-bold text-sm">Money-Back Guarantee</span>
+                <span className="font-bold text-sm">7-Day Guarantee</span>
               </div>
               <div className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border-2 border-orange-500/40 backdrop-blur-sm hover:scale-105 transition-transform">
                 <Award className="h-5 w-5 text-orange-600" />
@@ -118,7 +118,7 @@ export function HeroSection() {
         </div>
         
         {/* Scroll Indicator - Enhanced */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20">
           <div className="flex flex-col items-center gap-2 text-muted-foreground/60 hover:text-foreground transition-all cursor-pointer group">
             <span className="text-sm font-bold px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 group-hover:border-accent/50 transition-colors">
               See How It Works

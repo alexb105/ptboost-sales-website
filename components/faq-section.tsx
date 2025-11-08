@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     question: "Can I edit the website myself later?",
-    answer: "Yes! I'll give you access to edit text, images, and basic content. If you want bigger changes down the line, I'm happy to help (small fee may apply for major redesigns). But for day-to-day updates like changing your prices or adding new photos, you're fully in control."
+    answer: "Absolutely! You'll get access to our AI-powered editor that lets you update text, images, prices, and content in seconds — no coding required. Just tell the AI what you want to change in plain English, and it happens instantly. For major redesigns, I'm happy to help (small fee may apply). But for day-to-day updates, you have total control with zero developer fees."
   },
   {
     question: "Is hosting really included?",
@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     question: "Is there a refund policy?",
-    answer: "100% money-back guarantee. If you're not happy with your site and we can't make it right through revisions, you get a full refund. No questions asked, no hard feelings. I only want happy clients who'll refer others."
+    answer: "Yes! You have 7 days after delivery to review your completed website. If you're not satisfied, you can request a full refund within that window. Additionally, if any serious technical issues arise that prevent basic website functionality and can't be fixed within 30 days, you're also covered. Full details in our Terms & Conditions."
   }
 ]
 
@@ -133,10 +133,11 @@ export function FAQSection() {
                   ctaSection.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-lg font-bold rounded-full hover:scale-105 transition-all shadow-xl"
+              className="inline-flex items-center gap-2 px-6 md:px-8 py-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-base md:text-lg font-bold rounded-full hover:scale-105 transition-all shadow-xl"
             >
-              Secure My £59 Website Now
-              <ArrowRight className="h-5 w-5" />
+              <span className="md:hidden">Get Started</span>
+              <span className="hidden md:inline whitespace-nowrap">Secure My £59 Website Now</span>
+              <ArrowRight className="h-5 w-5 flex-shrink-0" />
             </button>
           </div>
         </div>

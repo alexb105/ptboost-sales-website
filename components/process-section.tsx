@@ -54,7 +54,7 @@ export function ProcessSection() {
                 <h3 className="text-2xl font-black text-foreground mb-4">
                   Purchase Your Website
                 </h3>
-                <p className="text-muted-foreground leading-relaxed mb-6">
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
                   Secure your spot with a one-time payment of just £59. No hidden fees, no subscriptions — pay once, own forever.
                 </p>
 
@@ -102,15 +102,15 @@ export function ProcessSection() {
                 <h3 className="text-2xl font-black text-foreground mb-4">
                   Share Your Details
                 </h3>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  Upload your content, photos, social links, and preferences. Don't have content yet? No problem — I'll help you!
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
+                  Upload your content, social links, and preferences. Don't have content yet? No problem — I'll help you!
                 </p>
 
                 {/* Features */}
                 <ul className="space-y-2 flex flex-col items-center">
                   <li className="flex items-center gap-2 text-sm">
                     <Check className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                    <span className="text-muted-foreground">Photos & bio (optional)</span>
+                    <span className="text-muted-foreground">Write-up including bio (optional)</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm">
                     <Check className="h-4 w-4 text-orange-500 flex-shrink-0" />
@@ -150,7 +150,7 @@ export function ProcessSection() {
                 <h3 className="text-2xl font-black text-foreground mb-4">
                   I Build & Launch
                 </h3>
-                <p className="text-muted-foreground leading-relaxed mb-6">
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
                   Sit back and relax. I'll build your professional website, set up hosting, and have you live within 7 days — guaranteed.
                 </p>
 

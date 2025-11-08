@@ -1,17 +1,40 @@
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json()
+    const { name, email } = await request.json()
+
+    if (!name || !name.trim()) {
+      return NextResponse.json(
+        { error: 'Name is required' },
+        { status: 400 }
+      )
+    }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { error: 'Invalid email address' },
         { status: 400 }
       )
+    }
+
+    // Save to waiting list in Supabase
+    const { error: dbError } = await supabase
+      .from('waiting_list')
+      .insert([{ name: name.trim(), email }])
+
+    if (dbError) {
+      console.error('Error saving to waiting list:', dbError)
+      // Continue with email sending even if DB save fails
     }
 
     // Send notification to you (business owner)
@@ -25,12 +48,13 @@ export async function POST(request: Request) {
           <p>Someone wants to be notified when spots open up!</p>
           
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Email:</strong> ${email}</p>
+            <p style="margin: 0;"><strong>Name:</strong> ${name}</p>
+            <p style="margin: 10px 0 0 0;"><strong>Email:</strong> ${email}</p>
             <p style="margin: 10px 0 0 0;"><strong>Requested:</strong> ${new Date().toLocaleString()}</p>
           </div>
           
           <p style="color: #666;">
-            Make sure to reach out to them when you have spots available!
+            Make sure to reach out to ${name} when you have spots available!
           </p>
           
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
@@ -49,15 +73,15 @@ export async function POST(request: Request) {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #ff6b35; margin: 0; font-size: 28px;">Thank You!</h1>
+            <h1 style="color: #ff6b35; margin: 0; font-size: 28px;">Thank You, ${name}!</h1>
             <p style="color: #666; font-size: 16px; margin-top: 10px;">Your request has been received</p>
           </div>
           
           <div style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); padding: 30px; border-radius: 12px; color: white; margin-bottom: 30px;">
             <h2 style="margin: 0 0 15px 0; font-size: 22px;">You're on the Priority List! ✓</h2>
             <p style="margin: 0; font-size: 16px; line-height: 1.6;">
-              Thanks for your interest in getting a high-converting website for your personal training business. 
-              I'll notify you as soon as a spot opens up.
+              Thanks ${name}, for your interest in getting a high-converting website for your personal training business. 
+              I'll notify you personally as soon as a spot opens up.
             </p>
           </div>
           

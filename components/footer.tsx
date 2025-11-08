@@ -1,5 +1,7 @@
 "use client"
 
+import Link from "next/link"
+
 export function Footer() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -53,8 +55,8 @@ export function Footer() {
             <div className="p-6 rounded-2xl bg-gradient-to-br from-accent/10 to-orange-500/10 border border-accent/30 max-w-md w-full">
               <p className="text-sm font-bold text-white mb-3">Questions Before You Buy?</p>
               <div className="space-y-2 text-sm text-gray-300">
-                <p>
-                  📧 Email: <a href="mailto:ptboost.info@gmail.com" className="text-accent hover:underline font-semibold">ptboost.info@gmail.com</a>
+                <p className="break-all">
+                  📧 Email: <a href="mailto:ptboost.info@gmail.com" className="text-accent hover:underline font-semibold break-all">ptboost.info@gmail.com</a>
                 </p>
                 <p className="text-xs text-gray-400 leading-relaxed">
                   I typically respond within 24 hours. Happy to answer anything!
@@ -75,11 +77,18 @@ export function Footer() {
 
           {/* Copyright & Trust */}
           <div className="flex flex-col items-center text-center w-full gap-3">
-            <p className="text-xs md:text-sm text-gray-500">
-              © {new Date().getFullYear()} PTBoost. All rights reserved.
-            </p>
-            <p className="text-xs text-gray-600">
-              🔒 Secure payments via Stripe • 💯 100% Money-Back Guarantee • 🚀 38 spots left at £59
+            <div className="flex items-center gap-4 text-xs md:text-sm text-gray-500">
+              <p>© {new Date().getFullYear()} PTBoost. All rights reserved.</p>
+              <span className="text-gray-700">•</span>
+              <Link 
+                href="/terms" 
+                className="text-gray-400 hover:text-accent transition-colors underline underline-offset-2"
+              >
+                Terms & Conditions
+              </Link>
+            </div>
+            <p className="text-xs text-gray-600 max-w-2xl mx-auto">
+              🔒 Secure payments via Stripe • 💯 7-Day Satisfaction Guarantee • 🚀 First 50 sites at £59
             </p>
           </div>
         </div>

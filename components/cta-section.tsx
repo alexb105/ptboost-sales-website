@@ -12,7 +12,9 @@ export function CTASection() {
   const [isAtCapacity, setIsAtCapacity] = useState(false)
   const [capacityCount, setCapacityCount] = useState(0)
   const [showNotifyForm, setShowNotifyForm] = useState(false)
+  const [notifyName, setNotifyName] = useState('')
   const [notifyEmail, setNotifyEmail] = useState('')
+  const [notifyStep, setNotifyStep] = useState(1) // 1 = name, 2 = email
   const [notifyStatus, setNotifyStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [showBookingForm, setShowBookingForm] = useState(false)
   
@@ -41,6 +43,13 @@ export function CTASection() {
     setShowBookingForm(true)
   }
 
+  const handleNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (notifyName.trim()) {
+      setNotifyStep(2)
+    }
+  }
+
   const handleNotifySubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setNotifyStatus('loading')
@@ -49,18 +58,31 @@ export function CTASection() {
       const response = await fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: notifyEmail })
+        body: JSON.stringify({ 
+          name: notifyName,
+          email: notifyEmail 
+        })
       })
 
       if (response.ok) {
         setNotifyStatus('success')
+        setNotifyName('')
         setNotifyEmail('')
+        setNotifyStep(1)
       } else {
         setNotifyStatus('error')
       }
     } catch (error) {
       setNotifyStatus('error')
     }
+  }
+
+  const handleNotifyFormClose = () => {
+    setShowNotifyForm(false)
+    setNotifyStatus('idle')
+    setNotifyStep(1)
+    setNotifyName('')
+    setNotifyEmail('')
   }
 
   return (
@@ -199,9 +221,9 @@ export function CTASection() {
                                   <Check className="h-5 w-5 text-green-600 stroke-[3]" />
                                 </div>
                                 <div>
-                                  <p className="text-sm font-bold text-foreground mb-1">100% Money-Back Guarantee</p>
+                                  <p className="text-sm font-bold text-foreground mb-1">7-Day Satisfaction Guarantee</p>
                                   <p className="text-xs text-muted-foreground leading-relaxed">
-                                    Not happy with your site? Full refund, no questions asked. 
+                                    Not satisfied after delivery? Get a full refund within 7 days of receiving your completed website.
                                     You have nothing to lose and a professional website to gain.
                                   </p>
                                 </div>
@@ -212,16 +234,16 @@ export function CTASection() {
                           {/* Right Column - Pricing & CTA */}
                           <div className="space-y-6 h-full flex flex-col">
                             {/* Pricing with Enhanced Visual Hierarchy */}
-                            <div className="flex items-center justify-center gap-4">
+                            <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
                               <div className="text-center relative">
                                 <div className="absolute -inset-2 bg-red-500/20 rounded-lg transform rotate-12"></div>
-                                <span className="relative text-4xl font-black text-muted-foreground line-through decoration-4 decoration-red-500 block">£299</span>
-                                <span className="text-xs font-bold text-muted-foreground uppercase">After 50 Sites</span>
+                                <span className="relative text-2xl md:text-4xl font-black text-muted-foreground line-through decoration-4 decoration-red-500 block">£299</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase whitespace-nowrap">After 50 Sites</span>
                               </div>
-                              <ArrowRight className="h-8 w-8 text-accent animate-pulse" />
+                              <ArrowRight className="h-6 w-6 md:h-8 md:w-8 text-accent animate-pulse flex-shrink-0" />
                               <div className="flex items-baseline">
-                                <span className="text-4xl font-bold text-foreground">£</span>
-                                <span className="text-8xl font-black bg-gradient-to-br from-accent via-orange-500 to-red-500 bg-clip-text text-transparent leading-none drop-shadow-2xl animate-pulse" style={{ animationDuration: '2s' }}>
+                                <span className="text-2xl md:text-4xl font-bold text-foreground">£</span>
+                                <span className="text-5xl md:text-7xl lg:text-8xl font-black bg-gradient-to-br from-accent via-orange-500 to-red-500 bg-clip-text text-transparent leading-none drop-shadow-2xl animate-pulse" style={{ animationDuration: '2s' }}>
                                   59
                                 </span>
                               </div>
@@ -235,9 +257,9 @@ export function CTASection() {
                             <div className="flex justify-center">
                               <div className="relative">
                                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur animate-pulse"></div>
-                                <div className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-white/50 px-6 py-3 shadow-xl">
-                                  <Sparkles className="h-5 w-5 text-white animate-spin" style={{ animationDuration: '3s' }} />
-                                  <span className="text-lg font-black text-white">Save £260 - Launch Offer</span>
+                                <div className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-white/50 px-4 md:px-6 py-3 shadow-xl">
+                                  <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white animate-spin flex-shrink-0" style={{ animationDuration: '3s' }} />
+                                  <span className="text-sm md:text-lg font-black text-white whitespace-nowrap">Save £260 - Launch Offer</span>
                                 </div>
                               </div>
                             </div>
@@ -280,12 +302,13 @@ export function CTASection() {
                                   <div className="absolute -inset-1 bg-gradient-to-r from-accent via-orange-500 to-red-500 rounded-xl blur opacity-75 group-hover/btn:opacity-100 animate-pulse"></div>
                                   <Button
                                     size="lg"
-                                    className="relative w-full h-16 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-xl font-black text-white hover:scale-105 shadow-xl transition-all border-2 border-white/30"
+                                    className="relative w-full h-14 md:h-16 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-base md:text-xl font-black text-white hover:scale-105 shadow-xl transition-all border-2 border-white/30 px-4"
                                     onClick={handleCheckout}
                                   >
-                                    <Sparkles className="mr-2 h-6 w-6 animate-pulse" />
-                                    Secure My £59 Website Now!
-                                    <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover/btn:translate-x-1" />
+                                    <Sparkles className="mr-1 md:mr-2 h-5 w-5 md:h-6 md:w-6 animate-pulse flex-shrink-0" />
+                                    <span className="md:hidden">Get Started</span>
+                                    <span className="hidden md:inline">Secure My £59 Website Now!</span>
+                                    <ArrowRight className="ml-1 md:ml-2 h-5 w-5 md:h-6 md:w-6 transition-transform group-hover/btn:translate-x-1 flex-shrink-0" />
                                   </Button>
                                 </div>
                               </div>
@@ -308,10 +331,7 @@ export function CTASection() {
                                             I'll email you as soon as spots open up. Keep an eye on your inbox!
                                           </p>
                                           <button
-                                            onClick={() => {
-                                              setShowNotifyForm(false)
-                                              setNotifyStatus('idle')
-                                            }}
+                                            onClick={handleNotifyFormClose}
                                             className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
                                           >
                                             ← Go Back
@@ -325,48 +345,110 @@ export function CTASection() {
                                               <h3 className="text-lg font-bold text-foreground">Get Notified When Spots Open</h3>
                                             </div>
                                             <button
-                                              onClick={() => setShowNotifyForm(false)}
+                                              onClick={handleNotifyFormClose}
                                               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                                             >
                                               ✕
                                             </button>
                                           </div>
-                                          <p className="text-sm text-muted-foreground mb-4">
-                                            Leave your email and I'll let you know the moment I have availability. No spam, just a heads up!
-                                          </p>
-                                          <form onSubmit={handleNotifySubmit} className="space-y-3">
-                                            <Input
-                                              type="email"
-                                              placeholder="ptboost.info@gmail.com"
-                                              value={notifyEmail}
-                                              onChange={(e) => setNotifyEmail(e.target.value)}
-                                              required
-                                              className="h-12 text-base"
-                                              disabled={notifyStatus === 'loading'}
-                                            />
-                                            <Button
-                                              type="submit"
-                                              disabled={notifyStatus === 'loading'}
-                                              className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold"
-                                            >
-                                              {notifyStatus === 'loading' ? (
-                                                <>
-                                                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                                                  Sending...
-                                                </>
-                                              ) : (
-                                                <>
-                                                  <Bell className="mr-2 h-5 w-5" />
-                                                  Notify Me When Available
-                                                </>
-                                              )}
-                                            </Button>
-                                            {notifyStatus === 'error' && (
-                                              <p className="text-sm text-red-600 text-center">
-                                                Something went wrong. Please try again.
+                                          
+                                          {/* Step Indicator */}
+                                          <div className="flex items-center justify-center gap-2 mb-4">
+                                            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold transition-colors ${
+                                              notifyStep === 1 
+                                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' 
+                                                : 'bg-green-500 text-white'
+                                            }`}>
+                                              {notifyStep > 1 ? '✓' : '1'}
+                                            </div>
+                                            <div className={`h-1 w-12 rounded-full transition-colors ${
+                                              notifyStep === 2 ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-muted'
+                                            }`} />
+                                            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold transition-colors ${
+                                              notifyStep === 2 
+                                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' 
+                                                : 'bg-muted text-muted-foreground'
+                                            }`}>
+                                              2
+                                            </div>
+                                          </div>
+
+                                          {notifyStep === 1 ? (
+                                            <>
+                                              <p className="text-sm text-muted-foreground mb-4">
+                                                First, let me know your name so I can personally reach out when spots open.
                                               </p>
-                                            )}
-                                          </form>
+                                              <form onSubmit={handleNameSubmit} className="space-y-3">
+                                                <Input
+                                                  type="text"
+                                                  placeholder="Your first name"
+                                                  value={notifyName}
+                                                  onChange={(e) => setNotifyName(e.target.value)}
+                                                  required
+                                                  className="h-12 text-base"
+                                                  autoFocus
+                                                />
+                                                <Button
+                                                  type="submit"
+                                                  className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold"
+                                                >
+                                                  Continue
+                                                  <ArrowRight className="ml-2 h-5 w-5" />
+                                                </Button>
+                                              </form>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <p className="text-sm text-muted-foreground mb-4">
+                                                Thanks {notifyName}! Now enter your email and I'll let you know the moment I have availability. No spam, just a heads up!
+                                              </p>
+                                              <form onSubmit={handleNotifySubmit} className="space-y-3">
+                                                <Input
+                                                  type="email"
+                                                  placeholder="your.email@example.com"
+                                                  value={notifyEmail}
+                                                  onChange={(e) => setNotifyEmail(e.target.value)}
+                                                  required
+                                                  className="h-12 text-base"
+                                                  disabled={notifyStatus === 'loading'}
+                                                  autoFocus
+                                                />
+                                                <div className="flex gap-2">
+                                                  <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={() => setNotifyStep(1)}
+                                                    className="h-12"
+                                                    disabled={notifyStatus === 'loading'}
+                                                  >
+                                                    Back
+                                                  </Button>
+                                                  <Button
+                                                    type="submit"
+                                                    disabled={notifyStatus === 'loading'}
+                                                    className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold"
+                                                  >
+                                                    {notifyStatus === 'loading' ? (
+                                                      <>
+                                                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                                                        Sending...
+                                                      </>
+                                                    ) : (
+                                                      <>
+                                                        <Bell className="mr-2 h-5 w-5" />
+                                                        Notify Me
+                                                      </>
+                                                    )}
+                                                  </Button>
+                                                </div>
+                                                {notifyStatus === 'error' && (
+                                                  <p className="text-sm text-red-600 text-center">
+                                                    Something went wrong. Please try again.
+                                                  </p>
+                                                )}
+                                              </form>
+                                            </>
+                                          )}
                                         </>
                                       )}
                                     </div>

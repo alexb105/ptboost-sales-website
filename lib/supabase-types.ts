@@ -23,3 +23,10 @@ export interface CapacityStatus {
   updated_at: string
 }
 
+export interface WaitingListEntry {
+  id?: string
+  created_at?: string
+  name: string
+  email: string
+}
+

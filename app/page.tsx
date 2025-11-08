@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/hero-section"
 import { PainPointsSection } from "@/components/pain-points-section"
 import { ProcessSection } from "@/components/process-section"
 import { WebsiteShowcaseSection } from "@/components/website-showcase-section"
+import { AIEditorSection } from "@/components/ai-editor-section"
 import { AboutSection } from "@/components/about-section"
 import { BenefitsSection } from "@/components/benefits-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
@@ -18,6 +19,7 @@ export default function Home() {
       <PainPointsSection />
       <ProcessSection />
       <WebsiteShowcaseSection />
+      <AIEditorSection />
       <AboutSection />
       <BenefitsSection />
       <TestimonialsSection />

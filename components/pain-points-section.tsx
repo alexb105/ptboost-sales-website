@@ -81,20 +81,20 @@ export function PainPointsSection() {
                       <X className="h-6 w-6 text-red-500 stroke-[3]" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-black text-foreground mb-2 group-hover:text-red-500 transition-colors">
+                      <h3 className="text-lg md:text-2xl font-black text-foreground mb-2 group-hover:text-red-500 transition-colors">
                         {item.problem}
                       </h3>
-                      <p className="text-base text-muted-foreground leading-relaxed mb-4">
+                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4">
                         {item.reality}
                       </p>
                     </div>
                   </div>
                   
                   {/* Solution */}
-                  <div className="pl-[72px]">
+                  <div className="pl-0 md:pl-[72px]">
                     <div className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-green-500/10 via-emerald-500/10 to-green-500/5 border border-green-500/30">
                       <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm font-semibold text-foreground leading-relaxed">
+                      <p className="text-xs md:text-sm font-semibold text-foreground leading-relaxed">
                         <span className="text-green-600 dark:text-green-400">The Fix: </span>
                         {item.solution}
                       </p>
@@ -128,15 +128,15 @@ export function PainPointsSection() {
                 <div className="absolute -inset-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
                 <Button
                   size="lg"
-                  className="relative h-16 px-12 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-xl md:text-2xl font-black text-white hover:scale-105 shadow-2xl transition-all border-4 border-white/40"
+                  className="relative h-14 md:h-16 px-6 md:px-12 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-lg md:text-2xl font-black text-white hover:scale-105 shadow-2xl transition-all border-4 border-white/40"
                   onClick={scrollToProcess}
                 >
-                  See How It Works
-                  <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-2" />
+                  <span className="whitespace-nowrap">See How It Works</span>
+                  <ArrowRight className="ml-2 md:ml-3 h-5 w-5 md:h-6 md:w-6 transition-transform group-hover:translate-x-2 flex-shrink-0" />
                 </Button>
               </div>
               
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground px-4">
                 ⚡ £59 launch pricing • 🚀 Live in 7 days • ✅ Money-back guarantee
               </p>
             </div>
