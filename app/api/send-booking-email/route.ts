@@ -337,8 +337,8 @@ export async function POST(request: Request) {
 
                 <div class="message-card">
                   <p>
-                    🎉 <strong>We're thrilled to have you on board!</strong> Your payment has been processed successfully, 
-                    and we've received all your details. We're excited to start building your professional website that will 
+                    🎉 <strong>I'm thrilled to have you on board!</strong> Your payment has been processed successfully, 
+                    and I've received all your details. I'm excited to start building your professional website that will 
                     attract clients 24/7.
                   </p>
                 </div>
@@ -347,13 +347,13 @@ export async function POST(request: Request) {
                   <h2 class="section-title">📋 What Happens Next?</h2>
                   <ol class="steps-list">
                     <li>
-                      <p><strong>Within 24 hours:</strong> Our team will review your requirements and preferences</p>
+                      <p><strong>Within 24 hours:</strong> I will review your requirements and preferences. I'll be in touch if any additional information is required.</p>
                     </li>
                     <li>
-                      <p><strong>Discovery call:</strong> We'll reach out to schedule a quick call to understand your vision</p>
+                      <p><strong>Within 2 days:</strong> You can expect your first website demo!</p>
                     </li>
                     <li>
-                      <p><strong>Design concepts:</strong> We'll create initial design concepts based on your preferences</p>
+                      <p><strong>Design concepts:</strong> I'll create initial design concepts based on your preferences</p>
                     </li>
                     <li>
                       <p><strong>Launch ready:</strong> Your custom website will be live and attracting clients within 7 days!</p>
