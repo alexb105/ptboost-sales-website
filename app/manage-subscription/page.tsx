@@ -1,23 +1,31 @@
 "use client"
 
-import { useState, Suspense } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CreditCard, CheckCircle, XCircle, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
-import { toast } from "sonner"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
+// Redirect to /account page
+// This page is deprecated - all subscription management now happens through /account
+export default function ManageSubscriptionPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push('/account')
+  }, [router])
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/5 via-orange-500/5 to-red-500/5 p-4">
+      <div className="text-center">
+        <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-4" />
+        <p className="text-muted-foreground">Redirecting to account page...</p>
+      </div>
+    </div>
+  )
+}
+
+// Legacy component - no longer used
 function ManageSubscriptionContent() {
-  const searchParams = useSearchParams()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const success = searchParams.get('success')
+  return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

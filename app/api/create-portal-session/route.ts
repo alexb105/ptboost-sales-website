@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     
     // Ensure base URL doesn't have trailing slash to avoid double slashes
     const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')
-    const returnUrl = `${baseUrl}/manage-subscription?success=true`
+    const returnUrl = `${baseUrl}/account?success=true`
     
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: booking.stripe_customer_id,

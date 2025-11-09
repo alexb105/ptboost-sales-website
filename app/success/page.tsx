@@ -170,11 +170,11 @@ export default function SuccessPage() {
 
             <div className="text-center pt-2">
               <Button
-                onClick={() => window.location.href = '/manage-subscription'}
+                onClick={() => window.location.href = '/account'}
                 className="bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
               >
                 <CreditCard className="mr-2 h-4 w-4" />
-                Manage Subscription Now
+                Manage Account Now
               </Button>
             </div>
           </div>
@@ -249,11 +249,10 @@ export default function SuccessPage() {
           <a href="mailto:ptboost.info@gmail.com" className="text-accent hover:underline">
             ptboost.info@gmail.com
           </a>
-          {" "}• You can cancel or modify your subscription anytime from the{" "}
-          <a href="/manage-subscription" className="text-accent hover:underline">
-            Manage Subscription
+          {" "}• You can cancel or modify your subscription anytime from your{" "}
+          <a href="/account" className="text-accent hover:underline">
+            Account Page
           </a>
-          {" "}page
         </p>
       </Card>
       )}

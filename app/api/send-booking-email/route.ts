@@ -369,8 +369,8 @@ export async function POST(request: Request) {
                   <p class="password-note">
                     💡 Use this password to cancel, update payment methods, or view invoices
                   </p>
-                  <a style='color: white;' href="${(process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/manage-subscription" class="button">
-                    Manage Subscription →
+                  <a style='color: white;' href="${(process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/account" class="button">
+                    Manage Your Account →
                   </a>
                 </div>
 

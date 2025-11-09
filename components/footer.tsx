@@ -88,10 +88,10 @@ export function Footer() {
               </Link>
               <span className="text-gray-700">•</span>
               <Link 
-                href="/manage-subscription" 
+                href="/account" 
                 className="text-gray-400 hover:text-accent transition-colors underline underline-offset-2"
               >
-                Manage Subscription
+                Manage Account
               </Link>
             </div>
             <p className="text-xs text-gray-600 max-w-2xl mx-auto">

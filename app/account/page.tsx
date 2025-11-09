@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings } from "lucide-react"
+import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 interface UserData {
@@ -19,6 +20,7 @@ interface UserData {
 }
 
 function AccountContent() {
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -26,6 +28,18 @@ function AccountContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isLoadingPortal, setIsLoadingPortal] = useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+
+  // Check for success parameter from Stripe portal return
+  useEffect(() => {
+    const success = searchParams.get('success')
+    if (success === 'true') {
+      setShowSuccessMessage(true)
+      toast.success("Your subscription settings have been updated!")
+      // Clear the success parameter from URL
+      window.history.replaceState({}, '', '/account')
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -194,6 +208,16 @@ function AccountContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-accent/5 via-orange-500/5 to-red-500/5 p-4 py-8">
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Success message after returning from Stripe portal */}
+        {showSuccessMessage && (
+          <Alert className="border-green-500 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              Your subscription settings have been updated successfully!
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Header */}
         <Card>
           <CardHeader>
