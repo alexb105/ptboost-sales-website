@@ -134,8 +134,12 @@ export async function POST(request: Request) {
                 border-radius: 50px;
                 font-weight: 700;
                 font-size: 14px;
-                margin-bottom: 30px;
+                margin: 0 auto 30px auto;
                 box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+              }
+              .urgency-badge-wrapper {
+                text-align: center;
+                width: 100%;
               }
               .message-card {
                 background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 100%);
@@ -275,8 +279,10 @@ export async function POST(request: Request) {
               </div>
               
               <div class="content">
-                <div class="urgency-badge">
-                  🔥 Limited Time - Complete Your Order
+                <div class="urgency-badge-wrapper">
+                  <div class="urgency-badge">
+                    🔥 Limited Time - Complete Your Order
+                  </div>
                 </div>
 
                 <div class="message-card">
