@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User } from "lucide-react"
+import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard } from "lucide-react"
 import { createClient } from '@supabase/supabase-js'
 import type { BookingData, WaitingListEntry } from '@/lib/supabase-types'
 
@@ -1379,10 +1379,47 @@ export default function AdminPage() {
               {/* Uploaded Images */}
               {selectedOrder.images && selectedOrder.images.length > 0 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold border-b pb-2 flex items-center gap-2">
-                    <ImageIcon className="h-5 w-5" />
-                    Uploaded Images ({selectedOrder.images.length})
-                  </h3>
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <ImageIcon className="h-5 w-5" />
+                      Uploaded Images ({selectedOrder.images.length})
+                    </h3>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          // Download all images
+                          for (let i = 0; i < selectedOrder.images!.length; i++) {
+                            const imageUrl = selectedOrder.images![i]
+                            const response = await fetch(imageUrl)
+                            const blob = await response.blob()
+                            const url = window.URL.createObjectURL(blob)
+                            const a = document.createElement('a')
+                            a.href = url
+                            // Extract filename from URL or use index
+                            const urlParts = imageUrl.split('/')
+                            const filename = urlParts[urlParts.length - 1] || `image-${i + 1}.jpg`
+                            a.download = `${selectedOrder.full_name.replace(/\s+/g, '-')}-${filename}`
+                            document.body.appendChild(a)
+                            a.click()
+                            document.body.removeChild(a)
+                            window.URL.revokeObjectURL(url)
+                            // Small delay between downloads to avoid browser blocking
+                            if (i < selectedOrder.images!.length - 1) {
+                              await new Promise(resolve => setTimeout(resolve, 300))
+                            }
+                          }
+                        } catch (error) {
+                          console.error('Error downloading images:', error)
+                          alert('Failed to download some images. Please try downloading them individually.')
+                        }
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download All
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {selectedOrder.images.map((imageUrl, index) => (
                       <div key={index} className="relative group">
@@ -1429,6 +1466,20 @@ export default function AdminPage() {
                       {selectedOrder.payment_status.toUpperCase()}
                     </span>
                   </div>
+                  {selectedOrder.stripe_session_id && (
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Stripe Session ID:</span>
+                      <span className="font-mono text-xs break-all">{selectedOrder.stripe_session_id}</span>
+                    </div>
+                  )}
+                  {selectedOrder.stripe_customer_id && (
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Stripe Customer ID:</span>
+                      <span className="font-mono text-xs break-all">{selectedOrder.stripe_customer_id}</span>
+                    </div>
+                  )}
                   {selectedOrder.website_owned && (
                     <div className="flex items-center gap-2">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm">
