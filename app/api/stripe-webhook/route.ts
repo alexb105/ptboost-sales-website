@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     // We detect by checking the payment link URL, not the amount (since price can change)
     // Update these IDs if you create new buyout payment links
     const buyoutLinkIds = [
-      '28EfZi2FIgWf93Xdsr0co06',  // Current buyout link: https://buy.stripe.com/28EfZi2FIgWf93Xdsr0co06
+      '28EfZi2FIgWf93Xdsr0co06',  // Current buyout link: https://buy.stripe.com/14AdRafsueO70xr3RR0co05
       '14AdRafsueO70xr3RR0co05'   // Previous buyout link (if any)
     ]
     

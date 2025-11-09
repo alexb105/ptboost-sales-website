@@ -128,7 +128,7 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
       localStorage.setItem('pending_booking_id', bookingId)
       
       // Redirect to Stripe subscription payment link
-      window.location.href = "https://buy.stripe.com/4gMcN63JM9tN0xr1JJ0co04"
+      window.location.href = "https://buy.stripe.com/eVqbJ2gwy49t5RL3RR0co03"
     } catch (error) {
       console.error("Error:", error)
       toast.error("Something went wrong. Please try again.")

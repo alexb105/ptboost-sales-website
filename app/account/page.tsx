@@ -111,7 +111,7 @@ function AccountContent() {
 
   const handleBuyout = () => {
     // Open the Stripe payment link in a new tab
-    window.open("https://buy.stripe.com/28EfZi2FIgWf93Xdsr0co06", "_blank")
+    window.open("https://buy.stripe.com/14AdRafsueO70xr3RR0co05", "_blank")
   }
 
   // Login Form View
