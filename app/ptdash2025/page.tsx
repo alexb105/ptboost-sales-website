@@ -154,17 +154,38 @@ export default function AdminPage() {
         console.error('Error fetching completed orders:', error)
       } else {
         // Ensure images array is properly parsed (handle PostgreSQL array format)
-        const processedData = (data || []).map(order => ({
-          ...order,
-          images: Array.isArray(order.images) ? order.images : 
-                  typeof order.images === 'string' ? JSON.parse(order.images || '[]') : 
-                  order.images || []
-        }))
-        console.log('Fetched orders with images:', processedData.map(o => ({ 
-          name: o.full_name, 
-          imageCount: o.images?.length || 0,
-          images: o.images 
-        })))
+        const processedData = (data || []).map(order => {
+          let images = []
+          if (Array.isArray(order.images)) {
+            images = order.images
+          } else if (typeof order.images === 'string') {
+            try {
+              images = JSON.parse(order.images || '[]')
+            } catch (e) {
+              console.warn('Failed to parse images for', order.full_name, ':', e)
+              images = []
+            }
+          }
+          
+          // Filter out any null/undefined/empty image URLs
+          images = images.filter((url: string) => url && typeof url === 'string' && url.trim().length > 0)
+          
+          return {
+            ...order,
+            images
+          }
+        })
+        
+        // Debug logging
+        const ordersWithImages = processedData.filter(o => o.images && o.images.length > 0)
+        if (ordersWithImages.length > 0) {
+          console.log('Orders with images:', ordersWithImages.map(o => ({
+            name: o.full_name,
+            imageCount: o.images.length,
+            firstImageUrl: o.images[0]?.substring(0, 100) + '...'
+          })))
+        }
+        
         setCompletedOrders(processedData)
       }
     } catch (error) {
