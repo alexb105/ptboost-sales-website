@@ -41,7 +41,7 @@ export default function TermsPage() {
             Terms & Conditions
           </h1>
           <p className="text-gray-400 mb-8">
-            Last Updated: November 8, 2025
+            Last Updated: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
 
           <div className="space-y-8 text-gray-300">
@@ -60,17 +60,21 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">2. Service Description</h2>
               <p className="mb-4">
-                PTBoost provides pre-designed website templates and customization services for personal trainers. Our service includes:
+                PTBoost provides professional website design and development services specifically for UK personal trainers. Our service includes:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4 mb-4">
-                <li>A professionally designed website template</li>
-                <li>Basic customization (colors, text, images)</li>
-                <li>Free hosting via Netlify</li>
+                <li>A professionally designed, psychology-driven website template customized for your personal training business</li>
+                <li>Full customization (colors, text, images, branding) based on your preferences</li>
+                <li>Mobile-responsive design optimized for all devices</li>
+                <li>Smart lead capture system to help attract serious clients</li>
+                <li>Free hosting included (hosting provider may change)</li>
                 <li>Domain connection assistance (domain not included)</li>
-                <li>Website deployment</li>
+                <li>Website deployment and setup</li>
+                <li>Built-in AI website editor for future content updates</li>
+                <li>SEO optimization for local discovery</li>
               </ul>
               <p className="text-sm text-yellow-400 font-semibold">
-                ⚠️ IMPORTANT: While we provide the website and free hosting via Netlify, we do NOT provide domain registration, marketing services, SEO optimization, or traffic generation services unless explicitly stated in your purchase.
+                ⚠️ IMPORTANT: While we provide the website and free hosting, we do NOT provide domain registration, marketing services, guaranteed traffic generation, or guaranteed client acquisition. We provide a professional online presence — you are responsible for driving traffic and marketing your services. We do NOT guarantee that your website will attract serious clients, generate leads, or produce business results.
               </p>
             </section>
 
@@ -81,7 +85,7 @@ export default function TermsPage() {
                 <li>All payments must be made in full at the time of booking</li>
                 <li>Prices are subject to change without notice</li>
                 <li>All prices are in GBP (£) unless otherwise stated</li>
-                <li>Payment is processed through Stripe, a third-party payment processor</li>
+                <li>Payment is processed through a secure third-party payment processor</li>
                 <li>All sales are final unless otherwise stated in our refund policy</li>
                 <li>You are responsible for any bank fees, transaction fees, or currency conversion fees</li>
               </ul>
@@ -91,50 +95,60 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">4. Refund Policy</h2>
               <p className="mb-4 font-semibold text-accent">
-                Limited Refund Eligibility - Refunds are ONLY available under the following strict conditions:
+                Subscription Refund Policy - Refunds are available ONLY for the first month of your subscription:
               </p>
-              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-4">
-                <p className="font-bold text-red-400 mb-2">Refund Conditions:</p>
-                <ul className="list-disc list-inside space-y-3 ml-4 text-gray-300">
+              
+              <div className="bg-green-950/30 border border-green-500/30 rounded-lg p-4 mb-4">
+                <p className="font-bold text-green-400 mb-2">✅ First Month Refundable:</p>
+                <ul className="list-disc list-inside space-y-2 ml-4 text-gray-300">
                   <li>
-                    <strong>Post-Delivery Dissatisfaction:</strong> Refund available ONLY if you are not satisfied with the completed website within 7 days AFTER we have officially handed over the finished website to you. You must clearly communicate your dissatisfaction and the specific reasons within this 7-day window. After 7 days from handover, NO REFUNDS will be provided.
+                    <strong>First Subscription Payment:</strong> Your first monthly subscription payment (£7.99/month) is fully refundable if you request a refund within 30 days of the first payment date.
                   </li>
                   <li>
-                    <strong>Serious Technical Issues:</strong> Refund available only if the delivered website has serious technical defects that prevent basic functionality (e.g., website won't load, forms completely broken, site is unusable) AND we are unable to fix these issues within 30 days of you reporting them.
+                    <strong>No Questions Asked:</strong> You can request a refund for the first month for any reason - no questions asked, no explanation required.
+                  </li>
+                  <li>
+                    <strong>Refund Processing:</strong> Refund requests for the first month will be processed within 5-7 business days and refunded to your original payment method within 10-14 business days.
                   </li>
                 </ul>
               </div>
-              
-              <div className="bg-zinc-800/50 border border-accent/30 rounded-lg p-4 mb-4">
-                <p className="font-bold text-white mb-2">NO REFUNDS will be provided for:</p>
-                <ul className="list-disc list-inside space-y-2 ml-4">
-                  <li>Refund requests made after the 7-day post-delivery window has expired</li>
-                  <li>Change of mind or buyer's remorse after accepting the completed website</li>
-                  <li>Minor design preferences or subjective aesthetic opinions</li>
-                  <li>Website not generating leads, sales, or traffic (we do not guarantee business results)</li>
-                  <li>Technical issues caused by third-party services (Netlify hosting, domain providers, email services, etc.)</li>
-                  <li>Netlify service outages, downtime, or account issues</li>
-                  <li>Minor technical issues or bugs that do not prevent basic website functionality</li>
-                  <li>Delays caused by client not providing required materials or information</li>
-                  <li>Client's inability to use, update, or maintain the website after delivery</li>
-                  <li>Market changes, business changes, or external factors</li>
-                  <li>Issues with content or images provided by the client</li>
-                  <li>Failure to review and provide feedback during the development process</li>
+
+              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-4">
+                <p className="font-bold text-red-400 mb-2">❌ After Second Payment - NO REFUNDS:</p>
+                <ul className="list-disc list-inside space-y-2 ml-4 text-gray-300">
+                  <li>
+                    <strong>Second Payment and Beyond:</strong> Once your second subscription payment is successfully processed, ALL future payments become NON-REFUNDABLE. This means after the second payment, you cannot receive refunds for any subsequent subscription payments.
+                  </li>
+                  <li>
+                    <strong>No Exceptions:</strong> After the second payment, refunds will NOT be provided for any reason, including but not limited to:
+                    <ul className="list-disc list-inside space-y-1 ml-6 mt-2 text-sm">
+                      <li>Change of mind or buyer's remorse</li>
+                      <li>Website not generating leads, sales, traffic, or serious clients</li>
+                      <li>Dissatisfaction with the website design or functionality</li>
+                      <li>Technical issues (unless they prevent basic functionality and cannot be fixed within 30 days)</li>
+                      <li>Business changes or market conditions</li>
+                      <li>Inability to use or maintain the website</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Cancel Anytime:</strong> While refunds are not available after the second payment, you can cancel your subscription at any time to stop future charges. Cancellation will take effect at the end of your current billing period.
+                  </li>
                 </ul>
               </div>
 
               <div className="bg-blue-950/20 border border-blue-500/30 rounded-lg p-4 mb-4">
                 <p className="font-bold text-blue-400 mb-2">Important Notes:</p>
                 <ul className="list-disc list-inside space-y-2 ml-4 text-gray-300 text-sm">
-                  <li>The 7-day refund window begins when we officially notify you that your website is complete and hand it over to you</li>
-                  <li>You are responsible for thoroughly reviewing the website during this 7-day period</li>
-                  <li>For technical issues, you must report them immediately and provide clear documentation of the problem</li>
+                  <li>The 30-day refund window for the first month begins on the date of your first subscription payment</li>
+                  <li>To request a refund for the first month, you must email us at ptboost.info@gmail.com within 30 days of your first payment</li>
+                  <li>After the second payment is processed, the refund window closes permanently for all future payments</li>
+                  <li>If you cancel your subscription, you will continue to have access to your website until the end of your current billing period</li>
                   <li>Refunds do not cover any costs you incurred separately (domain names, third-party services, etc.)</li>
                 </ul>
               </div>
-
+              
               <p className="text-sm text-gray-400">
-                To request a refund, you must email us at ptboost.info@gmail.com within the applicable timeframe with your order number and detailed explanation. Refund requests are reviewed within 5-7 business days. Approved refunds are processed within 10-14 business days to your original payment method.
+                To request a refund for your first month, email us at ptboost.info@gmail.com within 30 days of your first payment date. Include your order number or email address used for the subscription. Refund requests are reviewed within 5-7 business days. Approved refunds are processed within 10-14 business days to your original payment method.
               </p>
             </section>
 
@@ -145,18 +159,18 @@ export default function TermsPage() {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Providing accurate information during the booking process</li>
                 <li>Providing all required content (text, images, branding) within 7 days of purchase</li>
-                <li>Thoroughly reviewing the completed website within the 7-day post-delivery refund window</li>
-                <li>Communicating any concerns or issues promptly during the review period</li>
+                <li>Reviewing the completed website and testing functionality within the first month of your subscription</li>
+                <li>Communicating any concerns or issues promptly during the first month if you wish to request a refund</li>
                 <li>Timely communication and responses to our requests throughout the project</li>
                 <li>Purchasing and maintaining your own domain name (if you want a custom domain)</li>
                 <li>Complying with all applicable laws and regulations in your use of the website</li>
-                <li>Complying with Netlify's Terms of Service and usage policies</li>
+                <li>Complying with our hosting provider's Terms of Service and usage policies</li>
                 <li>Maintaining appropriate website content after delivery</li>
                 <li>All marketing, SEO, and traffic generation efforts</li>
                 <li>Ensuring your website content does not violate any laws or third-party rights</li>
               </ul>
               <p className="mt-4 text-yellow-400 font-semibold">
-                ⚠️ Delays caused by failure to meet these responsibilities may result in project delays without any refund or compensation. Failure to review your website within the 7-day window means you forfeit your right to a refund based on dissatisfaction.
+                ⚠️ Delays caused by failure to meet these responsibilities may result in project delays without any refund or compensation. If you wish to request a refund for the first month, you must do so within 30 days of your first payment date. After the second payment is processed, no refunds will be available.
               </p>
             </section>
 
@@ -170,14 +184,25 @@ export default function TermsPage() {
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4 mb-4">
                   <li>Guarantee any traffic to your website</li>
-                  <li>Guarantee any leads, conversions, or sales</li>
+                  <li>Guarantee any leads, conversions, sales, or serious clients</li>
+                  <li>Guarantee that your website will attract serious clients or filter out tire-kickers</li>
                   <li>Provide ongoing marketing or advertising services</li>
                   <li>Drive traffic to your website through SEO, ads, or social media</li>
                   <li>Guarantee search engine rankings or visibility</li>
-                  <li>Provide business coaching or growth consulting</li>
+                  <li>Provide business coaching, growth consulting, or client acquisition services</li>
+                  <li>Guarantee that your website will solve problems related to chasing DMs or social media reliance</li>
                 </ul>
-                <p className="font-semibold">
-                  YOU are solely responsible for driving traffic to your website through your own marketing efforts, advertising, social media, or other promotional activities.
+                <p className="font-semibold mb-3">
+                  YOU are solely responsible for:
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-4 mb-4">
+                  <li>Driving traffic to your website through your own marketing efforts, advertising, social media, or other promotional activities</li>
+                  <li>Converting website visitors into clients</li>
+                  <li>All marketing, lead generation, and client acquisition efforts</li>
+                  <li>Managing your business operations, including handling inquiries and client relationships</li>
+                </ul>
+                <p className="font-semibold text-red-400">
+                  We provide a professional online presence — we do NOT guarantee business results, client acquisition, or that your website will attract serious clients. Your website is a tool, not a guarantee of business success.
                 </p>
               </div>
             </section>
@@ -237,9 +262,9 @@ export default function TermsPage() {
                 <ul className="list-disc list-inside space-y-2 ml-4 mb-4">
                   <li>Any indirect, incidental, consequential, or punitive damages</li>
                   <li>Loss of profits, revenue, business opportunities, or clients</li>
-                  <li>Website downtime, data loss, or technical issues (including those caused by Netlify)</li>
-                  <li>Third-party service failures (Netlify hosting, domain providers, email providers, etc.)</li>
-                  <li>Netlify service interruptions, account suspensions, or policy changes</li>
+                  <li>Website downtime, data loss, or technical issues (including those caused by hosting providers)</li>
+                  <li>Third-party service failures (hosting providers, domain providers, email providers, etc.)</li>
+                  <li>Hosting service interruptions, account suspensions, or policy changes</li>
                   <li>Security breaches or hacking attempts</li>
                   <li>Content errors or inaccuracies provided by you</li>
                   <li>Legal issues arising from your content or business practices</li>
@@ -253,22 +278,22 @@ export default function TermsPage() {
 
             {/* Third-Party Services */}
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">11. Third-Party Services & Netlify Hosting</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">11. Third-Party Services & Hosting</h2>
               <p className="mb-4">
-                While we provide free hosting via Netlify as part of our service, your website relies on third-party platforms (Netlify, payment processors, email services, etc.). We are NOT responsible for:
+                While we provide free hosting as part of our service, your website relies on third-party platforms (hosting providers, payment processors, email services, etc.). We are NOT responsible for:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4 mb-4">
-                <li>Netlify service outages, downtime, or technical issues</li>
-                <li>Changes to Netlify's terms of service or pricing structure</li>
-                <li>Netlify's decision to suspend or terminate accounts</li>
-                <li>Bandwidth or usage limitations imposed by Netlify</li>
-                <li>Data breaches or security issues with Netlify or other third-party services</li>
+                <li>Hosting service outages, downtime, or technical issues</li>
+                <li>Changes to hosting provider's terms of service or pricing structure</li>
+                <li>Hosting provider's decision to suspend or terminate accounts</li>
+                <li>Bandwidth or usage limitations imposed by hosting providers</li>
+                <li>Data breaches or security issues with hosting providers or other third-party services</li>
                 <li>Changes to third-party service terms or pricing</li>
                 <li>Any third-party service fees or charges that may arise</li>
-                <li>Your compliance with Netlify's or other third-party service terms</li>
+                <li>Your compliance with hosting provider's or other third-party service terms</li>
               </ul>
               <p className="text-sm text-gray-400">
-                Note: While hosting is currently provided free via Netlify, if Netlify changes their free tier or pricing in the future, you may be responsible for any hosting costs to continue service.
+                Note: While hosting is currently provided free, if our hosting provider changes their free tier or pricing in the future, you may be responsible for any hosting costs to continue service. We reserve the right to change hosting providers at any time.
               </p>
             </section>
 
@@ -276,7 +301,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">12. Warranty Disclaimer</h2>
               <p className="mb-4">
-                EXCEPT FOR THE 7-DAY POST-DELIVERY SATISFACTION GUARANTEE AND 30-DAY SERIOUS TECHNICAL ISSUE WARRANTY DESCRIBED IN OUR REFUND POLICY, YOUR WEBSITE IS PROVIDED "AS IS" WITHOUT ANY OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+                EXCEPT FOR THE 30-DAY FIRST MONTH REFUND POLICY DESCRIBED IN OUR REFUND POLICY, YOUR WEBSITE IS PROVIDED "AS IS" WITHOUT ANY OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Warranties of merchantability or fitness for a particular purpose</li>
@@ -287,7 +312,7 @@ export default function TermsPage() {
                 <li>Warranties of perpetual functionality without maintenance</li>
               </ul>
               <p className="mt-4 text-sm text-gray-400">
-                After the applicable refund periods have expired, all services are considered final and accepted by the client.
+                After the first month refund period has expired (or after the second payment is processed), all services are considered final and accepted by the client.
               </p>
             </section>
 
@@ -309,19 +334,63 @@ export default function TermsPage() {
 
             {/* Termination */}
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">14. Termination</h2>
-              <p className="mb-4">
-                We reserve the right to terminate or refuse service to anyone at any time for any reason, including:
-              </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Violation of these Terms</li>
-                <li>Fraudulent or abusive behavior</li>
-                <li>Non-payment or payment disputes</li>
-                <li>Providing false or misleading information</li>
-              </ul>
-              <p className="mt-4 text-gray-400">
-                Upon termination, you will not receive a refund unless specifically approved under our Refund Policy.
-              </p>
+              <h2 className="text-2xl font-bold text-white mb-4">14. Termination & Cancellation</h2>
+              
+              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4 mb-4">
+                <p className="font-bold text-red-400 mb-3">⚠️ IMPORTANT: What Happens When You Cancel or Delete Your Account</p>
+                
+                <div className="mb-4">
+                  <h3 className="font-bold text-white mb-2">14.1 Subscription Cancellation</h3>
+                  <p className="text-sm text-gray-300 mb-2">
+                    If you cancel your subscription:
+                  </p>
+                  <ul className="list-disc list-inside space-y-2 ml-4 text-sm text-gray-300">
+                    <li><strong>Your website will immediately stop being live</strong> - Your website will be taken offline and will no longer be accessible to visitors</li>
+                    <li><strong>No refunds</strong> - If you cancel after the second payment, you will not receive a refund for any remaining subscription period</li>
+                    <li><strong>Access ends immediately</strong> - You will lose access to your website and all associated services upon cancellation</li>
+                    <li><strong>Website files remain stored</strong> - Your website files will be stored for 30 days after cancellation in case you wish to reactivate</li>
+                    <li><strong>Reactivation</strong> - If you reactivate within 30 days, your website can be restored. After 30 days, website files may be permanently deleted</li>
+                  </ul>
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="font-bold text-white mb-2">14.2 Account Deletion</h3>
+                  <p className="text-sm text-gray-300 mb-2">
+                    If you delete your account:
+                  </p>
+                  <ul className="list-disc list-inside space-y-2 ml-4 text-sm text-gray-300">
+                    <li><strong>All website files will be permanently deleted</strong> - This action is IRREVERSIBLE and cannot be undone</li>
+                    <li><strong>Your website will be immediately taken offline</strong> - Your website will no longer be accessible</li>
+                    <li><strong>All data will be permanently removed</strong> - This includes your website files, content, images, and all associated data</li>
+                    <li><strong>No recovery possible</strong> - Once your account is deleted, we cannot recover your website or any data</li>
+                    <li><strong>No refunds</strong> - Account deletion does not entitle you to any refunds</li>
+                  </ul>
+                </div>
+
+                <div className="bg-yellow-950/30 border border-yellow-500/30 rounded-lg p-3 mt-4">
+                  <p className="font-bold text-yellow-400 mb-2 text-sm">⚠️ WARNING:</p>
+                  <p className="text-sm text-gray-300">
+                    Before canceling your subscription or deleting your account, please ensure you have downloaded or backed up any content, images, or data you wish to keep. We are not responsible for any data loss resulting from cancellation or account deletion.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-zinc-800/50 border border-accent/30 rounded-lg p-4 mb-4">
+                <h3 className="font-bold text-white mb-2">14.3 Our Right to Terminate</h3>
+                <p className="mb-2 text-sm text-gray-300">
+                  We reserve the right to terminate or refuse service to anyone at any time for any reason, including:
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-4 text-sm text-gray-300">
+                  <li>Violation of these Terms</li>
+                  <li>Fraudulent or abusive behavior</li>
+                  <li>Non-payment or payment disputes</li>
+                  <li>Providing false or misleading information</li>
+                  <li>Illegal use of the website or services</li>
+                </ul>
+                <p className="mt-3 text-sm text-gray-400">
+                  Upon termination by us, your website will be taken offline immediately and website files may be deleted after 30 days. You will not receive a refund unless specifically approved under our Refund Policy.
+                </p>
+              </div>
             </section>
 
             {/* Dispute Resolution */}
@@ -390,12 +459,17 @@ export default function TermsPage() {
               <ul className="space-y-2 text-sm">
                 <li>• You have read and understood these Terms & Conditions in full</li>
                 <li>• You agree to be bound by these Terms</li>
-                <li>• You understand the refund policy: 7 days post-delivery for dissatisfaction, 30 days for serious technical issues only</li>
-                <li>• You are responsible for thoroughly reviewing your website within the 7-day post-delivery window</li>
-                <li>• After the 7-day window expires, you forfeit your right to a refund based on dissatisfaction</li>
+                <li>• You understand the refund policy: First month subscription payment is refundable within 30 days; after the second payment, all future payments are NON-REFUNDABLE</li>
+                <li>• You understand that once your second subscription payment is processed, you cannot receive refunds for any future subscription payments</li>
+                <li>• You can cancel your subscription at any time to stop future charges, but refunds are only available for the first month</li>
                 <li>• You accept sole responsibility for marketing and driving traffic to your website</li>
-                <li>• You understand that business results (leads, sales, traffic) are NOT guaranteed</li>
-                <li>• Free hosting is provided via Netlify and subject to their terms and availability</li>
+                <li>• You understand that business results (leads, sales, traffic, serious clients) are NOT guaranteed</li>
+                <li>• You understand that we do NOT guarantee your website will attract serious clients or solve problems related to chasing DMs</li>
+                <li>• Free hosting is provided and subject to our hosting provider's terms and availability</li>
+                <li>• You understand that hosting providers may change and you may be responsible for hosting costs in the future</li>
+                <li>• You understand that if you cancel your subscription, your website will immediately stop being live and will no longer be accessible</li>
+                <li>• You understand that if you delete your account, all website files will be permanently deleted and cannot be recovered</li>
+                <li>• You understand that you are responsible for backing up any content, images, or data you wish to keep before canceling or deleting your account</li>
               </ul>
             </section>
           </div>

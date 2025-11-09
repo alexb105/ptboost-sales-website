@@ -31,20 +31,19 @@ export function HeroSection() {
               <span className="tracking-wide break-words">LAUNCH SPECIAL: Just £7.99/Month</span>
             </div>
 
-            {/* Pain Point Headline - Younger Audience Hook */}
+            {/* Pain Point Headline - UK PT Audience Hook */}
             <h1 className="mb-8 text-balance font-sans text-5xl font-black leading-[1.05] tracking-tight text-foreground md:text-7xl lg:text-8xl">
               <span className="block mb-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent drop-shadow-2xl">
-                Stop Chasing The Algorithm.
+                Stop Chasing DMs.
               </span>
               <span className="block text-foreground">
-                Start Getting More Leads While You Sleep.
+                Start Attracting Serious Clients Who Actually Book.
               </span>
             </h1>
 
-            {/* Subheadline - Younger Audience */}
+            {/* Subheadline - UK PT Audience */}
             <p className="mb-10 text-pretty text-2xl text-foreground md:text-3xl lg:text-4xl leading-tight font-bold max-w-4xl mx-auto">
-              Get a professional website that attracts <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent">local clients 24/7.</span>
-              Launch in 7 days. Just £7.99/month. No tech skills needed.
+              For UK personal trainers tired of chasing DMs — get a professional online presence that brings in <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent">serious clients 24/7</span> — without paying agency prices.
             </p>
 
             {/* Value Proposition - Stats Grid */}
@@ -95,7 +94,7 @@ export function HeroSection() {
                 </Button>
               </div>
               <p className="mt-4 text-xs md:text-sm font-bold text-muted-foreground break-words px-4">
-                🎯 Live in 7 days • Cancel anytime • No tech skills needed
+                🎯 For UK personal trainers • Live in 7 days • Cancel anytime • No tech skills needed
               </p>
             </div>
 

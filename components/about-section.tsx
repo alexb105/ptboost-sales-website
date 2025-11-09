@@ -48,13 +48,13 @@ export function AboutSection() {
                     <h3 className="text-xl font-bold text-foreground mb-2">The Problem I Noticed</h3>
                     <p>
                       I'm a web developer who specializes in high-converting websites. After working with businesses across different industries, 
-                      I noticed personal trainers face a unique challenge:
+                      I noticed UK personal trainers face a unique challenge:
                     </p>
                   </div>
                 </div>
                 <div className="pl-16">
                   <p className="font-bold text-foreground text-lg">
-                    ❌ You need a professional online presence, but agencies charge £2,000-5,000
+                    ❌ You're tired of chasing DMs and need a professional online presence that brings in serious clients — but agencies charge £2,000-5,000
                   </p>
                 </div>
               </div>
@@ -69,11 +69,11 @@ export function AboutSection() {
                   <div>
                     <h3 className="text-xl font-bold text-foreground mb-2">My Solution</h3>
                     <p className="mb-3">
-                      Most PTs can't justify spending thousands when you're just starting to scale. But without one, 
-                      you're stuck competing on Instagram where the algorithm controls your business.
+                      Most UK PTs can't justify spending thousands when you're just starting to scale. But without one, 
+                      you're stuck chasing DMs on Instagram where the algorithm controls your business — getting tire-kickers instead of serious clients.
                     </p>
                     <p className="font-bold text-foreground text-lg">
-                      ✅ That's why I'm offering professional websites for just <span className="text-accent">£7.99/month</span> — limited time launch pricing
+                      ✅ That's why I'm offering professional websites for just <span className="text-accent">£7.99/month</span> — attracting serious clients without paying agency prices
                     </p>
                   </div>
                 </div>

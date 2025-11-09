@@ -15,9 +15,9 @@ const painPoints = [
     solution: "One clean, professional site showcasing your packages, results, and expertise. Instant credibility that makes potential clients choose you over competitors."
   },
   {
-    problem: "You're tired of relying on social media for everything.",
-    reality: "Leads, messages, payments — all on one platform you don't control. When your engagement drops, your income drops. You need a place that's yours — stable, reliable, and built to convert.",
-    solution: "Own your presence. A professional website means people can find and contact you even if Instagram dies tomorrow. Your business, your rules, your leads — 24/7."
+    problem: "You're tired of chasing DMs and relying on social media for everything.",
+    reality: "You're spending hours replying to DMs, following up on Instagram messages, and chasing leads that go nowhere. Leads, messages, payments — all on one platform you don't control. When your engagement drops, your income drops. You need a place that's yours — stable, reliable, and built to convert serious clients.",
+    solution: "Own your presence. A professional website means people can find and contact you even if Instagram dies tomorrow. Your business, your rules, your leads — 24/7. No more chasing DMs — serious clients come to you."
   },
   {
     problem: "You're doing everything yourself — and burning out.",
@@ -25,9 +25,9 @@ const painPoints = [
     solution: "Done-for-you website service. No learning curve, no tech headaches. Just share your details, and we'll have you live in 7 days. Focus on training while your website works for you."
   },
   {
-    problem: "You're getting interest, but can't convert it into paying clients.",
-    reality: "People ask questions, seem keen, then vanish. Without a structured, professional space that guides them to book, you're leaving money on the table every day.",
-    solution: "A psychology-driven website with smart lead capture and clear calls-to-action. Guide visitors from interest to booking with a professional system that converts browsers into clients."
+    problem: "You're getting interest, but can't convert it into serious paying clients.",
+    reality: "People ask questions in DMs, seem keen, then vanish. You're getting tire-kickers and time-wasters, not serious clients ready to invest. Without a structured, professional space that pre-qualifies leads and guides them to book, you're leaving money on the table every day.",
+    solution: "A psychology-driven website with smart lead capture and clear calls-to-action. Pre-qualify visitors and guide serious clients from interest to booking with a professional system that filters out time-wasters and converts browsers into paying clients."
   },
   {
     problem: "You're undercharging because you don't look like a premium trainer.",
@@ -71,12 +71,12 @@ export function PainPointsSection() {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6">
               Why You're Not Getting
               <span className="block bg-gradient-to-r from-red-500 via-orange-500 to-accent bg-clip-text text-transparent">
-                Consistent Clients
+                Serious Clients
               </span>
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               It's not your training skills. It's not your content. 
-              <span className="font-bold text-foreground"> You just need a professional online presence.</span>
+              <span className="font-bold text-foreground"> You just need a professional online presence that attracts serious clients — not tire-kickers in your DMs.</span>
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export function PainPointsSection() {
                   You don't need to hire an expensive agency (£2,000+). You don't need to learn web design. 
                   You don't need to spend weeks figuring this out. 
                   <span className="block mt-3 text-foreground font-semibold">
-                    Get a professional website for just £7.99/month (launch special pricing), and you'll be live in 7 days.
+                    Get a professional website for just £7.99/month (launch special pricing), and you'll be live in 7 days — attracting serious clients without paying agency prices.
                   </span>
                 </p>
               </div>

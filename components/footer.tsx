@@ -88,6 +88,13 @@ export function Footer() {
               </Link>
               <span className="text-gray-700">•</span>
               <Link 
+                href="/privacy" 
+                className="text-gray-400 hover:text-accent transition-colors underline underline-offset-2"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-gray-700">•</span>
+              <Link 
                 href="/account" 
                 className="text-gray-400 hover:text-accent transition-colors underline underline-offset-2"
               >

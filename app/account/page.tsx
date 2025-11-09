@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle, Info, Code, Shield, Zap, Globe } from "lucide-react"
+import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle, Info, Code, Shield, Zap, Globe, Trash2, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
@@ -33,6 +33,9 @@ function AccountContent() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
   const [buyoutLink, setBuyoutLink] = useState("")
+  const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState("")
 
   // Check for success parameter from Stripe portal return
   useEffect(() => {
@@ -130,6 +133,46 @@ function AccountContent() {
     setEmail("")
     setPassword("")
     toast.info("Logged out successfully")
+  }
+
+  const handleDeleteAccount = async () => {
+    // Require user to type "DELETE" to confirm
+    if (deleteConfirmText !== "DELETE") {
+      toast.error("Please type 'DELETE' to confirm account deletion")
+      return
+    }
+
+    setIsDeletingAccount(true)
+    try {
+      const response = await fetch("/api/delete-account", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Failed to delete account")
+      }
+
+      toast.success("Your account has been permanently deleted")
+      setDeleteAccountDialogOpen(false)
+      setDeleteConfirmText("")
+      
+      // Log out and redirect
+      setTimeout(() => {
+        setIsAuthenticated(false)
+        setUserData(null)
+        setEmail("")
+        setPassword("")
+        window.location.href = "/"
+      }, 2000)
+    } catch (err) {
+      console.error("Error deleting account:", err)
+      toast.error(err instanceof Error ? err.message : "Failed to delete account")
+    } finally {
+      setIsDeletingAccount(false)
+    }
   }
 
   const handleBuyout = () => {
@@ -658,6 +701,137 @@ function AccountContent() {
             </CardContent>
           </Card>
         )}
+
+        {/* Delete Account Card */}
+        <Card className="border-red-500/30 bg-red-950/10">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <Trash2 className="h-5 w-5 text-red-500" />
+              </div>
+              <div>
+                <CardTitle className="text-lg text-red-500">Delete Account</CardTitle>
+                <CardDescription>
+                  Permanently delete your account and all associated data
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-red-400 mb-2">⚠️ Warning: This action is permanent and cannot be undone</p>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-gray-300 ml-6">
+                      <li>All website files will be permanently deleted</li>
+                      <li>Your website will immediately stop being live</li>
+                      <li>All data will be permanently removed (website files, content, images, booking data)</li>
+                      <li>Your subscription will be cancelled</li>
+                      <li>No recovery possible - we cannot restore your account or data</li>
+                      <li>No refunds - account deletion does not entitle you to any refunds</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm text-muted-foreground">
+                Before deleting your account, please ensure you have downloaded or backed up any content, images, or data you wish to keep. We are not responsible for any data loss resulting from account deletion.
+              </p>
+
+              <Dialog open={deleteAccountDialogOpen} onOpenChange={setDeleteAccountDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="destructive" 
+                    className="w-full h-12 gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete My Account
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-red-500 flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      Confirm Account Deletion
+                    </DialogTitle>
+                    <DialogDescription className="pt-2">
+                      This action cannot be undone. All your data will be permanently deleted.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="space-y-4 py-4">
+                    <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
+                      <p className="font-bold text-red-400 mb-2 text-sm">What will be deleted:</p>
+                      <ul className="list-disc list-inside space-y-1 text-sm text-gray-300 ml-4">
+                        <li>All website files (permanently deleted)</li>
+                        <li>Your website (will stop being live immediately)</li>
+                        <li>All booking data and account information</li>
+                        <li>All images and content you uploaded</li>
+                        <li>Your subscription (will be cancelled)</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-yellow-950/30 border border-yellow-500/30 rounded-lg p-4">
+                      <p className="font-bold text-yellow-400 mb-2 text-sm">⚠️ Final Warning:</p>
+                      <p className="text-sm text-gray-300">
+                        Once you delete your account, we cannot recover your website or any data. This is a permanent, irreversible action.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="delete-confirm" className="text-sm font-semibold">
+                        Type <span className="text-red-500 font-bold">DELETE</span> to confirm:
+                      </Label>
+                      <Input
+                        id="delete-confirm"
+                        type="text"
+                        value={deleteConfirmText}
+                        onChange={(e) => setDeleteConfirmText(e.target.value)}
+                        placeholder="Type DELETE to confirm"
+                        className="h-12"
+                        disabled={isDeletingAccount}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setDeleteAccountDialogOpen(false)
+                        setDeleteConfirmText("")
+                      }}
+                      className="flex-1"
+                      disabled={isDeletingAccount}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={handleDeleteAccount}
+                      disabled={isDeletingAccount || deleteConfirmText !== "DELETE"}
+                      className="flex-1 gap-2"
+                    >
+                      {isDeletingAccount ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="h-4 w-4" />
+                          Delete Account Permanently
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Back to Home */}
         <div className="flex justify-center pt-4">
