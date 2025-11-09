@@ -139,6 +139,25 @@ export default function WebsitePurchasedPage() {
               </div>
             </div>
 
+            {/* Subscription Information */}
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-semibold text-green-900 mb-1">
+                    About Your Subscription
+                  </h4>
+                  <p className="text-sm text-green-800">
+                    You can cancel your subscription at any time, and your website will remain live on our servers. 
+                    If you'd like your website removed from PTBoost servers, please email me at{" "}
+                    <a href="mailto:alexander.ptboost@gmail.com" className="text-green-700 hover:underline font-medium">
+                      alexander.ptboost@gmail.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Link href="/" className="flex-1">

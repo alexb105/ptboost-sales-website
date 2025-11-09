@@ -17,6 +17,7 @@ interface UserData {
   email: string
   businessName: string
   hasActiveSubscription: boolean
+  websiteOwned: boolean
 }
 
 function AccountContent() {
@@ -277,50 +278,124 @@ function AccountContent() {
           </Card>
 
           {/* Website Buyout Card */}
-          <Card className="relative overflow-hidden border-2 border-accent/20">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full -mr-16 -mt-16" />
+          <Card className={`relative overflow-hidden ${userData?.websiteOwned ? 'border-2 border-green-500/30 bg-green-50/50' : 'border-2 border-accent/20'}`}>
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${userData?.websiteOwned ? 'from-green-500/30 to-emerald-500/30' : 'from-green-500/20 to-emerald-500/20'} rounded-full -mr-16 -mt-16`} />
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <ShoppingCart className="h-5 w-5 text-green-600" />
+                <div className={`w-10 h-10 rounded-lg ${userData?.websiteOwned ? 'bg-green-500/20' : 'bg-green-500/10'} flex items-center justify-center`}>
+                  {userData?.websiteOwned ? (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <ShoppingCart className="h-5 w-5 text-green-600" />
+                  )}
                 </div>
-                <CardTitle className="text-lg">Own Your Website</CardTitle>
+                <CardTitle className="text-lg">
+                  {userData?.websiteOwned ? 'Website Owned ✓' : 'Own Your Website'}
+                </CardTitle>
               </div>
               <CardDescription>
-                Buy out your website for a special one-time price of <span className="font-bold text-green-600">£299</span> and own it completely!
+                {userData?.websiteOwned ? (
+                  <span className="text-green-700 font-medium">
+                    Congratulations! You own your website completely. No more monthly payments required.
+                  </span>
+                ) : (
+                  <>
+                    Buy out your website for a special one-time price of <span className="font-bold text-green-600">£299</span> and own it completely!
+                  </>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
-                  <span>Full ownership of your website</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
-                  <span>No more monthly payments</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
-                  <span>Complete control and customization</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
-                  <span>All source code included</span>
-                </div>
-              </div>
-              
-              <Button 
-                onClick={handleBuyout}
-                className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-              >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Buy Out for £299
-              </Button>
-              
-              <p className="text-xs text-center text-muted-foreground">
-                You'll be redirected to our secure payment page
-              </p>
+              {userData?.websiteOwned ? (
+                <>
+                  <div className="p-4 bg-green-100 border border-green-300 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div className="space-y-2">
+                        <p className="font-semibold text-green-900">You're all set!</p>
+                        <p className="text-sm text-green-800">
+                          Your website is fully owned. You'll receive a download link with all source code and files within 24-48 hours.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="space-y-2">
+                      <p className="font-semibold text-blue-900 text-sm">📋 Important Information</p>
+                      <p className="text-sm text-blue-800">
+                        You can cancel your subscription at any time, and your website will remain live on our servers. 
+                        If you'd like your website removed from PTBoost servers, please email me at{" "}
+                        <a href="mailto:alexander.ptboost@gmail.com" className="text-blue-600 hover:underline font-medium">
+                          alexander.ptboost@gmail.com
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                      <span className="line-through opacity-50">Full ownership of your website</span>
+                      <span className="text-green-600 font-medium ml-2">✓ Owned</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                      <span className="line-through opacity-50">No more monthly payments</span>
+                      <span className="text-green-600 font-medium ml-2">✓ Complete</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                      <span className="line-through opacity-50">Complete control and customization</span>
+                      <span className="text-green-600 font-medium ml-2">✓ Yours</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                      <span className="line-through opacity-50">All source code included</span>
+                      <span className="text-green-600 font-medium ml-2">✓ Included</span>
+                    </div>
+                  </div>
+                  <Button 
+                    disabled
+                    className="w-full h-12 bg-gray-300 text-gray-500 cursor-not-allowed"
+                  >
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                    Already Purchased
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
+                      <span>Full ownership of your website</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
+                      <span>No more monthly payments</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
+                      <span>Complete control and customization</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5" />
+                      <span>All source code included</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={handleBuyout}
+                    className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                  >
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Buy Out for £299
+                  </Button>
+                  
+                  <p className="text-xs text-center text-muted-foreground">
+                    You'll be redirected to our secure payment page
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>

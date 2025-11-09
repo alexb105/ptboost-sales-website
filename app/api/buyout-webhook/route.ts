@@ -153,6 +153,10 @@ export async function POST(request: Request) {
               console.log(`✅✅✅ SUCCESS! Marked website as owned for: ${customerEmail}`)
               console.log(`✅ Updated booking ID: ${updatedBooking[0].id}`)
               console.log(`✅ New website_owned value: ${updatedBooking[0].website_owned}`)
+              
+              // Log important information for the user
+              console.log('📋 IMPORTANT: User can cancel subscription and website will remain live')
+              console.log('📋 To remove website from PTBoost servers, email: alexander.ptboost@gmail.com')
             } else {
               console.warn(`⚠️ Update returned no results for booking ID: ${bookingToUpdate.id}`)
             }
