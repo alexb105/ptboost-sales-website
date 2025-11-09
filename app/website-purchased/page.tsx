@@ -90,9 +90,9 @@ export default function WebsitePurchasedPage() {
                     <Mail className="h-4 w-4 text-accent" />
                   </div>
                   <div>
-                    <p className="font-medium mb-1">Check Your Email</p>
+                    <p className="font-medium mb-1">Wait 24 - 48 Hours</p>
                     <p className="text-sm text-muted-foreground">
-                      We'll send you a download link to access all your website files within the next 24-48 hours.
+                      I'll send you a download link to access all your website files within the next 24-48 hours.
                     </p>
                   </div>
                 </div>

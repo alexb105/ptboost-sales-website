@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover',
@@ -154,6 +157,213 @@ export async function POST(request: Request) {
               console.log(`✅ Updated booking ID: ${updatedBooking[0].id}`)
               console.log(`✅ New website_owned value: ${updatedBooking[0].website_owned}`)
               
+              // Fetch full booking data for email
+              const { data: fullBooking } = await supabase
+                .from('bookings')
+                .select('*')
+                .eq('id', bookingToUpdate.id)
+                .single()
+
+              // Send email notification to alexander.ptboost@gmail.com
+              if (fullBooking && process.env.RESEND_API_KEY) {
+                try {
+                  console.log('📧 Sending buyout notification email to alexander.ptboost@gmail.com')
+                  await resend.emails.send({
+                    from: 'PTBoost <noreply@ptboost.co.uk>',
+                    to: ['alexander.ptboost@gmail.com'],
+                    subject: `🚀 Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,
+                    html: `
+                      <!DOCTYPE html>
+                      <html>
+                        <head>
+                          <meta charset="utf-8">
+                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                          <style>
+                            * {
+                              margin: 0;
+                              padding: 0;
+                              box-sizing: border-box;
+                            }
+                            body {
+                              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                              line-height: 1.6;
+                              color: #1a1a1a;
+                              background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 50%, #ffe5e5 100%);
+                              padding: 20px;
+                            }
+                            .email-container {
+                              max-width: 650px;
+                              margin: 0 auto;
+                              background: #ffffff;
+                              border-radius: 24px;
+                              overflow: hidden;
+                              box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                            }
+                            .header {
+                              background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                              color: white;
+                              padding: 50px 40px;
+                              text-align: center;
+                            }
+                            .header h1 {
+                              font-size: 32px;
+                              font-weight: 800;
+                              margin-bottom: 10px;
+                            }
+                            .content {
+                              padding: 40px;
+                            }
+                            .alert-box {
+                              background: #fef3e7;
+                              border-left: 4px solid #f97316;
+                              padding: 20px;
+                              margin: 20px 0;
+                              border-radius: 8px;
+                            }
+                            .info-section {
+                              background: #f9fafb;
+                              padding: 25px;
+                              border-radius: 12px;
+                              margin: 20px 0;
+                            }
+                            .info-row {
+                              display: flex;
+                              padding: 12px 0;
+                              border-bottom: 1px solid #e5e7eb;
+                            }
+                            .info-row:last-child {
+                              border-bottom: none;
+                            }
+                            .info-label {
+                              font-weight: 600;
+                              color: #374151;
+                              width: 150px;
+                              flex-shrink: 0;
+                            }
+                            .info-value {
+                              color: #1f2937;
+                              flex: 1;
+                            }
+                            .cta-button {
+                              display: inline-block;
+                              background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                              color: white;
+                              padding: 16px 32px;
+                              border-radius: 12px;
+                              text-decoration: none;
+                              font-weight: 600;
+                              margin: 20px 0;
+                              text-align: center;
+                            }
+                            .footer {
+                              background: #f9fafb;
+                              padding: 30px 40px;
+                              text-align: center;
+                              color: #6b7280;
+                              font-size: 14px;
+                            }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="email-container">
+                            <div class="header">
+                              <h1>🚀 Website Buyout Purchase</h1>
+                              <p style="font-size: 18px; opacity: 0.9;">Action Required: Prepare Website Folder</p>
+                            </div>
+                            <div class="content">
+                              <div class="alert-box">
+                                <strong>⚠️ Action Required:</strong> A customer has purchased the website buyout. You need to prepare the website folder to give to the user.
+                              </div>
+                              
+                              <div class="info-section">
+                                <h2 style="margin-bottom: 20px; color: #1f2937;">Customer Information</h2>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Name:</div>
+                                  <div class="info-value">${fullBooking.full_name || 'N/A'}</div>
+                                </div>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Email:</div>
+                                  <div class="info-value"><a href="mailto:${fullBooking.email}">${fullBooking.email || 'N/A'}</a></div>
+                                </div>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Phone:</div>
+                                  <div class="info-value">${fullBooking.phone || 'N/A'}</div>
+                                </div>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Business:</div>
+                                  <div class="info-value">${fullBooking.business_name || 'N/A'}</div>
+                                </div>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Location:</div>
+                                  <div class="info-value">${fullBooking.location || 'N/A'}</div>
+                                </div>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Specialization:</div>
+                                  <div class="info-value">${fullBooking.specialization || 'N/A'}</div>
+                                </div>
+                                
+                                ${fullBooking.website_goals ? `
+                                <div class="info-row">
+                                  <div class="info-label">Website Goals:</div>
+                                  <div class="info-value">${fullBooking.website_goals}</div>
+                                </div>
+                                ` : ''}
+                                
+                                ${fullBooking.preferred_colors ? `
+                                <div class="info-row">
+                                  <div class="info-label">Preferred Colors:</div>
+                                  <div class="info-value">${fullBooking.preferred_colors}</div>
+                                </div>
+                                ` : ''}
+                                
+                                ${fullBooking.additional_notes ? `
+                                <div class="info-row">
+                                  <div class="info-label">Additional Notes:</div>
+                                  <div class="info-value">${fullBooking.additional_notes}</div>
+                                </div>
+                                ` : ''}
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Booking ID:</div>
+                                  <div class="info-value">${fullBooking.id}</div>
+                                </div>
+                                
+                                <div class="info-row">
+                                  <div class="info-label">Purchase Date:</div>
+                                  <div class="info-value">${new Date(fullBooking.created_at || Date.now()).toLocaleString()}</div>
+                                </div>
+                              </div>
+                              
+                              <p style="margin-top: 30px; color: #374151;">
+                                <strong>Next Steps:</strong><br>
+                                1. Prepare the website folder for this customer<br>
+                                2. Contact the customer at <a href="mailto:${fullBooking.email}">${fullBooking.email}</a> to deliver the website files<br>
+                                3. The customer can now cancel their subscription and the website will remain live
+                              </p>
+                            </div>
+                            <div class="footer">
+                              <p>This is an automated notification from PTBoost</p>
+                            </div>
+                          </div>
+                        </body>
+                      </html>
+                    `,
+                  })
+                  console.log('✅ Buyout notification email sent successfully')
+                } catch (emailError) {
+                  console.error('❌ Failed to send buyout notification email:', emailError)
+                  // Don't fail the webhook if email fails
+                }
+              } else if (!process.env.RESEND_API_KEY) {
+                console.warn('⚠️ RESEND_API_KEY not configured - skipping email notification')
+              }
+              
               // Log important information for the user
               console.log('📋 IMPORTANT: User can cancel subscription and website will remain live')
               console.log('📋 To remove website from PTBoost servers, email: alexander.ptboost@gmail.com')
@@ -217,6 +427,202 @@ export async function POST(request: Request) {
                   .eq('id', booking.id)
                 
                 console.log(`✅ Marked website as owned for: ${customerEmail}`)
+                
+                // Fetch full booking data and send email notification
+                const { data: fullBooking } = await supabase
+                  .from('bookings')
+                  .select('*')
+                  .eq('id', booking.id)
+                  .single()
+
+                // Send email notification to alexander.ptboost@gmail.com
+                if (fullBooking && process.env.RESEND_API_KEY) {
+                  try {
+                    console.log('📧 Sending buyout notification email to alexander.ptboost@gmail.com')
+                    await resend.emails.send({
+                      from: 'PTBoost <noreply@ptboost.co.uk>',
+                      to: ['alexander.ptboost@gmail.com'],
+                      subject: `🚀 Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,
+                      html: `
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <meta charset="utf-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>
+                              * {
+                                margin: 0;
+                                padding: 0;
+                                box-sizing: border-box;
+                              }
+                              body {
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                                line-height: 1.6;
+                                color: #1a1a1a;
+                                background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 50%, #ffe5e5 100%);
+                                padding: 20px;
+                              }
+                              .email-container {
+                                max-width: 650px;
+                                margin: 0 auto;
+                                background: #ffffff;
+                                border-radius: 24px;
+                                overflow: hidden;
+                                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                              }
+                              .header {
+                                background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                                color: white;
+                                padding: 50px 40px;
+                                text-align: center;
+                              }
+                              .header h1 {
+                                font-size: 32px;
+                                font-weight: 800;
+                                margin-bottom: 10px;
+                              }
+                              .content {
+                                padding: 40px;
+                              }
+                              .alert-box {
+                                background: #fef3e7;
+                                border-left: 4px solid #f97316;
+                                padding: 20px;
+                                margin: 20px 0;
+                                border-radius: 8px;
+                              }
+                              .info-section {
+                                background: #f9fafb;
+                                padding: 25px;
+                                border-radius: 12px;
+                                margin: 20px 0;
+                              }
+                              .info-row {
+                                display: flex;
+                                padding: 12px 0;
+                                border-bottom: 1px solid #e5e7eb;
+                              }
+                              .info-row:last-child {
+                                border-bottom: none;
+                              }
+                              .info-label {
+                                font-weight: 600;
+                                color: #374151;
+                                width: 150px;
+                                flex-shrink: 0;
+                              }
+                              .info-value {
+                                color: #1f2937;
+                                flex: 1;
+                              }
+                              .footer {
+                                background: #f9fafb;
+                                padding: 30px 40px;
+                                text-align: center;
+                                color: #6b7280;
+                                font-size: 14px;
+                              }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="email-container">
+                              <div class="header">
+                                <h1>🚀 Website Buyout Purchase</h1>
+                                <p style="font-size: 18px; opacity: 0.9;">Action Required: Prepare Website Folder</p>
+                              </div>
+                              <div class="content">
+                                <div class="alert-box">
+                                  <strong>⚠️ Action Required:</strong> A customer has purchased the website buyout. You need to prepare the website folder to give to the user.
+                                </div>
+                                
+                                <div class="info-section">
+                                  <h2 style="margin-bottom: 20px; color: #1f2937;">Customer Information</h2>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Name:</div>
+                                    <div class="info-value">${fullBooking.full_name || 'N/A'}</div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Email:</div>
+                                    <div class="info-value"><a href="mailto:${fullBooking.email}">${fullBooking.email || 'N/A'}</a></div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Phone:</div>
+                                    <div class="info-value">${fullBooking.phone || 'N/A'}</div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Business:</div>
+                                    <div class="info-value">${fullBooking.business_name || 'N/A'}</div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Location:</div>
+                                    <div class="info-value">${fullBooking.location || 'N/A'}</div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Specialization:</div>
+                                    <div class="info-value">${fullBooking.specialization || 'N/A'}</div>
+                                  </div>
+                                  
+                                  ${fullBooking.website_goals ? `
+                                  <div class="info-row">
+                                    <div class="info-label">Website Goals:</div>
+                                    <div class="info-value">${fullBooking.website_goals}</div>
+                                  </div>
+                                  ` : ''}
+                                  
+                                  ${fullBooking.preferred_colors ? `
+                                  <div class="info-row">
+                                    <div class="info-label">Preferred Colors:</div>
+                                    <div class="info-value">${fullBooking.preferred_colors}</div>
+                                  </div>
+                                  ` : ''}
+                                  
+                                  ${fullBooking.additional_notes ? `
+                                  <div class="info-row">
+                                    <div class="info-label">Additional Notes:</div>
+                                    <div class="info-value">${fullBooking.additional_notes}</div>
+                                  </div>
+                                  ` : ''}
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Booking ID:</div>
+                                    <div class="info-value">${fullBooking.id}</div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Purchase Date:</div>
+                                    <div class="info-value">${new Date(fullBooking.created_at || Date.now()).toLocaleString()}</div>
+                                  </div>
+                                </div>
+                                
+                                <p style="margin-top: 30px; color: #374151;">
+                                  <strong>Next Steps:</strong><br>
+                                  1. Prepare the website folder for this customer<br>
+                                  2. Contact the customer at <a href="mailto:${fullBooking.email}">${fullBooking.email}</a> to deliver the website files<br>
+                                  3. The customer can now cancel their subscription and the website will remain live
+                                </p>
+                              </div>
+                              <div class="footer">
+                                <p>This is an automated notification from PTBoost</p>
+                              </div>
+                            </div>
+                          </body>
+                        </html>
+                      `,
+                    })
+                    console.log('✅ Buyout notification email sent successfully')
+                  } catch (emailError) {
+                    console.error('❌ Failed to send buyout notification email:', emailError)
+                    // Don't fail the webhook if email fails
+                  }
+                } else if (!process.env.RESEND_API_KEY) {
+                  console.warn('⚠️ RESEND_API_KEY not configured - skipping email notification')
+                }
               }
             }
           }
