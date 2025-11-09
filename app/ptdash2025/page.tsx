@@ -52,6 +52,9 @@ export default function AdminPage() {
   const [linksLastUpdated, setLinksLastUpdated] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<BookingData | null>(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
+  const [deleteOrderDialogOpen, setDeleteOrderDialogOpen] = useState(false)
+  const [orderToDelete, setOrderToDelete] = useState<BookingData | null>(null)
+  const [isDeletingOrder, setIsDeletingOrder] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -192,6 +195,33 @@ export default function AdminPage() {
       console.error('Error fetching completed orders:', error)
     } finally {
       setIsLoadingOrders(false)
+    }
+  }
+
+  const handleDeleteOrder = async () => {
+    if (!orderToDelete || !orderToDelete.id) return
+
+    setIsDeletingOrder(true)
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', orderToDelete.id)
+
+      if (error) {
+        console.error('Error deleting order:', error)
+        alert('Failed to delete order. Please try again.')
+      } else {
+        // Remove from local state
+        setCompletedOrders(prev => prev.filter(order => order.id !== orderToDelete.id))
+        setDeleteOrderDialogOpen(false)
+        setOrderToDelete(null)
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error)
+      alert('Failed to delete order. Please try again.')
+    } finally {
+      setIsDeletingOrder(false)
     }
   }
 
@@ -941,19 +971,43 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      {/* View Full Details Button */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedOrder(order)
-                          setDetailsDialogOpen(true)
-                        }}
-                        className="w-full"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Full Details
-                      </Button>
+                      {/* Subscription Indicator */}
+                      {order.stripe_customer_id && (
+                        <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                          <div className="flex items-center gap-2 text-sm">
+                            <CheckCircle className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                            <span className="text-blue-900 font-medium">Active Subscription</span>
+                            <span className="text-blue-700 text-xs">(Customer ID: {order.stripe_customer_id.substring(0, 12)}...)</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedOrder(order)
+                            setDetailsDialogOpen(true)
+                          }}
+                          className="flex-1"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setOrderToDelete(order)
+                            setDeleteOrderDialogOpen(true)
+                          }}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                   <div className="text-center text-sm text-muted-foreground pt-2">
@@ -1519,6 +1573,46 @@ export default function AdminPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Order Confirmation Dialog */}
+      <AlertDialog open={deleteOrderDialogOpen} onOpenChange={setDeleteOrderDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Order</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the order for <strong>{orderToDelete?.full_name}</strong>?
+              <br /><br />
+              This action cannot be undone. This will permanently delete the order and all associated data.
+              {orderToDelete?.stripe_customer_id && (
+                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-800 text-sm">
+                  ⚠️ Warning: This customer has an active subscription (Customer ID: {orderToDelete.stripe_customer_id}). 
+                  Deleting this order will not cancel their Stripe subscription.
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingOrder}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOrder}
+              disabled={isDeletingOrder}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeletingOrder ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Order
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
