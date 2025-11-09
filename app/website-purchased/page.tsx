@@ -133,7 +133,6 @@ export default function WebsitePurchasedPage() {
                   </h4>
                   <p className="text-sm text-blue-800">
                     Please check your spam folder if you don't receive the download link within 48 hours. 
-                    If you need immediate assistance, please contact us at support@ptboost.co.uk
                   </p>
                 </div>
               </div>

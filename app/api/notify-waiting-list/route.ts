@@ -486,8 +486,8 @@ export async function POST(request: Request) {
                       ⚠️ Fair Warning: This Price Is Only Available RIGHT NOW
                     </p>
                     <p style="margin: 15px 0 0 0; font-size: 15px; color: #7f1d1d; line-height: 1.7;">
-                      Once this spot is taken, the next person on the waiting list gets it at £299.<br>
-                      And when I hit 50 total sites? Everyone pays £299. No grandfather clause. No exceptions.
+                      Once this spot is taken, the next person on the waiting list gets it at £59.<br>
+                      And when I hit 50 total sites? Everyone pays £59. No grandfather clause. No exceptions.
                     </p>
                   </div>
 

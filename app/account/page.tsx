@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle, Info, Code, Shield, Zap, Globe } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
@@ -30,6 +31,7 @@ function AccountContent() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isLoadingPortal, setIsLoadingPortal] = useState(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
 
   // Check for success parameter from Stripe portal return
   useEffect(() => {
@@ -383,13 +385,222 @@ function AccountContent() {
                     </div>
                   </div>
                   
-                  <Button 
-                    onClick={handleBuyout}
-                    className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                  >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Buy Out for £299
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={handleBuyout}
+                      className="flex-1 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                    >
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Buy Out for £299
+                    </Button>
+                    
+                    <Dialog open={buyoutDialogOpen} onOpenChange={setBuyoutDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline"
+                          className="h-12 border-green-200 hover:bg-green-50"
+                        >
+                          <Info className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="text-2xl flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                              <ShoppingCart className="h-5 w-5 text-green-600" />
+                            </div>
+                            Own Your Website - Complete Guide
+                          </DialogTitle>
+                          <DialogDescription className="text-base pt-2">
+                            Everything you need to know about buying out your website for £299
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="space-y-6 pt-4">
+                          {/* Price Section */}
+                          <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+                            <div className="flex items-center gap-3 mb-2">
+                              <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                                <span className="text-white font-bold text-lg">£299</span>
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-lg text-green-900">One-Time Payment</h3>
+                                <p className="text-sm text-green-700">No recurring charges, no hidden fees</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Benefits Section */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                              What You Get
+                            </h3>
+                            <div className="grid gap-4 md:grid-cols-2">
+                              <div className="p-4 border rounded-lg hover:bg-accent/5 transition-colors">
+                                <div className="flex items-start gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                                    <Shield className="h-5 w-5 text-green-600" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold mb-1">Full Ownership</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      Complete legal ownership of your website. It's yours forever, no strings attached.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="p-4 border rounded-lg hover:bg-accent/5 transition-colors">
+                                <div className="flex items-start gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                                    <Zap className="h-5 w-5 text-green-600" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold mb-1">No Monthly Fees</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      Stop paying £7.99/month forever. One payment of £299 and you're done.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="p-4 border rounded-lg hover:bg-accent/5 transition-colors">
+                                <div className="flex items-start gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                                    <Code className="h-5 w-5 text-green-600" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold mb-1">Complete Source Code</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      Receive all HTML, CSS, JavaScript, and assets. Full access to customize everything.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="p-4 border rounded-lg hover:bg-accent/5 transition-colors">
+                                <div className="flex items-start gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                                    <Globe className="h-5 w-5 text-green-600" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold mb-1">Host Anywhere</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      Deploy to any hosting provider. Move to your own server, Vercel, Netlify, or anywhere.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* What's Included */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-3">What's Included in Your Download</h3>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-start gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                <span>Complete website source code (HTML, CSS, JavaScript)</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                <span>All images, fonts, and assets</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                <span>Documentation and setup instructions</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                <span>Responsive design files</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                <span>All customizations and features</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Process */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-3">How It Works</h3>
+                            <div className="space-y-3">
+                              <div className="flex gap-3">
+                                <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                                  1
+                                </div>
+                                <div>
+                                  <p className="font-medium">Make Payment</p>
+                                  <p className="text-sm text-muted-foreground">Complete your £299 payment securely via Stripe</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-3">
+                                <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                                  2
+                                </div>
+                                <div>
+                                  <p className="font-medium">Receive Download Link</p>
+                                  <p className="text-sm text-muted-foreground">We'll email you a download link within 24-48 hours</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-3">
+                                <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                                  3
+                                </div>
+                                <div>
+                                  <p className="font-medium">Download & Deploy</p>
+                                  <p className="text-sm text-muted-foreground">Download your files and deploy to any hosting provider</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Important Notes */}
+                          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                              <Info className="h-4 w-4" />
+                              Important Information
+                            </h3>
+                            <div className="space-y-2 text-sm text-blue-800">
+                              <p>
+                                • You can cancel your subscription at any time, and your website will remain live on our servers
+                              </p>
+                              <p>
+                                • If you'd like your website removed from PTBoost servers after purchase, email{" "}
+                                <a href="mailto:alexander.ptboost@gmail.com" className="text-blue-600 hover:underline font-medium">
+                                  alexander.ptboost@gmail.com
+                                </a>
+                              </p>
+                              <p>
+                                • The download link will be sent to your registered email address
+                              </p>
+                              <p>
+                                • All files are provided as-is and ready to deploy
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* CTA */}
+                          <div className="pt-4 border-t">
+                            <Button 
+                              onClick={() => {
+                                setBuyoutDialogOpen(false)
+                                handleBuyout()
+                              }}
+                              className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                            >
+                              <ShoppingCart className="mr-2 h-4 w-4" />
+                              Buy Out for £299 Now
+                            </Button>
+                            <p className="text-xs text-center text-muted-foreground mt-2">
+                              Secure payment via Stripe
+                            </p>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                   
                   <p className="text-xs text-center text-muted-foreground">
                     You'll be redirected to our secure payment page
