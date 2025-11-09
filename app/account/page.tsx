@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle, Info, Code, Shield, Zap, Globe, Trash2, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
@@ -35,7 +36,6 @@ function AccountContent() {
   const [buyoutLink, setBuyoutLink] = useState("")
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
-  const [deleteConfirmText, setDeleteConfirmText] = useState("")
 
   // Check for success parameter from Stripe portal return
   useEffect(() => {
@@ -135,13 +135,16 @@ function AccountContent() {
     toast.info("Logged out successfully")
   }
 
-  const handleDeleteAccount = async () => {
-    // Require user to type "DELETE" to confirm
-    if (deleteConfirmText !== "DELETE") {
-      toast.error("Please type 'DELETE' to confirm account deletion")
-      return
+  const handleBuyout = () => {
+    // Open the Stripe payment link in a new tab
+    if (buyoutLink) {
+      window.open(buyoutLink, "_blank")
+    } else {
+      toast.error("Payment link not configured. Please contact support.")
     }
+  }
 
+  const handleDeleteAccount = async () => {
     setIsDeletingAccount(true)
     try {
       const response = await fetch("/api/delete-account", {
@@ -155,32 +158,19 @@ function AccountContent() {
         throw new Error(data.error || "Failed to delete account")
       }
 
-      toast.success("Your account has been permanently deleted")
-      setDeleteAccountDialogOpen(false)
-      setDeleteConfirmText("")
+      toast.success("Account deleted successfully. All website files have been permanently deleted.")
       
-      // Log out and redirect
+      // Logout and redirect
+      handleLogout()
       setTimeout(() => {
-        setIsAuthenticated(false)
-        setUserData(null)
-        setEmail("")
-        setPassword("")
         window.location.href = "/"
       }, 2000)
     } catch (err) {
-      console.error("Error deleting account:", err)
+      console.error("Error:", err)
       toast.error(err instanceof Error ? err.message : "Failed to delete account")
     } finally {
       setIsDeletingAccount(false)
-    }
-  }
-
-  const handleBuyout = () => {
-    // Open the Stripe payment link in a new tab
-    if (buyoutLink) {
-      window.open(buyoutLink, "_blank")
-    } else {
-      toast.error("Payment link not configured. Please contact support.")
+      setDeleteAccountDialogOpen(false)
     }
   }
 
@@ -703,133 +693,124 @@ function AccountContent() {
         )}
 
         {/* Delete Account Card */}
-        <Card className="border-red-500/30 bg-red-950/10">
+        <Card className="border-red-500/30 bg-red-50/50 dark:bg-red-950/10">
           <CardHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                <Trash2 className="h-5 w-5 text-red-500" />
+                <Trash2 className="h-5 w-5 text-red-600" />
               </div>
-              <div>
-                <CardTitle className="text-lg text-red-500">Delete Account</CardTitle>
-                <CardDescription>
-                  Permanently delete your account and all associated data
-                </CardDescription>
-              </div>
+              <CardTitle className="text-lg text-red-900 dark:text-red-400">Danger Zone</CardTitle>
             </div>
+            <CardDescription className="text-red-800 dark:text-red-300">
+              Permanently delete your account and all website files. This action cannot be undone.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
-                <div className="flex items-start gap-3 mb-3">
-                  <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-red-400 mb-2">⚠️ Warning: This action is permanent and cannot be undone</p>
-                    <ul className="list-disc list-inside space-y-1 text-sm text-gray-300 ml-6">
-                      <li>All website files will be permanently deleted</li>
-                      <li>Your website will immediately stop being live</li>
-                      <li>All data will be permanently removed (website files, content, images, booking data)</li>
-                      <li>Your subscription will be cancelled</li>
-                      <li>No recovery possible - we cannot restore your account or data</li>
-                      <li>No refunds - account deletion does not entitle you to any refunds</li>
+            <AlertDialog open={deleteAccountDialogOpen} onOpenChange={setDeleteAccountDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="destructive"
+                  className="w-full h-12 bg-red-600 hover:bg-red-700"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <AlertDialogHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                      <AlertTriangle className="h-6 w-6 text-red-600" />
+                    </div>
+                    <AlertDialogTitle className="text-2xl text-red-900 dark:text-red-400">
+                      ⚠️ Permanent Account Deletion
+                    </AlertDialogTitle>
+                  </div>
+                  <AlertDialogDescription className="text-base pt-2">
+                    This action is <strong className="text-red-600">IRREVERSIBLE</strong> and will permanently delete your account and all website files.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                
+                <div className="space-y-4 pt-4">
+                  {/* Warning Box */}
+                  <div className="bg-red-950/30 border-2 border-red-500/50 rounded-lg p-4">
+                    <p className="font-bold text-red-400 mb-3 text-lg">⚠️ WARNING: What Will Be Deleted</p>
+                    <ul className="list-disc list-inside space-y-2 ml-2 text-sm text-gray-300">
+                      <li><strong>All website files will be permanently deleted</strong> - This action is IRREVERSIBLE and cannot be undone</li>
+                      <li><strong>Your website will be immediately taken offline</strong> - Your website will no longer be accessible</li>
+                      <li><strong>All data will be permanently removed</strong> - This includes your website files, content, images, and all associated data</li>
+                      <li><strong>No recovery possible</strong> - Once your account is deleted, we cannot recover your website or any data</li>
+                      <li><strong>No refunds</strong> - Account deletion does not entitle you to any refunds</li>
+                      <li><strong>Stripe subscription will be cancelled</strong> - Your active subscription will be cancelled immediately</li>
                     </ul>
                   </div>
+
+                  {/* Important Notice */}
+                  <div className="bg-yellow-950/30 border border-yellow-500/30 rounded-lg p-4">
+                    <p className="font-bold text-yellow-400 mb-2 text-sm">📋 Important Notice:</p>
+                    <p className="text-sm text-gray-300 mb-2">
+                      Before deleting your account, please ensure you have:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-gray-300">
+                      <li>Downloaded or backed up any content, images, or data you wish to keep</li>
+                      <li>Saved any important information from your website</li>
+                      <li>Exported any data you need for your records</li>
+                    </ul>
+                    <p className="text-sm text-red-400 font-semibold mt-3">
+                      We are not responsible for any data loss resulting from account deletion.
+                    </p>
+                  </div>
+
+                  {/* Terms Reference */}
+                  <div className="bg-zinc-800/50 border border-accent/30 rounded-lg p-4">
+                    <p className="font-bold text-white mb-2 text-sm">📄 Terms & Conditions:</p>
+                    <p className="text-sm text-gray-300">
+                      By deleting your account, you acknowledge that you have read and understood our{" "}
+                      <Link href="/terms" className="text-accent hover:underline font-semibold">
+                        Terms & Conditions
+                      </Link>
+                      {" "}regarding account deletion (Section 14.2). This action confirms your understanding that all website files will be permanently deleted and cannot be recovered.
+                    </p>
+                  </div>
+
+                  {/* Confirmation Text */}
+                  <div className="bg-red-950/20 border border-red-500/30 rounded-lg p-4">
+                    <p className="text-sm text-gray-300 text-center font-semibold">
+                      Are you absolutely sure you want to permanently delete your account and all website files?
+                    </p>
+                    <p className="text-xs text-red-400 text-center mt-2">
+                      This action cannot be undone.
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <p className="text-sm text-muted-foreground">
-                Before deleting your account, please ensure you have downloaded or backed up any content, images, or data you wish to keep. We are not responsible for any data loss resulting from account deletion.
-              </p>
-
-              <Dialog open={deleteAccountDialogOpen} onOpenChange={setDeleteAccountDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="destructive" 
-                    className="w-full h-12 gap-2"
+                <AlertDialogFooter className="flex-col sm:flex-row gap-2 pt-4">
+                  <AlertDialogCancel 
+                    disabled={isDeletingAccount}
+                    className="w-full sm:w-auto"
                   >
-                    <Trash2 className="h-4 w-4" />
-                    Delete My Account
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle className="text-red-500 flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5" />
-                      Confirm Account Deletion
-                    </DialogTitle>
-                    <DialogDescription className="pt-2">
-                      This action cannot be undone. All your data will be permanently deleted.
-                    </DialogDescription>
-                  </DialogHeader>
-                  
-                  <div className="space-y-4 py-4">
-                    <div className="bg-red-950/30 border border-red-500/30 rounded-lg p-4">
-                      <p className="font-bold text-red-400 mb-2 text-sm">What will be deleted:</p>
-                      <ul className="list-disc list-inside space-y-1 text-sm text-gray-300 ml-4">
-                        <li>All website files (permanently deleted)</li>
-                        <li>Your website (will stop being live immediately)</li>
-                        <li>All booking data and account information</li>
-                        <li>All images and content you uploaded</li>
-                        <li>Your subscription (will be cancelled)</li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-yellow-950/30 border border-yellow-500/30 rounded-lg p-4">
-                      <p className="font-bold text-yellow-400 mb-2 text-sm">⚠️ Final Warning:</p>
-                      <p className="text-sm text-gray-300">
-                        Once you delete your account, we cannot recover your website or any data. This is a permanent, irreversible action.
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="delete-confirm" className="text-sm font-semibold">
-                        Type <span className="text-red-500 font-bold">DELETE</span> to confirm:
-                      </Label>
-                      <Input
-                        id="delete-confirm"
-                        type="text"
-                        value={deleteConfirmText}
-                        onChange={(e) => setDeleteConfirmText(e.target.value)}
-                        placeholder="Type DELETE to confirm"
-                        className="h-12"
-                        disabled={isDeletingAccount}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setDeleteAccountDialogOpen(false)
-                        setDeleteConfirmText("")
-                      }}
-                      className="flex-1"
-                      disabled={isDeletingAccount}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={handleDeleteAccount}
-                      disabled={isDeletingAccount || deleteConfirmText !== "DELETE"}
-                      className="flex-1 gap-2"
-                    >
-                      {isDeletingAccount ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Deleting...
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 className="h-4 w-4" />
-                          Delete Account Permanently
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    disabled={isDeletingAccount}
+                    className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {isDeletingAccount ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Deleting Account...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Yes, Delete My Account Permanently
+                      </>
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
 

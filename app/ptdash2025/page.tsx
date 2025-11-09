@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard } from "lucide-react"
+import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard, FileSpreadsheet } from "lucide-react"
 import { createClient } from '@supabase/supabase-js'
 import type { BookingData, WaitingListEntry } from '@/lib/supabase-types'
+import { toast } from "sonner"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -497,6 +498,106 @@ export default function AdminPage() {
     localStorage.removeItem('adminPassword')
   }
 
+  const exportToCSV = () => {
+    // Combine completed and pending orders
+    const allOrders = [...completedOrders, ...pendingOrders]
+    
+    if (allOrders.length === 0) {
+      alert('No customer data to export')
+      return
+    }
+
+    // Define CSV headers
+    const headers = [
+      'Order ID',
+      'Full Name',
+      'Email',
+      'Phone',
+      'Business Name',
+      'Location',
+      'Specialization',
+      'Preferred Colors',
+      'Website Goals',
+      'Additional Notes',
+      'Payment Status',
+      'Stripe Customer ID',
+      'Stripe Session ID',
+      'Website Owned',
+      'Email Sent',
+      'Subscription Password',
+      'Number of Images',
+      'Order Date',
+      'Updated Date'
+    ]
+
+    // Convert data to CSV rows
+    const csvRows = [
+      headers.join(','), // Header row
+      ...allOrders.map(order => {
+        // Process images array
+        let imagesArray = []
+        if (Array.isArray(order.images)) {
+          imagesArray = order.images
+        } else if (typeof order.images === 'string') {
+          try {
+            imagesArray = JSON.parse(order.images || '[]')
+          } catch (e) {
+            imagesArray = []
+          }
+        }
+        
+        // Escape commas and quotes in CSV values
+        const escapeCSV = (value: any) => {
+          if (value === null || value === undefined) return ''
+          const stringValue = String(value)
+          // If value contains comma, quote, or newline, wrap in quotes and escape quotes
+          if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`
+          }
+          return stringValue
+        }
+
+        return [
+          escapeCSV(order.id),
+          escapeCSV(order.full_name),
+          escapeCSV(order.email),
+          escapeCSV(order.phone),
+          escapeCSV(order.business_name),
+          escapeCSV(order.location),
+          escapeCSV(order.specialization),
+          escapeCSV(order.preferred_colors || 'Not specified'),
+          escapeCSV(order.website_goals || 'Not specified'),
+          escapeCSV(order.additional_notes || 'Not specified'),
+          escapeCSV(order.payment_status),
+          escapeCSV(order.stripe_customer_id || ''),
+          escapeCSV(order.stripe_session_id || ''),
+          escapeCSV(order.website_owned ? 'Yes' : 'No'),
+          escapeCSV(order.email_sent ? 'Yes' : 'No'),
+          escapeCSV(order.subscription_password || ''),
+          escapeCSV(imagesArray.length),
+          escapeCSV(new Date(order.created_at || '').toLocaleString()),
+          escapeCSV(order.updated_at ? new Date(order.updated_at).toLocaleString() : '')
+        ].join(',')
+      })
+    ]
+
+    // Create CSV content
+    const csvContent = csvRows.join('\n')
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `ptboost-customers-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success(`Exported ${allOrders.length} customer records to CSV`)
+  }
+
   const handleUpdateCapacity = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -789,6 +890,28 @@ export default function AdminPage() {
 
           {/* Orders Tab */}
           <TabsContent value="orders" className="space-y-6">
+          {/* Export Button */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold mb-1">Export Customer Data</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Download all customer data (completed and pending orders) as a CSV spreadsheet
+                  </p>
+                </div>
+                <Button
+                  onClick={exportToCSV}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                  disabled={completedOrders.length === 0 && pendingOrders.length === 0}
+                >
+                  <FileSpreadsheet className="mr-2 h-4 w-4" />
+                  Export to CSV
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Email Status Alert */}
           {emailStatus && (
             <Alert className={emailStatus.type === 'success' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}>
@@ -1609,9 +1732,9 @@ export default function AdminPage() {
               <br /><br />
               This action cannot be undone. This will permanently delete the order and all associated data.
               {orderToDelete?.stripe_customer_id && (
-                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-800 text-sm">
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-800 text-sm">
                   ⚠️ Warning: This customer has an active subscription (Customer ID: {orderToDelete.stripe_customer_id}). 
-                  Deleting this order will not cancel their Stripe subscription.
+                  Deleting this order will also cancel their Stripe subscription and permanently delete their Stripe customer record.
                 </div>
               )}
             </AlertDialogDescription>
