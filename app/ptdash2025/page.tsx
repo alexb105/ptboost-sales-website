@@ -213,8 +213,9 @@ export default function AdminPage() {
       })
 
       if (response.ok) {
-        // Remove from local state
+        // Remove from local state (check both completed and pending)
         setCompletedOrders(prev => prev.filter(order => order.id !== orderToDelete.id))
+        setPendingOrders(prev => prev.filter(order => order.id !== orderToDelete.id))
         setDeleteOrderDialogOpen(false)
         setOrderToDelete(null)
       } else {
@@ -902,6 +903,17 @@ export default function AdminPage() {
                               Send Follow-Up Email
                             </>
                           )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setOrderToDelete(order)
+                            setDeleteOrderDialogOpen(true)
+                          }}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
