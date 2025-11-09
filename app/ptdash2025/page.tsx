@@ -29,8 +29,10 @@ export default function AdminPage() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const [adminPassword, setAdminPassword] = useState("")
   const [completedOrders, setCompletedOrders] = useState<BookingData[]>([])
+  const [pendingOrders, setPendingOrders] = useState<BookingData[]>([])
   const [waitingList, setWaitingList] = useState<WaitingListEntry[]>([])
   const [isLoadingOrders, setIsLoadingOrders] = useState(false)
+  const [isLoadingPendingOrders, setIsLoadingPendingOrders] = useState(false)
   const [isLoadingWaitingList, setIsLoadingWaitingList] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [entryToDelete, setEntryToDelete] = useState<WaitingListEntry | null>(null)
@@ -80,6 +82,7 @@ export default function AdminPage() {
     if (isAuthenticated) {
       fetchCapacityStatus()
       fetchCompletedOrders()
+      fetchPendingOrders()
       fetchWaitingList()
       fetchPaymentLinks()
     }
@@ -87,11 +90,15 @@ export default function AdminPage() {
 
   // Track previous counts to detect new entries
   const [prevOrdersCount, setPrevOrdersCount] = useState(0)
+  const [prevPendingCount, setPrevPendingCount] = useState(0)
   const [prevWaitingCount, setPrevWaitingCount] = useState(0)
 
   // Reset viewed status when new entries arrive
   useEffect(() => {
-    if (completedOrders.length > prevOrdersCount && prevOrdersCount > 0) {
+    const totalOrders = completedOrders.length + pendingOrders.length
+    const prevTotal = prevOrdersCount + prevPendingCount
+    
+    if (totalOrders > prevTotal && prevTotal > 0) {
       setViewedTabs(prev => {
         const newSet = new Set(prev)
         newSet.delete('orders')
@@ -99,7 +106,8 @@ export default function AdminPage() {
       })
     }
     setPrevOrdersCount(completedOrders.length)
-  }, [completedOrders.length])
+    setPrevPendingCount(pendingOrders.length)
+  }, [completedOrders.length, pendingOrders.length])
 
   useEffect(() => {
     if (waitingList.length > prevWaitingCount && prevWaitingCount > 0) {
@@ -148,6 +156,27 @@ export default function AdminPage() {
       console.error('Error fetching completed orders:', error)
     } finally {
       setIsLoadingOrders(false)
+    }
+  }
+
+  const fetchPendingOrders = async () => {
+    setIsLoadingPendingOrders(true)
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('payment_status', 'pending')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching pending orders:', error)
+      } else {
+        setPendingOrders(data || [])
+      }
+    } catch (error) {
+      console.error('Error fetching pending orders:', error)
+    } finally {
+      setIsLoadingPendingOrders(false)
     }
   }
 
@@ -315,6 +344,55 @@ export default function AdminPage() {
     }
   }
 
+  const handleSendFollowUp = async (order: BookingData) => {
+    if (!subscriptionLink) {
+      setEmailStatus({ 
+        type: 'error', 
+        message: 'Subscription link not configured. Please set it in Payment Links tab first.' 
+      })
+      setTimeout(() => setEmailStatus(null), 5000)
+      return
+    }
+
+    setSendingEmailTo(order.email)
+    setEmailStatus(null)
+
+    try {
+      const response = await fetch('/api/send-pending-followup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          bookingId: order.id,
+          subscriptionLink: subscriptionLink
+        })
+      })
+
+      if (response.ok) {
+        setEmailStatus({ 
+          type: 'success', 
+          message: `Follow-up email sent successfully to ${order.full_name}!` 
+        })
+        setTimeout(() => setEmailStatus(null), 5000)
+      } else {
+        const error = await response.json()
+        setEmailStatus({ 
+          type: 'error', 
+          message: `Failed to send email: ${error.error || 'Unknown error'}` 
+        })
+        setTimeout(() => setEmailStatus(null), 5000)
+      }
+    } catch (error) {
+      console.error('Error sending follow-up email:', error)
+      setEmailStatus({ 
+        type: 'error', 
+        message: 'Failed to send follow-up email. Please try again.' 
+      })
+      setTimeout(() => setEmailStatus(null), 5000)
+    } finally {
+      setSendingEmailTo(null)
+    }
+  }
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     setAuthError("")
@@ -470,9 +548,9 @@ export default function AdminPage() {
             <TabsTrigger value="orders" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Orders</span>
-              {completedOrders.length > 0 && !viewedTabs.has('orders') && (
+              {((pendingOrders.length > 0 || completedOrders.length > 0) && !viewedTabs.has('orders')) && (
                 <span className="ml-1 bg-accent text-accent-foreground text-xs px-2 py-0.5 rounded-full">
-                  {completedOrders.length}
+                  {pendingOrders.length + completedOrders.length}
                 </span>
               )}
             </TabsTrigger>
@@ -629,8 +707,135 @@ export default function AdminPage() {
           </Card>
           </TabsContent>
 
-          {/* Completed Orders Tab */}
+          {/* Orders Tab */}
           <TabsContent value="orders" className="space-y-6">
+          {/* Email Status Alert */}
+          {emailStatus && (
+            <Alert className={emailStatus.type === 'success' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}>
+              {emailStatus.type === 'success' ? (
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              ) : (
+                <XCircle className="h-4 w-4 text-red-600" />
+              )}
+              <AlertDescription className={emailStatus.type === 'success' ? 'text-green-800' : 'text-red-800'}>
+                {emailStatus.message}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Pending Orders Section */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-orange-500" />
+                    Pending Orders
+                  </CardTitle>
+                  <CardDescription>
+                    Customers who started but haven't completed payment
+                  </CardDescription>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={fetchPendingOrders}
+                  disabled={isLoadingPendingOrders}
+                >
+                  {isLoadingPendingOrders ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Refresh'
+                  )}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoadingPendingOrders ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : pendingOrders.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Calendar className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                  <p>No pending orders</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {pendingOrders.map((order) => (
+                    <div 
+                      key={order.id} 
+                      className="p-4 border-2 border-orange-200 rounded-lg hover:bg-orange-50/50 transition-colors bg-orange-50/30"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-bold text-lg">{order.full_name}</h3>
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-500 text-white">
+                              PENDING
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {order.business_name}
+                          </p>
+                        </div>
+                        <div className="text-right text-sm text-muted-foreground">
+                          <Calendar className="h-3 w-3 inline mr-1" />
+                          {new Date(order.created_at || '').toLocaleDateString()}
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2 text-sm mb-3">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Mail className="h-4 w-4" />
+                          <a href={`mailto:${order.email}`} className="hover:text-accent">
+                            {order.email}
+                          </a>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Phone className="h-4 w-4" />
+                          <a href={`tel:${order.phone}`} className="hover:text-accent">
+                            {order.phone}
+                          </a>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <MapPin className="h-4 w-4" />
+                          {order.location}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-2 border-t border-orange-200">
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => handleSendFollowUp(order)}
+                          disabled={sendingEmailTo === order.email || !subscriptionLink}
+                          className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                        >
+                          {sendingEmailTo === order.email ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="h-4 w-4 mr-2" />
+                              Send Follow-Up Email
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="text-center text-sm text-muted-foreground pt-2">
+                    Total: {pendingOrders.length} {pendingOrders.length === 1 ? 'pending order' : 'pending orders'}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Completed Orders Section */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
