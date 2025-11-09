@@ -32,6 +32,7 @@ function AccountContent() {
   const [isLoadingPortal, setIsLoadingPortal] = useState(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
+  const [buyoutLink, setBuyoutLink] = useState("")
 
   // Check for success parameter from Stripe portal return
   useEffect(() => {
@@ -43,6 +44,28 @@ function AccountContent() {
       window.history.replaceState({}, '', '/account')
     }
   }, [searchParams])
+
+  // Fetch payment links on mount
+  useEffect(() => {
+    fetchPaymentLinks()
+  }, [])
+
+  const fetchPaymentLinks = async () => {
+    try {
+      const response = await fetch('/api/payment-links')
+      const data = await response.json()
+      if (data.buyoutLink) {
+        setBuyoutLink(data.buyoutLink)
+      } else {
+        // Fallback to default if not set
+        setBuyoutLink("https://buy.stripe.com/14AdRafsueO70xr3RR0co05")
+      }
+    } catch (error) {
+      console.error('Error fetching payment links:', error)
+      // Fallback to default on error
+      setBuyoutLink("https://buy.stripe.com/14AdRafsueO70xr3RR0co05")
+    }
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -111,7 +134,11 @@ function AccountContent() {
 
   const handleBuyout = () => {
     // Open the Stripe payment link in a new tab
-    window.open("https://buy.stripe.com/14AdRafsueO70xr3RR0co05", "_blank")
+    if (buyoutLink) {
+      window.open(buyoutLink, "_blank")
+    } else {
+      toast.error("Payment link not configured. Please contact support.")
+    }
   }
 
   // Login Form View

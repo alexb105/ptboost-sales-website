@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -34,6 +34,7 @@ interface FormData {
 export function BookingForm({ open, onOpenChange }: BookingFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [subscriptionLink, setSubscriptionLink] = useState("")
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -47,6 +48,28 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
   })
 
   const totalSteps = 3
+
+  // Fetch payment links on mount
+  useEffect(() => {
+    fetchPaymentLinks()
+  }, [])
+
+  const fetchPaymentLinks = async () => {
+    try {
+      const response = await fetch('/api/payment-links')
+      const data = await response.json()
+      if (data.subscriptionLink) {
+        setSubscriptionLink(data.subscriptionLink)
+      } else {
+        // Fallback to default if not set
+        setSubscriptionLink("https://buy.stripe.com/eVqbJ2gwy49t5RL3RR0co03")
+      }
+    } catch (error) {
+      console.error('Error fetching payment links:', error)
+      // Fallback to default on error
+      setSubscriptionLink("https://buy.stripe.com/eVqbJ2gwy49t5RL3RR0co03")
+    }
+  }
 
   const updateFormData = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -128,7 +151,12 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
       localStorage.setItem('pending_booking_id', bookingId)
       
       // Redirect to Stripe subscription payment link
-      window.location.href = "https://buy.stripe.com/eVqbJ2gwy49t5RL3RR0co03"
+      if (subscriptionLink) {
+        window.location.href = subscriptionLink
+      } else {
+        toast.error("Payment link not configured. Please contact support.")
+        setIsSubmitting(false)
+      }
     } catch (error) {
       console.error("Error:", error)
       toast.error("Something went wrong. Please try again.")

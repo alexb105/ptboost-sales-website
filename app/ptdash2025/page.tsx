@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send } from "lucide-react"
+import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2 } from "lucide-react"
 import { createClient } from '@supabase/supabase-js'
 import type { BookingData, WaitingListEntry } from '@/lib/supabase-types'
 
@@ -40,6 +40,13 @@ export default function AdminPage() {
   const [sendingEmailTo, setSendingEmailTo] = useState<string | null>(null) // Track which email is being sent
   const [emailStatus, setEmailStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
   const [rememberMe, setRememberMe] = useState(true)
+  const [subscriptionLink, setSubscriptionLink] = useState("")
+  const [buyoutLink, setBuyoutLink] = useState("")
+  const [newSubscriptionLink, setNewSubscriptionLink] = useState("")
+  const [newBuyoutLink, setNewBuyoutLink] = useState("")
+  const [isLoadingLinks, setIsLoadingLinks] = useState(false)
+  const [linksUpdateStatus, setLinksUpdateStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [linksLastUpdated, setLinksLastUpdated] = useState<string | null>(null)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -74,6 +81,7 @@ export default function AdminPage() {
       fetchCapacityStatus()
       fetchCompletedOrders()
       fetchWaitingList()
+      fetchPaymentLinks()
     }
   }, [isAuthenticated])
 
@@ -160,6 +168,68 @@ export default function AdminPage() {
       console.error('Error fetching waiting list:', error)
     } finally {
       setIsLoadingWaitingList(false)
+    }
+  }
+
+  const fetchPaymentLinks = async () => {
+    try {
+      const response = await fetch('/api/payment-links')
+      const data = await response.json()
+      setSubscriptionLink(data.subscriptionLink || '')
+      setBuyoutLink(data.buyoutLink || '')
+      setNewSubscriptionLink(data.subscriptionLink || '')
+      setNewBuyoutLink(data.buyoutLink || '')
+      setLinksLastUpdated(data.updatedAt)
+    } catch (error) {
+      console.error('Error fetching payment links:', error)
+    }
+  }
+
+  const handleUpdatePaymentLinks = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoadingLinks(true)
+    setLinksUpdateStatus('idle')
+
+    try {
+      const response = await fetch('/api/payment-links', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          subscriptionLink: newSubscriptionLink.trim() || null,
+          buyoutLink: newBuyoutLink.trim() || null,
+          adminPassword 
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setSubscriptionLink(data.subscriptionLink || '')
+        setBuyoutLink(data.buyoutLink || '')
+        setNewSubscriptionLink(data.subscriptionLink || '')
+        setNewBuyoutLink(data.buyoutLink || '')
+        setLinksLastUpdated(data.updatedAt)
+        setLinksUpdateStatus('success')
+        setTimeout(() => setLinksUpdateStatus('idle'), 3000)
+      } else {
+        if (response.status === 401) {
+          setAuthError("Invalid password. Please log in again.")
+          setIsAuthenticated(false)
+          setPassword("")
+          setAdminPassword("")
+          localStorage.removeItem('adminPassword')
+        } else {
+          const errorData = await response.json()
+          setLinksUpdateStatus('error')
+          setTimeout(() => setLinksUpdateStatus('idle'), 5000)
+          alert(errorData.error || 'Failed to update payment links')
+        }
+      }
+    } catch (error) {
+      console.error('Error updating payment links:', error)
+      setLinksUpdateStatus('error')
+      setTimeout(() => setLinksUpdateStatus('idle'), 5000)
+    } finally {
+      setIsLoadingLinks(false)
     }
   }
 
@@ -392,7 +462,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="capacity" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Capacity</span>
@@ -414,6 +484,10 @@ export default function AdminPage() {
                   {waitingList.length}
                 </span>
               )}
+            </TabsTrigger>
+            <TabsTrigger value="payment-links" className="flex items-center gap-2">
+              <Link2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Payment Links</span>
             </TabsTrigger>
             <TabsTrigger value="info" className="flex items-center gap-2">
               <Info className="h-4 w-4" />
@@ -776,6 +850,139 @@ export default function AdminPage() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+          </TabsContent>
+
+          {/* Payment Links Tab */}
+          <TabsContent value="payment-links" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Link2 className="h-5 w-5" />
+                Stripe Payment Links
+              </CardTitle>
+              <CardDescription>
+                Manage your Stripe payment links for subscriptions and buyouts
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <form onSubmit={handleUpdatePaymentLinks} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="subscription-link" className="text-lg font-bold">
+                      Subscription Payment Link
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Used for monthly subscription payments (booking form)
+                    </p>
+                    <Input
+                      id="subscription-link"
+                      type="url"
+                      placeholder="https://buy.stripe.com/..."
+                      value={newSubscriptionLink}
+                      onChange={(e) => setNewSubscriptionLink(e.target.value)}
+                      className="text-base font-mono"
+                      disabled={isLoadingLinks}
+                    />
+                    {subscriptionLink && (
+                      <div className="text-sm text-muted-foreground">
+                        Current: <a href={subscriptionLink} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline break-all">{subscriptionLink}</a>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="buyout-link" className="text-lg font-bold">
+                      Buyout Payment Link
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Used for one-time website purchases
+                    </p>
+                    <Input
+                      id="buyout-link"
+                      type="url"
+                      placeholder="https://buy.stripe.com/..."
+                      value={newBuyoutLink}
+                      onChange={(e) => setNewBuyoutLink(e.target.value)}
+                      className="text-base font-mono"
+                      disabled={isLoadingLinks}
+                    />
+                    {buyoutLink && (
+                      <div className="text-sm text-muted-foreground">
+                        Current: <a href={buyoutLink} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline break-all">{buyoutLink}</a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button 
+                    type="submit" 
+                    disabled={isLoadingLinks}
+                    className="flex-1"
+                  >
+                    {isLoadingLinks ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="h-4 w-4 mr-2" />
+                        Update Links
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={fetchPaymentLinks}
+                    disabled={isLoadingLinks}
+                  >
+                    {isLoadingLinks ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'Refresh'
+                    )}
+                  </Button>
+                </div>
+              </form>
+
+              {linksLastUpdated && (
+                <div className="text-sm text-muted-foreground">
+                  Last updated: {new Date(linksLastUpdated).toLocaleString()}
+                </div>
+              )}
+
+              {linksUpdateStatus === 'success' && (
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Payment links updated successfully!
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {linksUpdateStatus === 'error' && (
+                <Alert variant="destructive">
+                  <XCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Failed to update payment links. Please check your URLs and try again.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm font-medium mb-2">How to get your Stripe Payment Links:</p>
+                <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                  <li>Go to your Stripe Dashboard</li>
+                  <li>Navigate to Products → Payment Links</li>
+                  <li>Copy the payment link URL (starts with https://buy.stripe.com/...)</li>
+                  <li>Paste it in the corresponding field above</li>
+                  <li>Click "Update Links" to save</li>
+                </ol>
+              </div>
             </CardContent>
           </Card>
           </TabsContent>
