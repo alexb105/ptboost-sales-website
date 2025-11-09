@@ -12,6 +12,7 @@ export interface BookingData {
   preferred_colors: string
   website_goals: string
   additional_notes: string
+  images?: string[] // Array of image URLs
   payment_status: 'pending' | 'completed' | 'failed'
   stripe_session_id?: string
   email_sent?: boolean

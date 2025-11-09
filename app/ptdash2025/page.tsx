@@ -9,7 +9,8 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2 } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User } from "lucide-react"
 import { createClient } from '@supabase/supabase-js'
 import type { BookingData, WaitingListEntry } from '@/lib/supabase-types'
 
@@ -49,6 +50,8 @@ export default function AdminPage() {
   const [isLoadingLinks, setIsLoadingLinks] = useState(false)
   const [linksUpdateStatus, setLinksUpdateStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [linksLastUpdated, setLinksLastUpdated] = useState<string | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<BookingData | null>(null)
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -899,7 +902,8 @@ export default function AdminPage() {
                         </div>
                       </div>
                       
-                      <div className="grid gap-2 text-sm">
+                      {/* Contact Info */}
+                      <div className="grid gap-2 text-sm mb-3">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Mail className="h-4 w-4" />
                           <a href={`mailto:${order.email}`} className="hover:text-accent">
@@ -912,6 +916,10 @@ export default function AdminPage() {
                             {order.phone}
                           </a>
                         </div>
+                      </div>
+
+                      {/* Order Info */}
+                      <div className="grid gap-2 text-sm mb-3">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <MapPin className="h-4 w-4" />
                           {order.location}
@@ -922,19 +930,19 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      {order.website_goals && (
-                        <div className="mt-3 p-3 bg-muted/50 rounded-md">
-                          <p className="text-sm font-medium mb-1">Website Goals:</p>
-                          <p className="text-sm text-muted-foreground">{order.website_goals}</p>
-                        </div>
-                      )}
-
-                      {order.additional_notes && (
-                        <div className="mt-2 p-3 bg-muted/50 rounded-md">
-                          <p className="text-sm font-medium mb-1">Additional Notes:</p>
-                          <p className="text-sm text-muted-foreground">{order.additional_notes}</p>
-                        </div>
-                      )}
+                      {/* View Full Details Button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedOrder(order)
+                          setDetailsDialogOpen(true)
+                        }}
+                        className="w-full mt-2"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Full Details
+                      </Button>
                     </div>
                   ))}
                   <div className="text-center text-sm text-muted-foreground pt-2">
@@ -1276,6 +1284,164 @@ export default function AdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Full Details Dialog */}
+      <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              {selectedOrder?.full_name} - Full Order Details
+            </DialogTitle>
+            <DialogDescription>
+              Complete customer information and uploaded images
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-6 mt-4">
+              {/* Personal Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold border-b pb-2">Personal Information</h3>
+                <div className="grid gap-3">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Full Name:</span>
+                    <span>{selectedOrder.full_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Email:</span>
+                    <a href={`mailto:${selectedOrder.email}`} className="text-accent hover:underline">
+                      {selectedOrder.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Phone:</span>
+                    <a href={`tel:${selectedOrder.phone}`} className="text-accent hover:underline">
+                      {selectedOrder.phone}
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Business Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold border-b pb-2">Business Information</h3>
+                <div className="grid gap-3">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Business Name:</span>
+                    <span>{selectedOrder.business_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Location:</span>
+                    <span>{selectedOrder.location}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Specialization:</span>
+                    <span>{selectedOrder.specialization}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Website Preferences */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold border-b pb-2">Website Preferences</h3>
+                <div className="grid gap-3">
+                  <div>
+                    <span className="font-medium">Preferred Colors:</span>
+                    <p className="text-muted-foreground mt-1">
+                      {selectedOrder.preferred_colors || 'Not specified'}
+                    </p>
+                  </div>
+                  {selectedOrder.website_goals && selectedOrder.website_goals !== 'Not specified' && (
+                    <div>
+                      <span className="font-medium">Website Goals:</span>
+                      <p className="text-muted-foreground mt-1 whitespace-pre-wrap">
+                        {selectedOrder.website_goals}
+                      </p>
+                    </div>
+                  )}
+                  {selectedOrder.additional_notes && selectedOrder.additional_notes !== 'Not specified' && (
+                    <div>
+                      <span className="font-medium">Additional Notes:</span>
+                      <p className="text-muted-foreground mt-1 whitespace-pre-wrap">
+                        {selectedOrder.additional_notes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Uploaded Images */}
+              {selectedOrder.images && selectedOrder.images.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2 flex items-center gap-2">
+                    <ImageIcon className="h-5 w-5" />
+                    Uploaded Images ({selectedOrder.images.length})
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {selectedOrder.images.map((imageUrl, index) => (
+                      <div key={index} className="relative group">
+                        <div className="aspect-square rounded-lg overflow-hidden border border-muted">
+                          <img
+                            src={imageUrl}
+                            alt={`Upload ${index + 1}`}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+                            onClick={() => window.open(imageUrl, '_blank')}
+                          />
+                        </div>
+                        <a
+                          href={imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                        >
+                          <span className="text-white text-sm">View Full Size</span>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Order Metadata */}
+              <div className="space-y-4 pt-4 border-t">
+                <h3 className="text-lg font-semibold border-b pb-2">Order Information</h3>
+                <div className="grid gap-3 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">Order Date:</span>
+                    <span>{new Date(selectedOrder.created_at || '').toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Payment Status:</span>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      selectedOrder.payment_status === 'completed' 
+                        ? 'bg-green-100 text-green-800' 
+                        : selectedOrder.payment_status === 'pending'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {selectedOrder.payment_status.toUpperCase()}
+                    </span>
+                  </div>
+                  {selectedOrder.website_owned && (
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm">
+                        ✓ WEBSITE OWNED
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

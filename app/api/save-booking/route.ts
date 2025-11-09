@@ -22,6 +22,7 @@ export async function POST(request: Request) {
         preferred_colors: formData.preferredColors || 'Not specified',
         website_goals: formData.websiteGoals || 'Not specified',
         additional_notes: formData.additionalNotes || 'Not specified',
+        images: formData.images || [],
         payment_status: 'pending',
         email_sent: false,
         subscription_password: subscriptionPassword

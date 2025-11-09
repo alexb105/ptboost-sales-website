@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, ArrowLeft, Loader2, User, Briefcase, Globe, MessageSquare } from "lucide-react"
+import { ArrowRight, ArrowLeft, Loader2, User, Briefcase, Globe, MessageSquare, Upload, X } from "lucide-react"
 import { toast } from "sonner"
 
 interface BookingFormProps {
@@ -29,6 +29,7 @@ interface FormData {
   preferredColors: string
   websiteGoals: string
   additionalNotes: string
+  images: string[] // Array of image URLs
 }
 
 export function BookingForm({ open, onOpenChange }: BookingFormProps) {
@@ -45,7 +46,12 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
     preferredColors: "",
     websiteGoals: "",
     additionalNotes: "",
+    images: [],
   })
+  const [uploadedImages, setUploadedImages] = useState<File[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB in bytes
+  const MAX_IMAGES = 10 // Maximum number of images
 
   const totalSteps = 3
 
@@ -124,6 +130,70 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
 
   const handleBack = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1))
+  }
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return
+
+    const filesArray = Array.from(files)
+    
+    // Check total number of images
+    if (uploadedImages.length + filesArray.length > MAX_IMAGES) {
+      toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+      return
+    }
+
+    // Validate file sizes and types
+    for (const file of filesArray) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`${file.name} exceeds the ${MAX_FILE_SIZE / (1024 * 1024)}MB limit. Please choose a smaller file.`)
+        return
+      }
+      if (!file.type.startsWith('image/')) {
+        toast.error(`${file.name} is not a valid image file`)
+        return
+      }
+    }
+
+    setIsUploading(true)
+    const imageUrls: string[] = []
+
+    try {
+      // Upload each image
+      for (const file of filesArray) {
+        const uploadFormData = new FormData()
+        uploadFormData.append('file', file)
+
+        const response = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: uploadFormData,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to upload ${file.name}`)
+        }
+
+        const { url } = await response.json()
+        imageUrls.push(url)
+      }
+
+      setUploadedImages(prev => [...prev, ...filesArray])
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...imageUrls] }))
+      toast.success(`Successfully uploaded ${filesArray.length} image(s)`)
+    } catch (error) {
+      console.error('Error uploading images:', error)
+      toast.error('Failed to upload images. Please try again.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index))
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }))
   }
 
   const handleSubmit = async () => {
@@ -322,6 +392,66 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
           onChange={(e) => updateFormData("additionalNotes", e.target.value)}
           className="min-h-24"
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="images">Upload Images (Optional)</Label>
+        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-accent/50 transition-colors">
+          <input
+            type="file"
+            id="images"
+            accept="image/*"
+            multiple
+            onChange={(e) => handleImageUpload(e.target.files)}
+            className="hidden"
+            disabled={isUploading || uploadedImages.length >= MAX_IMAGES}
+          />
+          <label
+            htmlFor="images"
+            className={`cursor-pointer flex flex-col items-center gap-2 ${isUploading || uploadedImages.length >= MAX_IMAGES ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <Upload className="h-8 w-8 text-muted-foreground" />
+            <div>
+              <span className="text-sm font-medium text-foreground">
+                Click to upload images
+              </span>
+              <p className="text-xs text-muted-foreground mt-1">
+                Maximum {MAX_IMAGES} images, {MAX_FILE_SIZE / (1024 * 1024)}MB per file
+              </p>
+            </div>
+          </label>
+        </div>
+
+        {isUploading && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Uploading images...
+          </div>
+        )}
+
+        {uploadedImages.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+            {uploadedImages.map((file, index) => (
+              <div key={index} className="relative group">
+                <div className="aspect-square rounded-lg overflow-hidden border border-muted">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Upload ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+                <p className="text-xs text-muted-foreground mt-1 truncate">{file.name}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
