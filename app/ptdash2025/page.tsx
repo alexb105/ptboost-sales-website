@@ -203,19 +203,32 @@ export default function AdminPage() {
 
     setIsDeletingOrder(true)
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('id', orderToDelete.id)
+      const response = await fetch('/api/delete-order', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          orderId: orderToDelete.id,
+          adminPassword 
+        })
+      })
 
-      if (error) {
-        console.error('Error deleting order:', error)
-        alert('Failed to delete order. Please try again.')
-      } else {
+      if (response.ok) {
         // Remove from local state
         setCompletedOrders(prev => prev.filter(order => order.id !== orderToDelete.id))
         setDeleteOrderDialogOpen(false)
         setOrderToDelete(null)
+      } else {
+        if (response.status === 401) {
+          setAuthError("Invalid password. Please log in again.")
+          setIsAuthenticated(false)
+          setPassword("")
+          setAdminPassword("")
+          localStorage.removeItem('adminPassword')
+          setDeleteOrderDialogOpen(false)
+        } else {
+          const errorData = await response.json()
+          alert(errorData.error || 'Failed to delete order. Please try again.')
+        }
       }
     } catch (error) {
       console.error('Error deleting order:', error)
