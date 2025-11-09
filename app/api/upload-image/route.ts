@@ -49,8 +49,33 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Error uploading to Supabase Storage:', error)
+      
+      // Provide more specific error messages
+      if (error.message?.includes('Bucket not found') || error.message?.includes('does not exist')) {
+        return NextResponse.json(
+          { 
+            error: 'Storage bucket not configured. Please create the "booking-images" bucket in Supabase Storage.',
+            details: error.message
+          },
+          { status: 500 }
+        )
+      }
+      
+      if (error.message?.includes('new row violates row-level security policy')) {
+        return NextResponse.json(
+          { 
+            error: 'Storage bucket policies not configured. Please set up anonymous upload policies.',
+            details: error.message
+          },
+          { status: 500 }
+        )
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to upload image' },
+        { 
+          error: 'Failed to upload image',
+          details: error.message || 'Unknown error'
+        },
         { status: 500 }
       )
     }
@@ -66,8 +91,12 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('Error in upload-image:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to upload image' },
+      { 
+        error: 'Failed to upload image',
+        details: errorMessage
+      },
       { status: 500 }
     )
   }

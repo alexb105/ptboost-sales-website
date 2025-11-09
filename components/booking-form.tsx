@@ -169,11 +169,17 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
           body: uploadFormData,
         })
 
+        const responseData = await response.json()
+
         if (!response.ok) {
-          throw new Error(`Failed to upload ${file.name}`)
+          const errorMessage = responseData.error || responseData.details || `Failed to upload ${file.name}`
+          throw new Error(errorMessage)
         }
 
-        const { url } = await response.json()
+        const { url } = responseData
+        if (!url) {
+          throw new Error(`No URL returned for ${file.name}`)
+        }
         imageUrls.push(url)
       }
 
@@ -182,7 +188,13 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
       toast.success(`Successfully uploaded ${filesArray.length} image(s)`)
     } catch (error) {
       console.error('Error uploading images:', error)
-      toast.error('Failed to upload images. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload images. Please try again.'
+      toast.error(errorMessage)
+      
+      // If it's a configuration error, show a more helpful message
+      if (errorMessage.includes('Storage bucket') || errorMessage.includes('policies')) {
+        toast.error('Image upload is not configured. Please contact support.', { duration: 6000 })
+      }
     } finally {
       setIsUploading(false)
     }
