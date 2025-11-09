@@ -240,8 +240,8 @@ export function BenefitsSection() {
         {/* Auto-Scrolling Carousel Container */}
         <div className="relative mb-12 overflow-hidden">
           {/* Gradient fade on edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background via-background/40 md:via-background/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background via-background/40 md:via-background/80 to-transparent z-10 pointer-events-none" />
           
           {/* Draggable Infinite Scrolling Carousel */}
           <div
