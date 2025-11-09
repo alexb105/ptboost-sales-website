@@ -214,47 +214,90 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true })
     }
 
-    // Store the Stripe customer ID in the most recent booking for this email
-    // Try both pending and completed statuses (in case success page already marked it)
-    if (session.customer && session.customer_details?.email) {
+    // Update the existing booking for this customer
+    // Find the most recent pending booking and update it to completed with customer ID
+    if (session.customer_details?.email) {
       try {
-        // First try to update pending bookings
-        const { data: pendingBooking } = await supabase
+        const customerEmail = session.customer_details.email.trim()
+        console.log(`Looking for booking to update for email: ${customerEmail}`)
+        
+        // First, find the most recent pending booking for this email
+        const { data: pendingBookings, error: fetchError } = await supabase
           .from('bookings')
-          .update({
-            stripe_customer_id: session.customer as string,
-            stripe_session_id: session.id
-          })
-          .eq('email', session.customer_details.email)
+          .select('id, payment_status, stripe_customer_id')
+          .eq('email', customerEmail)
           .eq('payment_status', 'pending')
           .order('created_at', { ascending: false })
           .limit(1)
-          .select()
 
-        // If no pending booking found, update completed bookings
-        if (!pendingBooking || pendingBooking.length === 0) {
-          const { error: completedError } = await supabase
+        if (fetchError) {
+          console.error('Error fetching pending booking:', fetchError)
+        } else if (pendingBookings && pendingBookings.length > 0) {
+          // Found a pending booking - update it to completed with customer ID
+          const bookingId = pendingBookings[0].id
+          console.log(`Found pending booking ${bookingId}, updating to completed`)
+          
+          const updateData: any = {
+            payment_status: 'completed',
+            stripe_session_id: session.id,
+            updated_at: new Date().toISOString()
+          }
+          
+          // Add customer ID if available
+          if (session.customer) {
+            updateData.stripe_customer_id = session.customer as string
+          }
+          
+          const { error: updateError } = await supabase
             .from('bookings')
-            .update({
-              stripe_customer_id: session.customer as string,
-              stripe_session_id: session.id
-            })
-            .eq('email', session.customer_details.email)
-            .eq('payment_status', 'completed')
-            .is('stripe_customer_id', null) // Only update if customer_id is null
-            .order('created_at', { ascending: false })
-            .limit(1)
+            .update(updateData)
+            .eq('id', bookingId)
 
-          if (completedError) {
-            console.error('Error updating completed booking customer ID:', completedError)
+          if (updateError) {
+            console.error('Error updating booking to completed:', updateError)
           } else {
-            console.log(`Stored customer ID ${session.customer} for completed booking: ${session.customer_details.email}`)
+            console.log(`✅ Updated booking ${bookingId} to completed with customer ID`)
           }
         } else {
-          console.log(`Stored customer ID ${session.customer} for pending booking: ${session.customer_details.email}`)
+          // No pending booking found - check if there's a completed one that needs customer ID
+          console.log('No pending booking found, checking for completed booking that needs customer ID')
+          
+          if (session.customer) {
+            const { data: completedBookings } = await supabase
+              .from('bookings')
+              .select('id')
+              .eq('email', customerEmail)
+              .eq('payment_status', 'completed')
+              .is('stripe_customer_id', null)
+              .order('created_at', { ascending: false })
+              .limit(1)
+
+            if (completedBookings && completedBookings.length > 0) {
+              const bookingId = completedBookings[0].id
+              console.log(`Found completed booking ${bookingId} without customer ID, updating`)
+              
+              const { error: updateError } = await supabase
+                .from('bookings')
+                .update({
+                  stripe_customer_id: session.customer as string,
+                  stripe_session_id: session.id,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', bookingId)
+
+              if (updateError) {
+                console.error('Error updating customer ID for completed booking:', updateError)
+              } else {
+                console.log(`✅ Updated customer ID for booking ${bookingId}`)
+              }
+            } else {
+              console.warn(`⚠️ No booking found for email: ${customerEmail}`)
+              console.warn('This might mean the booking was created with a different email or does not exist yet')
+            }
+          }
         }
       } catch (error) {
-        console.error('Error storing customer ID:', error)
+        console.error('Error updating booking:', error)
       }
     }
 
@@ -296,26 +339,45 @@ export async function POST(request: Request) {
     console.log('Subscription created:', subscription.id)
     console.log('Customer ID:', subscription.customer)
 
-    // Try to find and update booking with this customer ID
+    // Try to find and update existing booking with this customer ID
     if (subscription.customer) {
       try {
         // Get customer details to find by email
         const customer = await stripe.customers.retrieve(subscription.customer as string)
         if (customer && !customer.deleted && 'email' in customer && customer.email) {
-          const { error: updateError } = await supabase
+          const customerEmail = customer.email.trim()
+          
+          // Find the most recent booking for this email (pending or completed)
+          const { data: bookings } = await supabase
             .from('bookings')
-            .update({
-              stripe_customer_id: subscription.customer as string
-            })
-            .eq('email', customer.email)
-            .is('stripe_customer_id', null) // Only update if null
+            .select('id, stripe_customer_id')
+            .eq('email', customerEmail)
             .order('created_at', { ascending: false })
             .limit(1)
 
-          if (updateError) {
-            console.error('Error updating customer ID from subscription:', updateError)
+          if (bookings && bookings.length > 0) {
+            const bookingId = bookings[0].id
+            
+            // Only update if customer ID is missing
+            if (!bookings[0].stripe_customer_id) {
+              const { error: updateError } = await supabase
+                .from('bookings')
+                .update({
+                  stripe_customer_id: subscription.customer as string,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', bookingId)
+
+              if (updateError) {
+                console.error('Error updating customer ID from subscription:', updateError)
+              } else {
+                console.log(`✅ Updated customer ID ${subscription.customer} for booking ${bookingId} (${customerEmail})`)
+              }
+            } else {
+              console.log(`Booking ${bookingId} already has customer ID, skipping update`)
+            }
           } else {
-            console.log(`Stored customer ID ${subscription.customer} from subscription for: ${customer.email}`)
+            console.warn(`⚠️ No booking found for email: ${customerEmail} when processing subscription.created`)
           }
         }
       } catch (error) {
