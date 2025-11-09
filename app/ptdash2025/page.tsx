@@ -153,7 +153,19 @@ export default function AdminPage() {
       if (error) {
         console.error('Error fetching completed orders:', error)
       } else {
-        setCompletedOrders(data || [])
+        // Ensure images array is properly parsed (handle PostgreSQL array format)
+        const processedData = (data || []).map(order => ({
+          ...order,
+          images: Array.isArray(order.images) ? order.images : 
+                  typeof order.images === 'string' ? JSON.parse(order.images || '[]') : 
+                  order.images || []
+        }))
+        console.log('Fetched orders with images:', processedData.map(o => ({ 
+          name: o.full_name, 
+          imageCount: o.images?.length || 0,
+          images: o.images 
+        })))
+        setCompletedOrders(processedData)
       }
     } catch (error) {
       console.error('Error fetching completed orders:', error)
@@ -1355,7 +1367,7 @@ export default function AdminPage() {
               </div>
 
               {/* Uploaded Images */}
-              {selectedOrder.images && selectedOrder.images.length > 0 && (
+              {selectedOrder.images && Array.isArray(selectedOrder.images) && selectedOrder.images.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b pb-2">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -1401,12 +1413,27 @@ export default function AdminPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {selectedOrder.images.map((imageUrl, index) => (
                       <div key={index} className="relative group">
-                        <div className="aspect-square rounded-lg overflow-hidden border border-muted">
+                        <div className="aspect-square rounded-lg overflow-hidden border border-muted bg-muted/50">
                           <img
                             src={imageUrl}
                             alt={`Upload ${index + 1}`}
                             className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
                             onClick={() => window.open(imageUrl, '_blank')}
+                            onError={(e) => {
+                              console.error('Failed to load image:', imageUrl)
+                              const target = e.target as HTMLImageElement
+                              target.style.display = 'none'
+                              const parent = target.parentElement
+                              if (parent) {
+                                parent.innerHTML = `
+                                  <div class="flex items-center justify-center h-full text-muted-foreground text-sm p-2 text-center">
+                                    Image failed to load<br/>
+                                    <a href="${imageUrl}" target="_blank" class="text-accent hover:underline mt-1">Open URL</a>
+                                  </div>
+                                `
+                              }
+                            }}
+                            loading="lazy"
                           />
                         </div>
                         <a
