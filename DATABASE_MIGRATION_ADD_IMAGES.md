@@ -21,7 +21,7 @@ You also need to create a storage bucket for booking images:
 
 1. Go to **Storage** in your Supabase dashboard
 2. Click **New bucket**
-3. Name it `booking-images`
+3. Name it `order-images`
 4. Set it to **Public** (so images can be accessed via URL)
 5. Click **Create bucket**
 
@@ -34,19 +34,19 @@ After creating the bucket, set up the following policies in **Storage** → **Po
 CREATE POLICY "Allow anonymous uploads"
 ON storage.objects FOR INSERT
 TO anon
-WITH CHECK (bucket_id = 'booking-images');
+WITH CHECK (bucket_id = 'order-images');
 
 -- Allow anonymous reads (public access)
 CREATE POLICY "Allow anonymous reads"
 ON storage.objects FOR SELECT
 TO anon
-USING (bucket_id = 'booking-images');
+USING (bucket_id = 'order-images');
 
 -- Allow anonymous deletes (optional, for cleanup)
 CREATE POLICY "Allow anonymous deletes"
 ON storage.objects FOR DELETE
 TO anon
-USING (bucket_id = 'booking-images');
+USING (bucket_id = 'order-images');
 ```
 
 ## Verification
@@ -54,6 +54,6 @@ USING (bucket_id = 'booking-images');
 After running the migration:
 
 1. Check that the `images` column exists in the `bookings` table
-2. Verify the storage bucket `booking-images` exists and is public
+2. Verify the storage bucket `order-images` exists and is public
 3. Test uploading an image through the booking form
 

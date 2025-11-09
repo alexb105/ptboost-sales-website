@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
-      .from('booking-images')
+      .from('order-images')
       .upload(filePath, buffer, {
         contentType: file.type,
         upsert: false,
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       if (error.message?.includes('Bucket not found') || error.message?.includes('does not exist')) {
         return NextResponse.json(
           { 
-            error: 'Storage bucket not configured. Please create the "booking-images" bucket in Supabase Storage.',
+            error: 'Storage bucket not configured. Please create the "order-images" bucket in Supabase Storage.',
             details: error.message
           },
           { status: 500 }
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from('booking-images')
+      .from('order-images')
       .getPublicUrl(filePath)
 
     return NextResponse.json({ 
