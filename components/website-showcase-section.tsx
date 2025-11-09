@@ -17,7 +17,7 @@ const caseStudies = {
       { metric: "24/7", label: "Working For You", icon: Users },
       { metric: "7 Days", label: "From Start to Live", icon: Calendar },
     ],
-    testimonial: "This website completely transformed my business. The psychology-driven design converts visitors automatically, and the mobile-first approach means clients can book me from anywhere. The smart lead capture system collects all their details — I wake up to new enquiries every morning.",
+    testimonial: "This website completely transformed my business. The psychology-driven design converts visitors automatically, and the mobile-first approach means clients can contact me from anywhere. The smart lead capture system collects all their details — I wake up to new enquiries every morning.",
     beforeAfter: {
       before: "Relying only on Instagram and word-of-mouth. Had to DM people constantly and chase leads. No professional way to capture client details.",
       after: "A conversion-optimized website with smart lead capture that works 24/7. Clients find me through Google, fill out the form, and I follow up. Simple.",
@@ -49,7 +49,7 @@ const caseStudies = {
       "Hosting & maintenance included — everything for £7.99/month",
       "Mobile-first design — 90% of my clients visit on phones",
       "Lead capture system collects client details automatically",
-      "Psychology-driven layout turns browsers into bookers",
+      "Psychology-driven layout turns browsers into leads",
     ],
   },
   style3: {
@@ -69,7 +69,7 @@ const caseStudies = {
       after: "A bold, mobile-optimized website that's on-brand. Smart lead capture qualifies prospects. Lightning-fast load times. Free hosting means it costs nothing to run.",
     },
     features: [
-      "7-day turnaround — live and booking clients in a week",
+      "7-day turnaround — live and getting leads in a week",
       "Psychology-driven design pre-qualifies serious clients",
       "Lightning-fast & secure — built with modern tech",
       "Hosting & maintenance included — everything for £7.99/month",

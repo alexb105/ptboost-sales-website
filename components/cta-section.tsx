@@ -494,7 +494,7 @@ export function CTASection() {
                                           </p>
                                           <p className="text-sm text-muted-foreground leading-relaxed">
                                             New spots typically open within 1-2 weeks as projects are completed. Check back soon, 
-                                            or follow me on social media for announcements when bookings reopen.
+                                            or follow me on social media for announcements when spots reopen.
                                           </p>
                                         </>
                                       ) : (

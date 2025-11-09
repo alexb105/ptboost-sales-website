@@ -494,7 +494,7 @@ export async function POST(request: Request) {
                   <!-- CTA Section -->
                   <div class="cta-section">
                     <p style="font-size: 17px; font-weight: 700; color: #111827; margin-bottom: 20px;">
-                      Ready to stop relying on Instagram and start booking clients on autopilot?
+                      Ready to stop relying on Instagram and start getting more leads on autopilot?
                     </p>
                     <a href="${websiteLink}" class="cta-button">
                       🚀 Yes, Claim My £59 Website Now

@@ -37,7 +37,7 @@ export function HeroSection() {
                 Stop Chasing The Algorithm.
               </span>
               <span className="block text-foreground">
-                Start Booking Clients While You Sleep.
+                Start Getting More Leads While You Sleep.
               </span>
             </h1>
 

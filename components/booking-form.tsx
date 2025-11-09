@@ -388,7 +388,7 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
         <Label htmlFor="websiteGoals">Main Website Goals (Optional)</Label>
         <Textarea
           id="websiteGoals"
-          placeholder="e.g., Get more client bookings, showcase my transformation results, establish credibility..."
+          placeholder="e.g., Get more leads, showcase my transformation results, establish credibility..."
           value={formData.websiteGoals}
           onChange={(e) => updateFormData("websiteGoals", e.target.value)}
           className="min-h-24"
