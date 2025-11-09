@@ -353,9 +353,6 @@ export async function POST(request: Request) {
                       <p><strong>Within 2 days:</strong> You can expect your first website demo!</p>
                     </li>
                     <li>
-                      <p><strong>Design concepts:</strong> I'll create initial design concepts based on your preferences</p>
-                    </li>
-                    <li>
                       <p><strong>Launch ready:</strong> Your custom website will be live and attracting clients within 7 days!</p>
                     </li>
                   </ol>
@@ -372,7 +369,7 @@ export async function POST(request: Request) {
                   <p class="password-note">
                     💡 Use this password to cancel, update payment methods, or view invoices
                   </p>
-                  <a href="${(process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/manage-subscription" class="button">
+                  <a style='color: white;' href="${(process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/manage-subscription" class="button">
                     Manage Subscription →
                   </a>
                 </div>

@@ -15,6 +15,7 @@ export interface BookingData {
   payment_status: 'pending' | 'completed' | 'failed'
   stripe_session_id?: string
   email_sent?: boolean
+  website_owned?: boolean
 }
 
 export interface CapacityStatus {

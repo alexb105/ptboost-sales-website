@@ -601,8 +601,15 @@ export default function AdminPage() {
                       className="p-4 border rounded-lg hover:bg-accent/5 transition-colors"
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="font-bold text-lg">{order.full_name}</h3>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-bold text-lg">{order.full_name}</h3>
+                            {order.website_owned && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm">
+                                ✓ WEBSITE OWNED
+                              </span>
+                            )}
+                          </div>
                           <p className="text-sm text-muted-foreground">
                             {order.business_name}
                           </p>
