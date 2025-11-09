@@ -212,6 +212,26 @@ export function CTASection() {
                                   <p className="text-xs text-muted-foreground leading-relaxed">Live and attracting clients in a week or less — guaranteed</p>
                                 </div>
                               </div>
+
+                              <div className="flex items-start gap-3 group">
+                                <div className="rounded-full bg-gradient-to-br from-accent to-orange-500 p-1.5 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform">
+                                  <Check className="h-4 w-4 text-white stroke-[3]" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-foreground text-sm">Built-in AI Website Editor</p>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">Make content changes without any technical knowledge — just tell the AI what you want</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3 group">
+                                <div className="rounded-full bg-gradient-to-br from-accent to-orange-500 p-1.5 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform">
+                                  <Check className="h-4 w-4 text-white stroke-[3]" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-foreground text-sm">SEO Optimized</p>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">Get found locally on Google when people search for trainers in your area</p>
+                                </div>
+                              </div>
                             </div>
 
                             {/* Real Guarantee */}

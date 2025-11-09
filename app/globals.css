@@ -245,4 +245,23 @@
   .animate-bounce-slow {
     animation: bounce-slow 2s infinite;
   }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-50% - 12px));
+    }
+  }
+  
+  .animate-scroll {
+    animation: scroll 60s linear infinite;
+    display: flex;
+    width: fit-content;
+  }
+  
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
 }

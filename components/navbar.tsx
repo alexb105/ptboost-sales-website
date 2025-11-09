@@ -15,9 +15,8 @@ export function Navbar() {
     }
   }
 
-  const scrollToForm = () => {
-    document.getElementById("lead-form")?.scrollIntoView({ behavior: "smooth" })
-    setIsMenuOpen(false)
+  const scrollToCTA = () => {
+    scrollToSection("cta")
   }
 
   return (
@@ -55,19 +54,13 @@ export function Navbar() {
               Process
             </button>
             <button
-              onClick={() => scrollToSection("cta")}
+              onClick={() => scrollToSection("faq")}
               className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors"
             >
-              Pricing
-            </button>
-            <button
-              onClick={() => scrollToSection("testimonials")}
-              className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors"
-            >
-              Testimonials
+              FAQ
             </button>
             <Button
-              onClick={scrollToForm}
+              onClick={scrollToCTA}
               className="bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white font-bold hover:scale-105 transition-transform shadow-lg"
             >
               Get Started
@@ -111,19 +104,13 @@ export function Navbar() {
                 Process
               </button>
               <button
-                onClick={() => scrollToSection("cta")}
+                onClick={() => scrollToSection("faq")}
                 className="text-left px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/10 rounded-lg transition-colors"
               >
-                Pricing
-              </button>
-              <button
-                onClick={() => scrollToSection("testimonials")}
-                className="text-left px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-foreground hover:bg-accent/10 rounded-lg transition-colors"
-              >
-                Testimonials
+                FAQ
               </button>
               <Button
-                onClick={scrollToForm}
+                onClick={scrollToCTA}
                 className="bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white font-bold shadow-lg"
               >
                 Get Started

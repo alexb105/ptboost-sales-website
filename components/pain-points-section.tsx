@@ -5,34 +5,44 @@ import { Button } from "@/components/ui/button"
 
 const painPoints = [
   {
-    problem: "You're stuck in DM prison",
-    reality: "Hours spent cold messaging local leads, chasing replies, getting ghosted. Zero automation.",
-    solution: "Your website works 24/7 — capturing interested local clients with a contact form while you train or sleep."
+    problem: "You're working hard but still invisible.",
+    reality: "You're training clients all week, posting online, and pushing yourself — yet people in your area don't even know you exist. You're not ranking, not being found, and it's killing your growth.",
+    solution: "A professional website gets you found locally on Google. When people search 'personal trainer near me,' you'll show up — bringing in clients who are actively looking for exactly what you offer."
   },
   {
-    problem: "You look amateur without a professional site",
-    reality: "Linktree + Google Forms + scattered socials = unprofessional. Local clients can't figure out your offer or how to train with you.",
-    solution: "One clean, professional site showcasing your packages, results, and an easy contact form. Instant credibility."
+    problem: "You're losing clients to trainers who look more professional.",
+    reality: "They're not better coaches — they just look like they run real businesses. Without a website that instantly builds trust, you're missing out on the clients you deserve.",
+    solution: "One clean, professional site showcasing your packages, results, and expertise. Instant credibility that makes potential clients choose you over competitors."
   },
   {
-    problem: "You're relying 100% on social media",
-    reality: "Algorithm tanks your reach? Your leads disappear. One shadowban = zero new clients walking through your door.",
-    solution: "Own your presence. A professional website means people can find and contact you even if Instagram dies tomorrow."
+    problem: "You're tired of relying on social media for everything.",
+    reality: "Leads, messages, payments — all on one platform you don't control. When your engagement drops, your income drops. You need a place that's yours — stable, reliable, and built to convert.",
+    solution: "Own your presence. A professional website means people can find and contact you even if Instagram dies tomorrow. Your business, your rules, your leads — 24/7."
   },
   {
-    problem: "You're invisible on Google",
-    reality: "People in your area search 'personal trainer near me' and find everyone but you. No website = no local discovery.",
-    solution: "A professional website gets you found locally on Google, bringing in clients who are actively looking for a trainer in your area."
+    problem: "You're doing everything yourself — and burning out.",
+    reality: "Training, admin, DMs, content, invoices — you're doing it all. You don't have time to figure out web design or marketing systems. You need something that just works, without draining your energy.",
+    solution: "Done-for-you website service. No learning curve, no tech headaches. Just share your details, and we'll have you live in 7 days. Focus on training while your website works for you."
   },
   {
-    problem: "Interested clients slip away",
-    reality: "People find you on Instagram but messaging feels awkward. They hesitate, scroll past, and book with someone else.",
-    solution: "A simple contact form makes it easy for them to reach out. Collect their details, follow up, and get them training."
+    problem: "You're getting interest, but can't convert it into paying clients.",
+    reality: "People ask questions, seem keen, then vanish. Without a structured, professional space that guides them to book, you're leaving money on the table every day.",
+    solution: "A psychology-driven website with smart lead capture and clear calls-to-action. Guide visitors from interest to booking with a professional system that converts browsers into clients."
   },
   {
-    problem: "You can't charge what you're worth",
-    reality: "Without a professional site showing your expertise and client results, people assume you're just starting out and lowball you.",
-    solution: "A polished website showcasing testimonials, transformations, and clear packages positions you as the premium choice."
+    problem: "You're undercharging because you don't look like a premium trainer.",
+    reality: "You know your service is worth more, but potential clients don't see it. A professional image builds authority — and makes people willing to pay your true value.",
+    solution: "A polished website showcasing testimonials, transformations, and clear packages positions you as the premium choice. Build the authority that justifies your true worth."
+  },
+  {
+    problem: "You can't justify spending £2,000–£5,000 on a website.",
+    reality: "You know you need one, but the price is ridiculous. You're stuck between 'too expensive' and 'too technical.' You need something affordable, done-for-you, and built for real trainers — not big agencies.",
+    solution: "Just £7.99/month — no massive upfront cost. Everything included: website, hosting, maintenance. Built specifically for trainers who need professional results without agency prices."
+  },
+  {
+    problem: "You're stuck doing admin when you should be growing.",
+    reality: "You're sending the same info, following up manually, juggling leads — all while your competitors' systems do it automatically. You're working hard, but not efficiently.",
+    solution: "Smart lead capture system collects client details automatically. Your website handles the initial contact, so you can focus on what you do best — transforming clients."
   }
 ]
 
