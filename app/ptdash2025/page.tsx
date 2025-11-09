@@ -882,51 +882,29 @@ export default function AdminPage() {
                       key={order.id} 
                       className="p-4 border rounded-lg hover:bg-accent/5 transition-colors"
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold text-lg">{order.full_name}</h3>
-                            {order.website_owned && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm">
-                                ✓ WEBSITE OWNED
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            {order.business_name}
-                          </p>
-                        </div>
-                        <div className="text-right text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3 inline mr-1" />
-                          {new Date(order.created_at || '').toLocaleDateString()}
-                        </div>
+                      {/* Name */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <h3 className="font-bold text-lg">{order.full_name}</h3>
+                        {order.website_owned && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm">
+                            ✓ WEBSITE OWNED
+                          </span>
+                        )}
                       </div>
                       
                       {/* Contact Info */}
-                      <div className="grid gap-2 text-sm mb-3">
+                      <div className="space-y-2 text-sm mb-3">
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Mail className="h-4 w-4" />
-                          <a href={`mailto:${order.email}`} className="hover:text-accent">
+                          <Mail className="h-4 w-4 flex-shrink-0" />
+                          <a href={`mailto:${order.email}`} className="hover:text-accent truncate">
                             {order.email}
                           </a>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Phone className="h-4 w-4" />
+                          <Phone className="h-4 w-4 flex-shrink-0" />
                           <a href={`tel:${order.phone}`} className="hover:text-accent">
                             {order.phone}
                           </a>
-                        </div>
-                      </div>
-
-                      {/* Order Info */}
-                      <div className="grid gap-2 text-sm mb-3">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <MapPin className="h-4 w-4" />
-                          {order.location}
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Briefcase className="h-4 w-4" />
-                          {order.specialization}
                         </div>
                       </div>
 
@@ -938,7 +916,7 @@ export default function AdminPage() {
                           setSelectedOrder(order)
                           setDetailsDialogOpen(true)
                         }}
-                        className="w-full mt-2"
+                        className="w-full"
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         View Full Details
