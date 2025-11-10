@@ -21,12 +21,12 @@ export async function GET(request: Request) {
       'customer_booking_confirmation': {
         file: 'app/api/send-booking-email/route.ts',
         startPattern: 'const customerHtml = customerTemplate?.html || `',
-        endPattern: '`\n    \n    const customerEmail = await resend.emails.send'
+        endPattern: '`\n    \n    const customerEmail = await resend.emails.send({'
       },
       'developer_new_booking': {
         file: 'app/api/send-booking-email/route.ts',
         startPattern: 'const developerHtml = developerTemplate?.html || `',
-        endPattern: '`\n    \n    const { data, error } = await resend.emails.send'
+        endPattern: '`\n    \n    const { data, error } = await resend.emails.send({'
       },
       'customer_pending_followup': {
         file: 'app/api/send-pending-followup/route.ts',
@@ -61,13 +61,26 @@ export async function GET(request: Request) {
     try {
       // Read the route file
       const filePath = join(process.cwd(), templateInfo.file)
-      const fileContent = await readFile(filePath, 'utf-8')
+      console.log('Reading file:', filePath)
+      
+      let fileContent: string
+      try {
+        fileContent = await readFile(filePath, 'utf-8')
+      } catch (readError) {
+        console.error('Error reading file:', readError)
+        return NextResponse.json(
+          { error: `Could not read file: ${templateInfo.file}`, details: readError instanceof Error ? readError.message : String(readError) },
+          { status: 500 }
+        )
+      }
       
       // Find the start and end positions
       const startIndex = fileContent.indexOf(templateInfo.startPattern)
       if (startIndex === -1) {
+        console.error('Start pattern not found:', templateInfo.startPattern)
+        console.error('File content preview:', fileContent.substring(0, 500))
         return NextResponse.json(
-          { error: 'Could not find start pattern in route file' },
+          { error: 'Could not find start pattern in route file', pattern: templateInfo.startPattern },
           { status: 500 }
         )
       }
@@ -75,8 +88,10 @@ export async function GET(request: Request) {
       const htmlStart = startIndex + templateInfo.startPattern.length
       const endIndex = fileContent.indexOf(templateInfo.endPattern, htmlStart)
       if (endIndex === -1) {
+        console.error('End pattern not found:', templateInfo.endPattern)
+        console.error('Content after start:', fileContent.substring(htmlStart, htmlStart + 200))
         return NextResponse.json(
-          { error: 'Could not find end pattern in route file' },
+          { error: 'Could not find end pattern in route file', pattern: templateInfo.endPattern },
           { status: 500 }
         )
       }
