@@ -31,7 +31,11 @@ export async function GET(request: Request) {
       )
     }
 
-    return NextResponse.json({ templates: data || [] })
+    // If fetching a single template and it has empty HTML, we'll let the frontend handle populating it
+    // The frontend can check the hardcoded fallbacks in the email routes
+    const result = Array.isArray(data) ? data : (data ? [data] : [])
+    
+    return NextResponse.json({ templates: result })
   } catch (error) {
     console.error('Error in GET email templates:', error)
     return NextResponse.json(

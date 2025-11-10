@@ -64,6 +64,7 @@ export default function AdminPage() {
   const [editSubject, setEditSubject] = useState("")
   const [editHtmlContent, setEditHtmlContent] = useState("")
   const [isSavingTemplate, setIsSavingTemplate] = useState(false)
+  const [isSendingTestEmail, setIsSendingTestEmail] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -613,6 +614,8 @@ export default function AdminPage() {
       const response = await fetch('/api/email-templates')
       const data = await response.json()
       if (data.templates) {
+        // For templates with empty HTML, we'll populate them when editing
+        // The actual HTML will be loaded from the hardcoded fallbacks in the email routes
         setEmailTemplates(data.templates)
       }
     } catch (error) {
@@ -622,11 +625,70 @@ export default function AdminPage() {
     }
   }
 
-  const handleEditTemplate = (template: any) => {
+  const handleEditTemplate = async (template: any) => {
     setEditingTemplate(template)
     setEditSubject(template.subject || '')
-    setEditHtmlContent(template.html_content || '')
+    
+    // Get HTML content from database
+    let htmlContent = template.html_content || ''
+    
+    // If HTML is empty, fetch it from the hardcoded fallback in the email routes
+    if (!htmlContent || htmlContent.trim() === '') {
+      try {
+        const response = await fetch(`/api/get-template-fallback?key=${template.template_key}`)
+        const data = await response.json()
+        if (data.html) {
+          htmlContent = data.html
+        }
+      } catch (error) {
+        console.error('Error fetching template fallback:', error)
+        // Leave empty if we can't fetch it
+      }
+    }
+    
+    setEditHtmlContent(htmlContent)
     setEditDialogOpen(true)
+  }
+
+  const handleSendTestEmail = async () => {
+    if (!editingTemplate || !editSubject || !editHtmlContent) {
+      alert('Subject and HTML content are required')
+      return
+    }
+
+    setIsSendingTestEmail(true)
+    try {
+      const response = await fetch('/api/test-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateKey: editingTemplate.template_key,
+          subject: editSubject,
+          htmlContent: editHtmlContent,
+          adminPassword
+        })
+      })
+
+      if (response.ok) {
+        toast.success('Test email sent successfully to alexander.ptboost@gmail.com!')
+      } else {
+        if (response.status === 401) {
+          setAuthError("Invalid password. Please log in again.")
+          setIsAuthenticated(false)
+          setPassword("")
+          setAdminPassword("")
+          localStorage.removeItem('adminPassword')
+        } else {
+          const errorData = await response.json()
+          alert(errorData.error || 'Failed to send test email')
+        }
+      }
+    } catch (error) {
+      console.error('Error sending test email:', error)
+      alert('Failed to send test email. Please try again.')
+    } finally {
+      setIsSendingTestEmail(false)
+    }
   }
 
   const handleSaveTemplate = async () => {
@@ -2008,11 +2070,16 @@ export default function AdminPage() {
                   id="edit-html"
                   value={editHtmlContent}
                   onChange={(e) => setEditHtmlContent(e.target.value)}
-                  placeholder="Enter HTML email content"
+                  placeholder={editHtmlContent ? "Enter HTML email content" : "HTML content is empty. Copy the HTML from the email route files (app/api/send-booking-email/route.ts, etc.) or leave empty to use the hardcoded fallback."}
                   className="font-mono text-sm min-h-[400px]"
                 />
                 <p className="text-xs text-muted-foreground">
                   Use HTML to format your email. Variables like {'{'}fullName{'}'}, {'{'}email{'}'}, {'{'}businessName{'}'}, etc. will be replaced with actual values.
+                  {(!editHtmlContent || editHtmlContent.trim() === '') && (
+                    <span className="block mt-1 text-orange-600 font-semibold">
+                      ⚠️ Template is empty. The system will use the hardcoded fallback from the email route files. Copy the HTML from those files to customize this template.
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -2025,14 +2092,32 @@ export default function AdminPage() {
                     setEditSubject("")
                     setEditHtmlContent("")
                   }}
-                  disabled={isSavingTemplate}
+                  disabled={isSavingTemplate || isSendingTestEmail}
                   className="flex-1"
                 >
                   Cancel
                 </Button>
                 <Button
+                  variant="outline"
+                  onClick={handleSendTestEmail}
+                  disabled={isSavingTemplate || isSendingTestEmail || !editSubject || !editHtmlContent}
+                  className="flex-1"
+                >
+                  {isSendingTestEmail ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Test Email
+                    </>
+                  )}
+                </Button>
+                <Button
                   onClick={handleSaveTemplate}
-                  disabled={isSavingTemplate || !editSubject || !editHtmlContent}
+                  disabled={isSavingTemplate || isSendingTestEmail || !editSubject || !editHtmlContent}
                   className="flex-1"
                 >
                   {isSavingTemplate ? (

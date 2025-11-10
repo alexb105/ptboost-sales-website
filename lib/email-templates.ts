@@ -35,6 +35,7 @@ export async function getEmailTemplate(templateKey: string) {
 /**
  * Replace template variables in a string
  * Variables are in the format {variableName}
+ * Also handles conditional expressions like {if_variable}...{/if_variable}
  */
 export function replaceTemplateVariables(
   template: string,
@@ -42,12 +43,26 @@ export function replaceTemplateVariables(
 ): string {
   let result = template
 
+  // Handle conditional expressions first: {if_variable}...{/if_variable}
+  // This allows for optional sections
+  Object.keys(variables).forEach((key) => {
+    const value = variables[key] || ''
+    const ifRegex = new RegExp(`\\{if_${key}\\}([\\s\\S]*?)\\{/if_${key}\\}`, 'g')
+    result = result.replace(ifRegex, (match, content) => {
+      // Only include content if variable has a truthy value
+      return value ? content : ''
+    })
+  })
+
   // Replace all {variable} patterns
   Object.keys(variables).forEach((key) => {
     const value = variables[key] || ''
     const regex = new RegExp(`\\{${key}\\}`, 'g')
     result = result.replace(regex, value)
   })
+
+  // Handle special variables
+  result = result.replace(/\{siteUrl\}/g, (process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, ''))
 
   return result
 }
@@ -63,6 +78,11 @@ export async function renderEmailTemplate(
 
   if (!template) {
     console.warn(`Template ${templateKey} not found, returning null`)
+    return null
+  }
+
+  // If HTML content is empty, return null so the caller can use fallback
+  if (!template.html_content || template.html_content.trim() === '') {
     return null
   }
 
