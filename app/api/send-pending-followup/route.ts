@@ -288,7 +288,7 @@ export async function POST(request: Request) {
                 <div class="message-card">
                   <p>Hi ${booking.full_name},</p>
                   <p>We noticed you started the process to secure your professional personal trainer website, but haven't completed your payment yet.</p>
-                  <p><strong>Your spot is still reserved!</strong> Complete your order now to lock in your £59/month subscription and get your custom website delivered within 24-48 hours.</p>
+                  <p><strong>Your spot is still reserved!</strong> Complete your order now to lock in your £7.99/month subscription and get your custom website delivered within 24-48 hours.</p>
                 </div>
 
                 <a href="${subscriptionLink}" class="button">

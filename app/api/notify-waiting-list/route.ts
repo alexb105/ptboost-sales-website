@@ -339,14 +339,14 @@ export async function POST(request: Request) {
 
                   <p style="font-size: 16px; line-height: 1.8; margin: 25px 0; color: #374151;">
                     Here's the reality: While other PTs are stuck spending £2,000-5,000 on agency websites (or worse, relying on Instagram's algorithm), 
-                    you have a chance to lock in a <strong style="color: #f97316;">professional, conversion-optimized website for just £59.</strong>
+                    you have a chance to lock in a <strong style="color: #f97316;">professional, conversion-optimized website for just £7.99.</strong>
                   </p>
 
                   <!-- Highlight Box -->
                   <div class="highlight-box">
                     <span class="emoji">⚡</span>
                     <p style="font-size: 16px; margin-bottom: 10px;">Your Exclusive Price</p>
-                    <div class="price">£59</div>
+                    <div class="price">£7.99</div>
                     <p style="font-size: 14px; color: #6b7280; margin-top: 5px;">
                       First 50 sites only<br>
                       <span style="text-decoration: line-through; opacity: 0.7;">Regular price: £299</span> 
@@ -444,7 +444,7 @@ export async function POST(request: Request) {
                         <tr>
                           <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">Upfront Cost</td>
                           <td style="padding: 12px; text-align: center; color: #dc2626; font-weight: 600; border-bottom: 1px solid #f3f4f6;">£2,000-5,000</td>
-                          <td style="padding: 12px; text-align: center; color: #059669; font-weight: 800; border-bottom: 1px solid #f3f4f6;">£59</td>
+                          <td style="padding: 12px; text-align: center; color: #059669; font-weight: 800; border-bottom: 1px solid #f3f4f6;">£7.99</td>
                         </tr>
                         <tr>
                           <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">Monthly Hosting</td>
@@ -459,7 +459,7 @@ export async function POST(request: Request) {
                         <tr style="background: #f0fdf4;">
                           <td style="padding: 12px; font-weight: 800; border-top: 2px solid #e5e7eb;">First Year Total</td>
                           <td style="padding: 12px; text-align: center; color: #dc2626; font-weight: 800; font-size: 16px; border-top: 2px solid #e5e7eb;">£2,240-5,600</td>
-                          <td style="padding: 12px; text-align: center; color: #059669; font-weight: 800; font-size: 18px; border-top: 2px solid #e5e7eb;">£59</td>
+                          <td style="padding: 12px; text-align: center; color: #059669; font-weight: 800; font-size: 18px; border-top: 2px solid #e5e7eb;">£7.99</td>
                         </tr>
                       </tbody>
                     </table>
@@ -486,8 +486,8 @@ export async function POST(request: Request) {
                       ⚠️ Fair Warning: This Price Is Only Available RIGHT NOW
                     </p>
                     <p style="margin: 15px 0 0 0; font-size: 15px; color: #7f1d1d; line-height: 1.7;">
-                      Once this spot is taken, the next person on the waiting list gets it at £59.<br>
-                      And when I hit 50 total sites? Everyone pays £59. No grandfather clause. No exceptions.
+                      Once this spot is taken, the next person on the waiting list gets it at £7.99.<br>
+                      And when I hit 50 total sites? Everyone pays £7.99. No grandfather clause. No exceptions.
                     </p>
                   </div>
 
@@ -497,7 +497,7 @@ export async function POST(request: Request) {
                       Ready to stop relying on Instagram and start getting more leads on autopilot?
                     </p>
                     <a href="${websiteLink}" class="cta-button">
-                      🚀 Yes, Claim My £59 Website Now
+                      🚀 Yes, Claim My £7.99 Website Now
                     </a>
                     <div class="cta-subtitle">
                       ⏰ This spot won't last • See full details & secure your spot
@@ -518,7 +518,7 @@ export async function POST(request: Request) {
                     <p style="margin: 0; font-size: 15px; color: #78350f; line-height: 1.7;">
                       Think about it: You're ONE website away from looking as professional as the PTs charging £80+/session. 
                       You're ONE website away from having clients find you on Google instead of scrolling endlessly on Instagram. 
-                      And you're ONE click away from securing £59 pricing before it jumps to £299.
+                      And you're ONE click away from securing £7.99 pricing before it jumps to £299.
                     </p>
                     <p style="margin: 15px 0 0 0; font-size: 15px; color: #78350f; line-height: 1.7; font-weight: 600;">
                       The worst case? You test it for 7 days, don't like it, and get a full refund. The best case? 
@@ -530,7 +530,7 @@ export async function POST(request: Request) {
                     <p style="margin: 0; font-size: 15px; color: #065f46; font-weight: 700; line-height: 1.7;">
                       ✅ I contacted you because you asked to be notified.<br>
                       ✅ A spot just opened up and it's yours if you want it.<br>
-                      ✅ The price is £59 today. Tomorrow? It might be £299.
+                      ✅ The price is £7.99 today. Tomorrow? It might be £299.
                     </p>
                     <p style="margin: 15px 0 0 0; font-size: 14px; color: #047857;">
                       The decision is yours. But the clock is ticking. ⏰
