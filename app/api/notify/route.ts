@@ -1,3 +1,4 @@
+// email template
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
