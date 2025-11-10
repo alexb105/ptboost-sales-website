@@ -1,4 +1,4 @@
-// email template
+// email template: availability announcement to waiting list lead (to prospect)
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 

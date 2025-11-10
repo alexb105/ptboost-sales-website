@@ -1,4 +1,4 @@
-// email template
+// email template: follow-up reminder to complete website order (to lead)
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { supabase } from '@/lib/supabase'

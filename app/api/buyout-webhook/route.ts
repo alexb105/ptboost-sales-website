@@ -1,4 +1,4 @@
-// email template
+// email template: website buyout confirmation sent to customer after purchase
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'

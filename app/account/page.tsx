@@ -37,6 +37,24 @@ function AccountContent() {
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
 
+  // Fetch latest user data from server (keeps ownership panel in sync)
+  const refreshUserData = async (loginEmail: string, loginPassword: string) => {
+    try {
+      const response = await fetch("/api/verify-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      })
+      if (!response.ok) return
+      const { user } = await response.json()
+      setUserData(user)
+      // Persist the freshest user snapshot
+      localStorage.setItem('ptboost_account_userData', JSON.stringify(user))
+    } catch {
+      // Silently ignore – we'll keep showing the last known state
+    }
+  }
+
   // Check for saved authentication state on mount
   useEffect(() => {
     const savedAuth = localStorage.getItem('ptboost_account_auth')
@@ -51,6 +69,8 @@ function AccountContent() {
         setEmail(savedEmail)
         setPassword(savedPassword)
         setIsAuthenticated(true)
+        // Always re-validate from server so the panel reflects latest ownership
+        refreshUserData(savedEmail, savedPassword)
       } catch (error) {
         console.error('Error restoring session:', error)
         // Clear invalid data
@@ -60,6 +80,20 @@ function AccountContent() {
         localStorage.removeItem('ptboost_account_password')
       }
     }
+  }, [])
+
+  // Also refresh when the tab regains focus (covers returning after completing payment)
+  useEffect(() => {
+    const handleFocus = () => {
+      const savedAuth = localStorage.getItem('ptboost_account_auth')
+      const savedEmail = localStorage.getItem('ptboost_account_email')
+      const savedPassword = localStorage.getItem('ptboost_account_password')
+      if (savedAuth === 'true' && savedEmail && savedPassword) {
+        refreshUserData(savedEmail, savedPassword)
+      }
+    }
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
   }, [])
 
   // Check for success parameter from Stripe portal return

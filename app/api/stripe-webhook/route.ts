@@ -1,11 +1,15 @@
+// email template: internal alert when a subscription is cancelled (to you)
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
+import { Resend } from 'resend'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover',
 })
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -494,6 +498,322 @@ export async function POST(request: Request) {
     const subscription = event.data.object as Stripe.Subscription
     console.log('Subscription cancelled:', subscription.id)
     console.log('Customer ID:', subscription.customer)
+
+    // Send email notification to alexander.ptboost@gmail.com
+    if (subscription.customer && process.env.RESEND_API_KEY) {
+      try {
+        // Get customer details from Stripe
+        const customer = await stripe.customers.retrieve(subscription.customer as string)
+        const customerEmail = customer && !customer.deleted && 'email' in customer ? customer.email : null
+        const customerName = customer && !customer.deleted && 'name' in customer ? customer.name : null
+
+        // Try to get booking information from database
+        let bookingInfo = null
+        if (customerEmail) {
+          const { data: bookings } = await supabase
+            .from('bookings')
+            .select('id, full_name, business_name, email, location, specialization')
+            .eq('email', customerEmail)
+            .order('created_at', { ascending: false })
+            .limit(1)
+          
+          if (bookings && bookings.length > 0) {
+            bookingInfo = bookings[0]
+          }
+        }
+
+        // Send notification email
+        await resend.emails.send({
+          from: 'PTBoost Notifications <noreply@ptboost.co.uk>',
+          to: 'alexander.ptboost@gmail.com',
+          subject: '⚠️ Subscription Cancelled - Customer Notification',
+          html: `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                  * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                  }
+                  body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #1a1a1a;
+                    background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 50%, #ffe5e5 100%);
+                    padding: 20px;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                  }
+                  .email-container {
+                    max-width: 650px;
+                    margin: 0 auto;
+                    background: #ffffff;
+                    border-radius: 24px;
+                    overflow: hidden;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                  }
+                  .header {
+                    background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f97316 100%);
+                    color: white;
+                    padding: 50px 40px;
+                    text-align: center;
+                    position: relative;
+                    overflow: hidden;
+                  }
+                  .header::before {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    right: -20%;
+                    width: 300px;
+                    height: 300px;
+                    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                    border-radius: 50%;
+                  }
+                  .header-content {
+                    position: relative;
+                    z-index: 1;
+                  }
+                  .header h1 {
+                    font-size: 36px;
+                    font-weight: 900;
+                    margin: 0 0 15px 0;
+                    letter-spacing: -0.5px;
+                    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                  }
+                  .header p {
+                    font-size: 20px;
+                    font-weight: 600;
+                    margin: 0;
+                    opacity: 0.95;
+                  }
+                  .content {
+                    padding: 40px;
+                    background: #ffffff;
+                  }
+                  .alert-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 50px;
+                    font-weight: 700;
+                    font-size: 14px;
+                    margin-bottom: 30px;
+                    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+                  }
+                  .section {
+                    background: #ffffff;
+                    padding: 30px;
+                    border-radius: 16px;
+                    margin-bottom: 25px;
+                    border: 2px solid #f3f4f6;
+                  }
+                  .section-title {
+                    font-size: 20px;
+                    font-weight: 800;
+                    color: #1a1a1a;
+                    margin: 0 0 20px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                  }
+                  .section-title::before {
+                    content: '';
+                    width: 4px;
+                    height: 24px;
+                    background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+                    border-radius: 2px;
+                  }
+                  .details-grid {
+                    display: grid;
+                    gap: 15px;
+                    margin-top: 20px;
+                  }
+                  .detail-item {
+                    padding: 18px;
+                    background: #f9fafb;
+                    border-radius: 12px;
+                    border-left: 4px solid #dc2626;
+                  }
+                  .detail-label {
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #6b7280;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 8px;
+                  }
+                  .detail-value {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #1a1a1a;
+                    word-break: break-word;
+                  }
+                  .detail-value a {
+                    color: #dc2626;
+                    text-decoration: none;
+                    font-weight: 700;
+                  }
+                  .detail-value a:hover {
+                    text-decoration: underline;
+                  }
+                  .footer {
+                    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                    color: white;
+                    padding: 40px;
+                    text-align: center;
+                  }
+                  .footer-brand {
+                    font-size: 24px;
+                    font-weight: 900;
+                    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    margin-bottom: 10px;
+                  }
+                  .footer-text {
+                    font-size: 15px;
+                    color: #d1d5db;
+                    margin: 10px 0 0 0;
+                    line-height: 1.6;
+                  }
+                  @media only screen and (max-width: 600px) {
+                    .email-container {
+                      border-radius: 0;
+                    }
+                    .header {
+                      padding: 40px 30px;
+                    }
+                    .header h1 {
+                      font-size: 28px;
+                    }
+                    .header p {
+                      font-size: 18px;
+                    }
+                    .content {
+                      padding: 30px 25px;
+                    }
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="email-container">
+                  <div class="header">
+                    <div class="header-content">
+                      <h1>⚠️ Subscription Cancelled</h1>
+                      <p>A customer has cancelled their subscription</p>
+                    </div>
+                  </div>
+                  
+                  <div class="content">
+                    <div class="alert-badge">
+                      ⚡ Action Required
+                    </div>
+
+                    <div class="section">
+                      <h2 class="section-title">📋 Subscription Details</h2>
+                      <div class="details-grid">
+                        <div class="detail-item">
+                          <div class="detail-label">Subscription ID</div>
+                          <div class="detail-value">${subscription.id}</div>
+                        </div>
+                        <div class="detail-item">
+                          <div class="detail-label">Customer ID</div>
+                          <div class="detail-value">${subscription.customer}</div>
+                        </div>
+                        <div class="detail-item">
+                          <div class="detail-label">Cancelled At</div>
+                          <div class="detail-value">${new Date(subscription.canceled_at ? subscription.canceled_at * 1000 : Date.now()).toLocaleString()}</div>
+                        </div>
+                        ${'current_period_end' in subscription && (subscription as any).current_period_end ? `
+                        <div class="detail-item">
+                          <div class="detail-label">Access Until</div>
+                          <div class="detail-value">${new Date((subscription as any).current_period_end * 1000).toLocaleString()}</div>
+                        </div>
+                        ` : ''}
+                      </div>
+                    </div>
+
+                    ${customerEmail ? `
+                    <div class="section">
+                      <h2 class="section-title">👤 Customer Information</h2>
+                      <div class="details-grid">
+                        <div class="detail-item">
+                          <div class="detail-label">Email</div>
+                          <div class="detail-value"><a href="mailto:${customerEmail}">${customerEmail}</a></div>
+                        </div>
+                        ${customerName ? `
+                        <div class="detail-item">
+                          <div class="detail-label">Name (from Stripe)</div>
+                          <div class="detail-value">${customerName}</div>
+                        </div>
+                        ` : ''}
+                      </div>
+                    </div>
+                    ` : ''}
+
+                    ${bookingInfo ? `
+                    <div class="section">
+                      <h2 class="section-title">📝 Booking Information</h2>
+                      <div class="details-grid">
+                        ${bookingInfo.full_name ? `
+                        <div class="detail-item">
+                          <div class="detail-label">Full Name</div>
+                          <div class="detail-value">${bookingInfo.full_name}</div>
+                        </div>
+                        ` : ''}
+                        ${bookingInfo.business_name ? `
+                        <div class="detail-item">
+                          <div class="detail-label">Business Name</div>
+                          <div class="detail-value">${bookingInfo.business_name}</div>
+                        </div>
+                        ` : ''}
+                        ${bookingInfo.location ? `
+                        <div class="detail-item">
+                          <div class="detail-label">Location</div>
+                          <div class="detail-value">${bookingInfo.location}</div>
+                        </div>
+                        ` : ''}
+                        ${bookingInfo.specialization ? `
+                        <div class="detail-item">
+                          <div class="detail-label">Specialization</div>
+                          <div class="detail-value">${bookingInfo.specialization}</div>
+                        </div>
+                        ` : ''}
+                        <div class="detail-item">
+                          <div class="detail-label">Booking ID</div>
+                          <div class="detail-value">${bookingInfo.id}</div>
+                        </div>
+                      </div>
+                    </div>
+                    ` : ''}
+                  </div>
+
+                  <div class="footer">
+                    <div class="footer-brand">PTBoost</div>
+                    <p class="footer-text">
+                      This is an automated notification from your PTBoost system.
+                    </p>
+                  </div>
+                </div>
+              </body>
+            </html>
+          `,
+        })
+        console.log(`✅ Subscription cancellation notification email sent to alexander.ptboost@gmail.com for subscription: ${subscription.id}`)
+      } catch (emailError) {
+        console.error('Error sending subscription cancellation notification email:', emailError)
+        // Don't fail the webhook if email fails
+      }
+    }
 
     // Optional: Update your database to mark subscription as cancelled
     // You could add a subscription_status column and update it here

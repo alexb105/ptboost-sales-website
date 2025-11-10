@@ -1,4 +1,4 @@
-// email template
+// email template: internal notification when a new lead requests notification (to you)
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'

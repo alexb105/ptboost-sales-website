@@ -1,4 +1,4 @@
-// email template
+// email template: customer order confirmation (to buyer) and internal new order alert (to you)
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
