@@ -8,11 +8,46 @@
 const { createClient } = require('@supabase/supabase-js')
 const { readFile } = require('fs/promises')
 const { join } = require('path')
+const { existsSync } = require('fs')
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+// Load environment variables from .env.local
+function loadEnvFile() {
+  const envPath = join(__dirname, '..', '.env.local')
+  if (existsSync(envPath)) {
+    const envContent = require('fs').readFileSync(envPath, 'utf-8')
+    envContent.split('\n').forEach(line => {
+      const trimmedLine = line.trim()
+      if (trimmedLine && !trimmedLine.startsWith('#')) {
+        const [key, ...valueParts] = trimmedLine.split('=')
+        if (key && valueParts.length > 0) {
+          const value = valueParts.join('=').replace(/^["']|["']$/g, '')
+          process.env[key.trim()] = value.trim()
+        }
+      }
+    })
+  }
+}
+
+// Load environment variables
+loadEnvFile()
+
+// Validate required environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+if (!supabaseUrl) {
+  console.error('❌ Error: NEXT_PUBLIC_SUPABASE_URL is required')
+  console.error('Please set it in .env.local or as an environment variable')
+  process.exit(1)
+}
+
+if (!supabaseKey) {
+  console.error('❌ Error: SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY is required')
+  console.error('Please set it in .env.local or as an environment variable')
+  process.exit(1)
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 /**
  * Convert JavaScript template literals to template variable format
