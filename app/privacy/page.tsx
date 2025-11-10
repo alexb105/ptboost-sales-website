@@ -3,7 +3,11 @@ import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Privacy Policy | PTBoost",
-  description: "Privacy policy and data protection information for PTBoost website services",
+  description: "Privacy policy and data protection information for PTBoost website services for UK personal trainers. Learn how we protect your data and handle personal information.",
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function PrivacyPage() {

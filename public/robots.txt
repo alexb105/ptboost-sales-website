@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://ptboost.co.uk/sitemap.xml
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /ptdash2025/
+Disallow: /account/
+Disallow: /manage-subscription/
+
+# Allow important pages
+Allow: /
+Allow: /privacy
+Allow: /terms
+Allow: /success
+Allow: /website-purchased
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+

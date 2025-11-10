@@ -141,8 +141,9 @@ export function WebsiteShowcaseSection() {
                     <div className="relative h-[400px] overflow-hidden bg-white dark:bg-gray-900">
                       <img 
                         src="/website_demos/personal-trainer-website-2.png" 
-                        alt="Personal Trainer Website Demo 2"
+                        alt="Premium professional personal trainer website design example for UK fitness trainers - modern sleek design style"
                         className="w-full h-auto animate-slow-scroll"
+                        loading="lazy"
                       />
                       
                       {/* Hover Overlay with Features */}
@@ -201,8 +202,9 @@ export function WebsiteShowcaseSection() {
                     <div className="relative h-[400px] overflow-hidden bg-white dark:bg-gray-900">
                       <img 
                         src="/website_demos/personal-trainer-website-1_.png" 
-                        alt="Personal Trainer Website Demo 1"
+                        alt="Vibrant empowering personal trainer website design example for UK female trainers and wellness coaches - bright engaging style"
                         className="w-full h-auto animate-slow-scroll"
+                        loading="lazy"
                       />
                       
                       {/* Hover Overlay */}
@@ -261,8 +263,9 @@ export function WebsiteShowcaseSection() {
                     <div className="relative h-[400px] overflow-hidden bg-white dark:bg-gray-900">
                       <img 
                         src="/website_demos/personal-trainer-website-3.png" 
-                        alt="Personal Trainer Website Demo 3"
+                        alt="Bold impactful personal trainer website design example for UK transformation specialists and bootcamp trainers - powerful dynamic style"
                         className="w-full h-auto animate-slow-scroll"
+                        loading="lazy"
                       />
                       
                       {/* Hover Overlay */}

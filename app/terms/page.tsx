@@ -3,7 +3,11 @@ import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Terms & Conditions | PTBoost",
-  description: "Terms and conditions for PTBoost website services",
+  description: "Terms and conditions for PTBoost website services for UK personal trainers. Read our service terms, 7-day guarantee policy, and cancellation terms.",
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function TermsPage() {

@@ -448,7 +448,7 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
                 <div className="aspect-square rounded-lg overflow-hidden border border-muted">
                   <img
                     src={URL.createObjectURL(file)}
-                    alt={`Upload ${index + 1}`}
+                    alt={`Personal trainer website image upload ${index + 1} - client photos for custom website design`}
                     className="w-full h-full object-cover"
                   />
                 </div>
