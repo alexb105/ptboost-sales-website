@@ -36,6 +36,10 @@ function AccountContent() {
   const [buyoutLink, setBuyoutLink] = useState("")
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState("")
+  const [cancelNotes, setCancelNotes] = useState("")
+  const [isSubmittingCancellation, setIsSubmittingCancellation] = useState(false)
 
   // Fetch latest user data from server (keeps ownership panel in sync)
   const refreshUserData = async (loginEmail: string, loginPassword: string) => {
@@ -166,30 +170,41 @@ function AccountContent() {
     }
   }
 
-  const handleManageSubscription = async () => {
-    setIsLoadingPortal(true)
+  const handleSubmitCancellation = async () => {
+    if (!email || !password) {
+      toast.error("Please log in again and try submitting your request.")
+      return
+    }
+    if (!cancelReason.trim()) {
+      toast.error("Please select a reason.")
+      return
+    }
+    setIsSubmittingCancellation(true)
     try {
-      const response = await fetch("/api/create-portal-session", {
+      const response = await fetch("/api/cancellation-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          name: userData?.name || "",
+          businessName: userData?.businessName || "",
+          reason: cancelReason,
+          notes: cancelNotes,
+        }),
       })
-
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to load subscription portal")
+        const data = await response.json().catch(() => ({}))
+        throw new Error((data as any).error || "Failed to submit cancellation request")
       }
-
-      const { url } = await response.json()
-      
-      // Open Stripe Customer Portal in a new tab
-      window.open(url, "_blank")
-      toast.success("Subscription portal opened in new tab")
+      toast.success("Cancellation request sent. We'll email you shortly.")
+      setCancelDialogOpen(false)
+      setCancelReason("")
+      setCancelNotes("")
     } catch (err) {
       console.error("Error:", err)
-      toast.error(err instanceof Error ? err.message : "Failed to load portal")
+      toast.error(err instanceof Error ? err.message : "Failed to send request")
     } finally {
-      setIsLoadingPortal(false)
+      setIsSubmittingCancellation(false)
     }
   }
 
@@ -388,27 +403,80 @@ function AccountContent() {
                 <CardTitle className="text-lg">Manage Subscription</CardTitle>
               </div>
               <CardDescription>
-                Access your Stripe customer portal to manage your subscription, update payment methods, view invoices, and more.
+                Submit a cancellation request. We'll process it and email you confirmation.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
-                onClick={handleManageSubscription}
-                disabled={isLoadingPortal}
-                className="w-full h-12 bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
-              >
-                {isLoadingPortal ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Loading Portal...
-                  </>
-                ) : (
-                  <>
+              <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="w-full h-12 bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
+                  >
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Open Subscription Portal
-                  </>
-                )}
-              </Button>
+                    Request Cancellation
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Request Subscription Cancellation</DialogTitle>
+                    <DialogDescription>
+                      Fill in the details below and we’ll process your cancellation promptly.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="reason">Reason for cancelling</Label>
+                      <select
+                        id="reason"
+                        value={cancelReason}
+                        onChange={(e) => setCancelReason(e.target.value)}
+                        className="h-11 w-full rounded-md border bg-background px-3 text-sm"
+                      >
+                        <option value="">Select a reason…</option>
+                        <option value="no-longer-needed">No longer need the service</option>
+                        <option value="too-expensive">Too expensive</option>
+                        <option value="temporary-pause">Taking a break</option>
+                        <option value="switching-providers">Switching providers</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="notes">Anything we should know? (optional)</Label>
+                      <textarea
+                        id="notes"
+                        value={cancelNotes}
+                        onChange={(e) => setCancelNotes(e.target.value)}
+                        rows={4}
+                        className="w-full rounded-md border bg-background p-3 text-sm"
+                        placeholder="Share any details that would help us process this smoothly."
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-end pt-2">
+                      <Button 
+                        variant="outline"
+                        onClick={() => setCancelDialogOpen(false)}
+                        disabled={isSubmittingCancellation}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        onClick={handleSubmitCancellation}
+                        disabled={isSubmittingCancellation}
+                        className="bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
+                      >
+                        {isSubmittingCancellation ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sending…
+                          </>
+                        ) : (
+                          <>Send Request</>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
 
