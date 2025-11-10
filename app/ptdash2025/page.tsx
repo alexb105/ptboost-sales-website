@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard, FileSpreadsheet, FileText, Edit } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { createClient } from '@supabase/supabase-js'
@@ -2050,6 +2051,70 @@ export default function AdminPage() {
 
           {editingTemplate && (
             <div className="space-y-6 mt-4">
+              {/* Available Variables Helper */}
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="variables">
+                  <AccordionTrigger className="text-sm font-semibold">
+                    📋 Available Variables for {editingTemplate.template_name}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="bg-muted p-4 rounded-lg space-y-2 text-sm">
+                      {(() => {
+                        const templateKey = editingTemplate.template_key
+                        const variables: Record<string, string[]> = {
+                          'customer_booking_confirmation': [
+                            '{fullName}', '{email}', '{businessName}', '{location}', '{specialization}',
+                            '{preferredColors}', '{websiteGoals}', '{additionalNotes}', '{subscriptionPassword}', '{sessionId}', '{siteUrl}'
+                          ],
+                          'developer_new_booking': [
+                            '{fullName}', '{email}', '{phone}', '{businessName}', '{location}', '{specialization}',
+                            '{preferredColors}', '{websiteGoals}', '{additionalNotes}', '{sessionId}', '{siteUrl}'
+                          ],
+                          'customer_pending_followup': [
+                            '{full_name}', '{subscriptionLink}', '{siteUrl}'
+                          ],
+                          'customer_waiting_list_notification': [
+                            '{name}', '{websiteLink}', '{siteUrl}'
+                          ],
+                          'customer_waiting_list_confirmation': [
+                            '{name}', '{siteUrl}'
+                          ],
+                          'developer_waiting_list_signup': [
+                            '{name}', '{email}', '{siteUrl}'
+                          ]
+                        }
+                        const templateVars = variables[templateKey] || []
+                        return (
+                          <div>
+                            <p className="font-semibold mb-2">Available variables (click to copy):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {templateVars.map((varName) => (
+                                <code
+                                  key={varName}
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(varName)
+                                    toast.success(`Copied ${varName}`)
+                                  }}
+                                  className="bg-background px-2 py-1 rounded border cursor-pointer hover:bg-accent text-xs font-mono"
+                                  title="Click to copy"
+                                >
+                                  {varName}
+                                </code>
+                              ))}
+                            </div>
+                            <p className="mt-3 text-xs text-muted-foreground">
+                              💡 Tip: Use conditional blocks like {'{'}if_preferredColors{'}'}...{'{'}/if_preferredColors{'}'} for optional variables.
+                              <br />
+                              Special variable: {'{'}siteUrl{'}'} is available in all templates.
+                            </p>
+                          </div>
+                        )
+                      })()}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
               <div className="space-y-2">
                 <Label htmlFor="edit-subject">Email Subject</Label>
                 <Input
