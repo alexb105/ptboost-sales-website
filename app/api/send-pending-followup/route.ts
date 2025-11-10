@@ -301,7 +301,7 @@ export async function POST(request: Request) {
                   <ul>
                     <li><span>Custom Professional Website Design tailored to your brand</span></li>
                     <li><span>Mobile Responsive & SEO Optimized for maximum visibility</span></li>
-                    <li><span>1 Year Free Hosting Included (save £100+)</span></li>
+                    <li><span>Free Hosting Included (save £100+)</span></li>
                     <li><span>Contact Form & Social Media Integration</span></li>
                     <li><span>Fast Delivery - Your website ready in 24-48 hours</span></li>
                     <li><span>Ongoing Support & Updates</span></li>

@@ -221,7 +221,7 @@ export default function SuccessPage() {
             </li>
             <li className="flex items-center justify-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-green-500" />
-              1 Year Free Hosting Included
+              Hosting Included
             </li>
             <li className="flex items-center justify-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-green-500" />
