@@ -733,9 +733,12 @@ function AccountContent() {
                 
                 <div className="space-y-4 pt-4">
                   {/* Warning Box */}
-                  <div className="bg-red-950/30 border-2 border-red-500/50 rounded-lg p-4">
-                    <p className="font-bold text-red-400 mb-3 text-lg">⚠️ WARNING: What Will Be Deleted</p>
-                    <ul className="list-disc list-inside space-y-2 ml-2 text-sm text-gray-300">
+                  <div className="bg-red-50 dark:bg-red-950/50 border-2 border-red-500/50 rounded-lg p-4">
+                    <p className="font-bold text-red-900 dark:text-red-400 mb-3 text-lg flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      WARNING: What Will Be Deleted
+                    </p>
+                    <ul className="list-disc list-inside space-y-2 ml-2 text-sm text-red-900 dark:text-red-100">
                       <li><strong>All website files will be permanently deleted</strong> - This action is IRREVERSIBLE and cannot be undone</li>
                       <li><strong>Your website will be immediately taken offline</strong> - Your website will no longer be accessible</li>
                       <li><strong>All data will be permanently removed</strong> - This includes your website files, content, images, and all associated data</li>
@@ -746,25 +749,25 @@ function AccountContent() {
                   </div>
 
                   {/* Important Notice */}
-                  <div className="bg-yellow-950/30 border border-yellow-500/30 rounded-lg p-4">
-                    <p className="font-bold text-yellow-400 mb-2 text-sm">📋 Important Notice:</p>
-                    <p className="text-sm text-gray-300 mb-2">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-500/50 rounded-lg p-4">
+                    <p className="font-bold text-yellow-900 dark:text-yellow-400 mb-2 text-sm">📋 Important Notice:</p>
+                    <p className="text-sm text-yellow-900 dark:text-yellow-100 mb-2">
                       Before deleting your account, please ensure you have:
                     </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-gray-300">
+                    <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-yellow-900 dark:text-yellow-100">
                       <li>Downloaded or backed up any content, images, or data you wish to keep</li>
                       <li>Saved any important information from your website</li>
                       <li>Exported any data you need for your records</li>
                     </ul>
-                    <p className="text-sm text-red-400 font-semibold mt-3">
+                    <p className="text-sm text-red-700 dark:text-red-400 font-semibold mt-3">
                       We are not responsible for any data loss resulting from account deletion.
                     </p>
                   </div>
 
                   {/* Terms Reference */}
-                  <div className="bg-zinc-800/50 border border-accent/30 rounded-lg p-4">
-                    <p className="font-bold text-white mb-2 text-sm">📄 Terms & Conditions:</p>
-                    <p className="text-sm text-gray-300">
+                  <div className="bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-300 dark:border-accent/30 rounded-lg p-4">
+                    <p className="font-bold text-zinc-900 dark:text-white mb-2 text-sm">📄 Terms & Conditions:</p>
+                    <p className="text-sm text-zinc-800 dark:text-zinc-200">
                       By deleting your account, you acknowledge that you have read and understood our{" "}
                       <Link href="/terms" className="text-accent hover:underline font-semibold">
                         Terms & Conditions
@@ -774,11 +777,11 @@ function AccountContent() {
                   </div>
 
                   {/* Confirmation Text */}
-                  <div className="bg-red-950/20 border border-red-500/30 rounded-lg p-4">
-                    <p className="text-sm text-gray-300 text-center font-semibold">
+                  <div className="bg-red-50 dark:bg-red-950/40 border border-red-500/50 rounded-lg p-4">
+                    <p className="text-sm text-red-900 dark:text-red-100 text-center font-semibold">
                       Are you absolutely sure you want to permanently delete your account and all website files?
                     </p>
-                    <p className="text-xs text-red-400 text-center mt-2">
+                    <p className="text-xs text-red-700 dark:text-red-400 text-center mt-2">
                       This action cannot be undone.
                     </p>
                   </div>
