@@ -135,7 +135,6 @@ export async function POST(request: Request) {
                 <p><strong>Your subscription will be cancelled within 24 hours (Monday–Friday).</strong></p>
                 <p>If you submitted this outside of business days, we’ll process it on the next working day.</p>
                 ${stripeCustomerId ? `<p>Your Stripe customer ID for reference: <span class="mono">${safe(stripeCustomerId)}</span></p>` : ''}
-                <p>If this wasn’t you or you have any questions, simply reply to this email.</p>
                 <p>— PTBoost</p>
               </div>
             </div>
