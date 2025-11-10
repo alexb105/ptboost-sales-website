@@ -66,6 +66,7 @@ export default function AdminPage() {
   const [editHtmlContent, setEditHtmlContent] = useState("")
   const [isSavingTemplate, setIsSavingTemplate] = useState(false)
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false)
+  const [sendingTestEmailTemplateId, setSendingTestEmailTemplateId] = useState<string | null>(null)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -689,6 +690,47 @@ export default function AdminPage() {
       alert('Failed to send test email. Please try again.')
     } finally {
       setIsSendingTestEmail(false)
+    }
+  }
+
+  const handleSendTestEmailFromCard = async (template: any) => {
+    if (!template || !template.subject || !template.html_content) {
+      alert('Template subject and HTML content are required')
+      return
+    }
+
+    setSendingTestEmailTemplateId(template.id)
+    try {
+      const response = await fetch('/api/test-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateKey: template.template_key,
+          subject: template.subject,
+          htmlContent: template.html_content,
+          adminPassword
+        })
+      })
+
+      if (response.ok) {
+        toast.success('Test email sent successfully to alexander.ptboost@gmail.com!')
+      } else {
+        if (response.status === 401) {
+          setAuthError("Invalid password. Please log in again.")
+          setIsAuthenticated(false)
+          setPassword("")
+          setAdminPassword("")
+          localStorage.removeItem('adminPassword')
+        } else {
+          const errorData = await response.json()
+          toast.error(errorData.error || 'Failed to send test email')
+        }
+      }
+    } catch (error) {
+      console.error('Error sending test email:', error)
+      toast.error('Failed to send test email. Please try again.')
+    } finally {
+      setSendingTestEmailTemplateId(null)
     }
   }
 
@@ -1618,14 +1660,34 @@ export default function AdminPage() {
                                       </div>
                                     </div>
                                   </div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleEditTemplate(template)}
-                                  >
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Edit
-                                  </Button>
+                                  <div className="flex gap-2 ml-4">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleSendTestEmailFromCard(template)}
+                                      disabled={sendingTestEmailTemplateId === template.id}
+                                    >
+                                      {sendingTestEmailTemplateId === template.id ? (
+                                        <>
+                                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                          Sending...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Send className="h-4 w-4 mr-2" />
+                                          Send Test
+                                        </>
+                                      )}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleEditTemplate(template)}
+                                    >
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      Edit
+                                    </Button>
+                                  </div>
                                 </div>
                               </CardHeader>
                             </Card>
@@ -1661,14 +1723,34 @@ export default function AdminPage() {
                                       </div>
                                     </div>
                                   </div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleEditTemplate(template)}
-                                  >
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Edit
-                                  </Button>
+                                  <div className="flex gap-2 ml-4">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleSendTestEmailFromCard(template)}
+                                      disabled={sendingTestEmailTemplateId === template.id}
+                                    >
+                                      {sendingTestEmailTemplateId === template.id ? (
+                                        <>
+                                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                          Sending...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Send className="h-4 w-4 mr-2" />
+                                          Send Test
+                                        </>
+                                      )}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleEditTemplate(template)}
+                                    >
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      Edit
+                                    </Button>
+                                  </div>
                                 </div>
                               </CardHeader>
                             </Card>
