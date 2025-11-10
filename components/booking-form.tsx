@@ -224,7 +224,7 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to save order data")
+        throw new Error("Failed to save booking data")
       }
 
       const { bookingId } = await response.json()

@@ -27,7 +27,7 @@ const painPoints = [
   {
     problem: "You're getting interest, but can't convert it into serious paying clients.",
     reality: "People ask questions in DMs, seem keen, then vanish. You're getting tire-kickers and time-wasters, not serious clients ready to invest. Without a structured, professional space that pre-qualifies leads and guides them to book, you're leaving money on the table every day.",
-    solution: "A psychology-driven website with smart lead capture and clear calls-to-action. Pre-qualify visitors and guide serious clients from interest to ordering with a professional system that filters out time-wasters and converts browsers into paying clients."
+    solution: "A psychology-driven website with smart lead capture and clear calls-to-action. Pre-qualify visitors and guide serious clients from interest to booking with a professional system that filters out time-wasters and converts browsers into paying clients."
   },
   {
     problem: "You're undercharging because you don't look like a premium trainer.",
