@@ -233,7 +233,7 @@ export function BenefitsSection() {
           </h2>
           
           <p className="text-base md:text-lg text-muted-foreground">
-            Professional tools that work 24/7 to attract, convert, and grow your client base
+            Professional tools that work 24/7 to attract, convert, and grow your client base. Optimized for UK personal trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow, and across the United Kingdom.
           </p>
         </div>
 

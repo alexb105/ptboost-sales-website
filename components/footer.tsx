@@ -33,7 +33,7 @@ export function Footer() {
                 PTBoost
               </h3>
               <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                High-converting websites for trainers who are ready to scale.
+                High-converting websites for UK personal trainers who are ready to scale. Serving trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow, and across the United Kingdom.
               </p>
             </div>
 

@@ -12,11 +12,11 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ptboost.co.uk"),
   title: {
-    default: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month",
+    default: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
     template: "%s | PTBoost"
   },
   description:
-    "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for trainers in London, Manchester, Birmingham. No tech skills needed.",
+    "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow. No tech skills needed. No £2,000-5,000 agency prices.",
   keywords: [
     "personal trainer website",
     "UK personal trainer",
@@ -29,6 +29,11 @@ export const metadata: Metadata = {
     "personal trainer website London",
     "personal trainer website Manchester",
     "personal trainer website Birmingham",
+    "personal trainer website Leeds",
+    "personal trainer website Liverpool",
+    "personal trainer website Bristol",
+    "personal trainer website Edinburgh",
+    "personal trainer website Glasgow",
     "cheap personal trainer website",
     "personal trainer website builder",
     "professional trainer website",
@@ -37,7 +42,23 @@ export const metadata: Metadata = {
     "PT website design",
     "personal trainer lead generation",
     "fitness business website",
-    "personal trainer website cost"
+    "personal trainer website cost",
+    "budget personal trainer website",
+    "personal trainer website £7.99",
+    "personal trainer website monthly",
+    "done for you personal trainer website",
+    "personal trainer website no tech skills",
+    "personal trainer website 7 days",
+    "local personal trainer website",
+    "personal trainer website for beginners",
+    "affordable fitness website",
+    "personal trainer website service",
+    "UK fitness website design",
+    "personal trainer website agency alternative",
+    "personal trainer website without coding",
+    "personal trainer website mobile first",
+    "personal trainer website SEO",
+    "personal trainer website lead capture"
   ],
   authors: [{ name: "PTBoost" }],
   creator: "PTBoost",
@@ -52,15 +73,15 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://ptboost.co.uk",
     siteName: "PTBoost",
-    title: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month",
+    title: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
     description:
-      "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for trainers in London, Manchester, Birmingham.",
+      "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow. No tech skills needed. No £2,000-5,000 agency prices.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PTBoost - Professional Websites for UK Personal Trainers",
+        alt: "PTBoost - Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
       },
     ],
   },
@@ -68,7 +89,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month",
     description:
-      "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients.",
+      "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers. No tech skills needed.",
     images: ["/og-image.jpg"],
     creator: "@ptboost",
   },

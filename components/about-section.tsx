@@ -27,10 +27,10 @@ export function AboutSection() {
 
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-4 text-balance text-center font-sans text-3xl font-black tracking-tight text-foreground md:text-5xl">
-            Built for Personal Trainers
+            Built for UK Personal Trainers
           </h2>
           <p className="text-center text-accent font-semibold text-lg mb-12">
-            By a developer who understands your business
+            By a developer who understands your business. Serving trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow, and across the United Kingdom.
           </p>
 
           {/* Main content grid */}

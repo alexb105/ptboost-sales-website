@@ -10,12 +10,14 @@ import { TestimonialsSection } from "@/components/testimonials-section"
 import { FAQSection } from "@/components/faq-section"
 import { CTASection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
+import { SEOContent } from "@/components/seo-content"
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       <Navbar />
       <HeroSection />
+      <SEOContent />
       <PainPointsSection />
       <ProcessSection />
       <WebsiteShowcaseSection />

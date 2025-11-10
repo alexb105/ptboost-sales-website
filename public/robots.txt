@@ -17,6 +17,35 @@ Allow: /terms
 Allow: /success
 Allow: /website-purchased
 
-# Crawl-delay for respectful crawling
+# Google-specific rules
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bing-specific rules
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# ChatGPT/OpenAI crawler
+User-agent: GPTBot
+Allow: /
+
+# ChatGPT/OpenAI crawler (alternative)
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic Claude crawler
+User-agent: anthropic-ai
+Allow: /
+
+# Common AI crawlers
+User-agent: CCBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Crawl-delay for other bots
 Crawl-delay: 1
 

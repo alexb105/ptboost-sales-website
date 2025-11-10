@@ -56,9 +56,9 @@ export function HeroSection() {
               </span>
             </h1>
 
-            {/* Subheadline - UK PT Audience */}
+            {/* Subheadline - UK PT Audience with Local SEO */}
             <p className={`mb-10 text-pretty text-2xl text-foreground md:text-3xl lg:text-4xl leading-tight font-bold max-w-4xl mx-auto ${isVisible ? 'animate-fade-in-up-delayed-2' : 'opacity-0'}`}>
-              For UK personal trainers tired of chasing DMs — get a professional online presence that brings in <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">serious clients 24/7</span> — without paying agency prices.
+              For UK personal trainers in <span className="text-accent font-black">London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow</span> and across the UK — tired of chasing DMs — get a professional online presence that brings in <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">serious clients 24/7</span> — without paying £2,000-5,000 agency prices.
             </p>
 
             {/* Value Proposition - Stats Grid with Stagger Animation */}
