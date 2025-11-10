@@ -69,7 +69,7 @@ function convertTemplateLiterals(html) {
     .replace(/\$\{fullBooking\.(\w+)\}/g, '{$1}')
     // Handle fullBooking with fallback: ${fullBooking.business_name || fullBooking.full_name} -> {businessName}
     .replace(/\$\{fullBooking\.business_name \|\| fullBooking\.full_name\}/g, '{businessName}')
-    .replace(/\$\{fullBooking\.(\w+) \|\| 'N/A'\}/g, '{$1}')
+    .replace(/\$\{fullBooking\.(\w+) \|\| 'N\/A'\}/g, '{$1}')
     // Handle new Date() expressions - convert to a placeholder or remove
     .replace(/\$\{new Date\(fullBooking\.created_at \|\| Date\.now\(\)\)\.toLocaleString\(\)\}/g, '{purchaseDate}')
     // Handle simple variables: ${name} -> {name}
