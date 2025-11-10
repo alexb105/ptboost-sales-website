@@ -164,6 +164,340 @@ export async function POST(request: Request) {
                 .eq('id', bookingToUpdate.id)
                 .single()
 
+              // Send confirmation email to customer
+              if (fullBooking && process.env.RESEND_API_KEY) {
+                try {
+                  console.log(`📧 Sending buyout confirmation email to customer: ${customerEmail}`)
+                  await resend.emails.send({
+                    from: 'PTBoost <noreply@ptboost.co.uk>',
+                    to: [customerEmail],
+                    subject: '🎉 Website Buyout Confirmation - Your Website is Now Yours!',
+                    html: `
+                      <!DOCTYPE html>
+                      <html>
+                        <head>
+                          <meta charset="utf-8">
+                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                          <style>
+                            * {
+                              margin: 0;
+                              padding: 0;
+                              box-sizing: border-box;
+                            }
+                            body {
+                              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                              line-height: 1.6;
+                              color: #1a1a1a;
+                              background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 50%, #ffe5e5 100%);
+                              padding: 20px;
+                              -webkit-font-smoothing: antialiased;
+                              -moz-osx-font-smoothing: grayscale;
+                            }
+                            .email-container {
+                              max-width: 650px;
+                              margin: 0 auto;
+                              background: #ffffff;
+                              border-radius: 24px;
+                              overflow: hidden;
+                              box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                            }
+                            .header {
+                              background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+                              color: white;
+                              padding: 50px 40px;
+                              text-align: center;
+                              position: relative;
+                              overflow: hidden;
+                            }
+                            .header::before {
+                              content: '';
+                              position: absolute;
+                              top: -50%;
+                              right: -20%;
+                              width: 300px;
+                              height: 300px;
+                              background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                              border-radius: 50%;
+                            }
+                            .header-content {
+                              position: relative;
+                              z-index: 1;
+                            }
+                            .header h1 {
+                              font-size: 36px;
+                              font-weight: 900;
+                              margin: 0 0 15px 0;
+                              letter-spacing: -0.5px;
+                              text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            }
+                            .header p {
+                              font-size: 20px;
+                              font-weight: 600;
+                              margin: 0;
+                              opacity: 0.95;
+                            }
+                            .content {
+                              padding: 40px;
+                              background: #ffffff;
+                            }
+                            .success-badge {
+                              display: inline-flex;
+                              align-items: center;
+                              gap: 8px;
+                              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                              color: white;
+                              padding: 12px 24px;
+                              border-radius: 50px;
+                              font-weight: 700;
+                              font-size: 14px;
+                              margin-bottom: 30px;
+                              box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                            }
+                            .message-card {
+                              background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                              padding: 30px;
+                              border-radius: 16px;
+                              margin-bottom: 25px;
+                              border: 2px solid rgba(16, 185, 129, 0.2);
+                            }
+                            .message-card p {
+                              font-size: 17px;
+                              line-height: 1.7;
+                              color: #1a1a1a;
+                              margin: 0 0 15px 0;
+                              font-weight: 500;
+                            }
+                            .section {
+                              background: #ffffff;
+                              padding: 30px;
+                              border-radius: 16px;
+                              margin-bottom: 25px;
+                              border: 2px solid #f3f4f6;
+                            }
+                            .section-title {
+                              font-size: 20px;
+                              font-weight: 800;
+                              color: #1a1a1a;
+                              margin: 0 0 20px 0;
+                              display: flex;
+                              align-items: center;
+                              gap: 10px;
+                            }
+                            .section-title::before {
+                              content: '';
+                              width: 4px;
+                              height: 24px;
+                              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                              border-radius: 2px;
+                            }
+                            .info-list {
+                              list-style: none;
+                              padding: 0;
+                              margin: 0;
+                            }
+                            .info-list li {
+                              padding: 15px 0;
+                              border-bottom: 1px solid #f3f4f6;
+                              display: flex;
+                              align-items: flex-start;
+                              gap: 15px;
+                            }
+                            .info-list li:last-child {
+                              border-bottom: none;
+                            }
+                            .info-list li::before {
+                              content: '✓';
+                              color: #10b981;
+                              font-size: 20px;
+                              font-weight: 700;
+                              line-height: 1;
+                              margin-top: -2px;
+                            }
+                            .info-list li p {
+                              margin: 0;
+                              font-size: 16px;
+                              line-height: 1.6;
+                              color: #374151;
+                              font-weight: 500;
+                            }
+                            .highlight-box {
+                              background: linear-gradient(135deg, #fef3e7 0%, #fde68a 100%);
+                              padding: 25px;
+                              border-radius: 16px;
+                              margin: 25px 0;
+                              border: 2px solid rgba(245, 158, 11, 0.3);
+                            }
+                            .highlight-box p {
+                              font-size: 16px;
+                              line-height: 1.7;
+                              color: #1a1a1a;
+                              margin: 0 0 10px 0;
+                              font-weight: 500;
+                            }
+                            .footer {
+                              background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                              color: white;
+                              padding: 40px;
+                              text-align: center;
+                            }
+                            .footer-brand {
+                              font-size: 24px;
+                              font-weight: 900;
+                              background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                              -webkit-background-clip: text;
+                              -webkit-text-fill-color: transparent;
+                              background-clip: text;
+                              margin-bottom: 10px;
+                            }
+                            .footer-text {
+                              font-size: 15px;
+                              color: #d1d5db;
+                              margin: 10px 0 0 0;
+                              line-height: 1.6;
+                            }
+                            @media only screen and (max-width: 600px) {
+                              .email-container {
+                                border-radius: 0;
+                              }
+                              .header {
+                                padding: 40px 30px;
+                              }
+                              .header h1 {
+                                font-size: 28px;
+                              }
+                              .header p {
+                                font-size: 18px;
+                              }
+                              .content {
+                                padding: 30px 25px;
+                              }
+                            }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="email-container">
+                            <div class="header">
+                              <div class="header-content">
+                                <h1>🎉 Website Buyout Confirmed!</h1>
+                                <p>Your website is now completely yours</p>
+                              </div>
+                            </div>
+                            
+                            <div class="content">
+                              <div class="success-badge">
+                                ✓ Purchase Successful
+                              </div>
+
+                              <div class="message-card">
+                                <p>
+                                  <strong>Dear ${fullBooking.full_name || 'Valued Customer'},</strong>
+                                </p>
+                                <p>
+                                  Congratulations! Your website buyout purchase has been successfully processed. You now own your website completely for a one-time payment of <strong style="color: #10b981;">£299</strong>.
+                                </p>
+                              </div>
+
+                              <div class="section">
+                                <h2 class="section-title">What You've Purchased</h2>
+                                <ul class="info-list">
+                                  <li>
+                                    <p><strong>Full website ownership</strong> - Complete legal ownership of your website. It's yours forever, no strings attached.</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Complete source code</strong> - All HTML, CSS, JavaScript, and assets. Full access to customize everything.</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>All website files</strong> - Images, fonts, and all assets included in your download.</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>No more monthly payments</strong> - You've paid once and own it completely. No recurring charges.</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Deploy anywhere</strong> - Host on any platform: Vercel, Netlify, your own server, or anywhere you choose.</p>
+                                  </li>
+                                </ul>
+                              </div>
+
+                              <div class="section">
+                                <h2 class="section-title">What Happens Next</h2>
+                                <ul class="info-list">
+                                  <li>
+                                    <p><strong>Within 24-48 hours</strong> - You'll receive a download link via email with all your website files</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Download your files</strong> - The email will contain a secure link to download your complete website package</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Deploy your website</strong> - Upload the files to your preferred hosting provider and go live</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Full documentation included</strong> - Setup instructions and documentation will be included in your download</p>
+                                  </li>
+                                </ul>
+                              </div>
+
+                              <div class="highlight-box">
+                                <p style="font-weight: 700; font-size: 18px; margin-bottom: 15px; color: #92400e;">📋 Important Information About Your Subscription</p>
+                                <p>
+                                  <strong>Your website will remain live on PTBoost servers</strong> - Even if you cancel your subscription, your website will stay online. You can cancel your subscription at any time through your account dashboard.
+                                </p>
+                                <p style="margin-top: 15px;">
+                                  <strong>Want to remove your website from PTBoost servers?</strong> - If you'd like your website removed from our servers after you've downloaded and deployed it elsewhere, simply email us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #92400e; font-weight: 700; text-decoration: none;">alexander.ptboost@gmail.com</a> and we'll take care of it.
+                                </p>
+                              </div>
+
+                              <div class="section">
+                                <h2 class="section-title">Purchase Details</h2>
+                                <ul class="info-list">
+                                  <li>
+                                    <p><strong>Purchase Amount:</strong> £299 (one-time payment)</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Purchase Date:</strong> ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Business Name:</strong> ${fullBooking.business_name || 'N/A'}</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Email:</strong> ${fullBooking.email}</p>
+                                  </li>
+                                  <li>
+                                    <p><strong>Booking ID:</strong> ${fullBooking.id}</p>
+                                  </li>
+                                </ul>
+                              </div>
+
+                              <div class="section">
+                                <h2 class="section-title">Need Help?</h2>
+                                <p style="font-size: 16px; line-height: 1.7; color: #374151; margin-bottom: 15px;">
+                                  If you have any questions about your purchase, need assistance with downloading your files, or require help with deployment, please don't hesitate to contact us:
+                                </p>
+                                <p style="font-size: 16px; line-height: 1.7; color: #374151;">
+                                  <strong>Email:</strong> <a href="mailto:alexander.ptboost@gmail.com" style="color: #10b981; font-weight: 700; text-decoration: none;">alexander.ptboost@gmail.com</a>
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="footer">
+                              <div class="footer-brand">PTBoost</div>
+                              <p class="footer-text">
+                                Thank you for choosing PTBoost! We're excited to see what you'll build with your new website.
+                                <br /><br />
+                                If you have any questions or concerns, please contact us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #f97316; text-decoration: none; font-weight: 700;">alexander.ptboost@gmail.com</a>
+                              </p>
+                            </div>
+                          </div>
+                        </body>
+                      </html>
+                    `,
+                  })
+                  console.log(`✅ Buyout confirmation email sent successfully to: ${customerEmail}`)
+                } catch (emailError) {
+                  console.error('❌ Failed to send buyout confirmation email to customer:', emailError)
+                  // Don't fail the webhook if email fails
+                }
+              }
+
               // Send email notification to alexander.ptboost@gmail.com
               if (fullBooking && process.env.RESEND_API_KEY) {
                 try {
@@ -434,6 +768,340 @@ export async function POST(request: Request) {
                   .select('*')
                   .eq('id', booking.id)
                   .single()
+
+                // Send confirmation email to customer
+                if (fullBooking && process.env.RESEND_API_KEY) {
+                  try {
+                    console.log(`📧 Sending buyout confirmation email to customer: ${customerEmail}`)
+                    await resend.emails.send({
+                      from: 'PTBoost <noreply@ptboost.co.uk>',
+                      to: [customerEmail],
+                      subject: '🎉 Website Buyout Confirmation - Your Website is Now Yours!',
+                      html: `
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <meta charset="utf-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>
+                              * {
+                                margin: 0;
+                                padding: 0;
+                                box-sizing: border-box;
+                              }
+                              body {
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                                line-height: 1.6;
+                                color: #1a1a1a;
+                                background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 50%, #ffe5e5 100%);
+                                padding: 20px;
+                                -webkit-font-smoothing: antialiased;
+                                -moz-osx-font-smoothing: grayscale;
+                              }
+                              .email-container {
+                                max-width: 650px;
+                                margin: 0 auto;
+                                background: #ffffff;
+                                border-radius: 24px;
+                                overflow: hidden;
+                                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                              }
+                              .header {
+                                background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+                                color: white;
+                                padding: 50px 40px;
+                                text-align: center;
+                                position: relative;
+                                overflow: hidden;
+                              }
+                              .header::before {
+                                content: '';
+                                position: absolute;
+                                top: -50%;
+                                right: -20%;
+                                width: 300px;
+                                height: 300px;
+                                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                                border-radius: 50%;
+                              }
+                              .header-content {
+                                position: relative;
+                                z-index: 1;
+                              }
+                              .header h1 {
+                                font-size: 36px;
+                                font-weight: 900;
+                                margin: 0 0 15px 0;
+                                letter-spacing: -0.5px;
+                                text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                              }
+                              .header p {
+                                font-size: 20px;
+                                font-weight: 600;
+                                margin: 0;
+                                opacity: 0.95;
+                              }
+                              .content {
+                                padding: 40px;
+                                background: #ffffff;
+                              }
+                              .success-badge {
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 8px;
+                                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                color: white;
+                                padding: 12px 24px;
+                                border-radius: 50px;
+                                font-weight: 700;
+                                font-size: 14px;
+                                margin-bottom: 30px;
+                                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                              }
+                              .message-card {
+                                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                                padding: 30px;
+                                border-radius: 16px;
+                                margin-bottom: 25px;
+                                border: 2px solid rgba(16, 185, 129, 0.2);
+                              }
+                              .message-card p {
+                                font-size: 17px;
+                                line-height: 1.7;
+                                color: #1a1a1a;
+                                margin: 0 0 15px 0;
+                                font-weight: 500;
+                              }
+                              .section {
+                                background: #ffffff;
+                                padding: 30px;
+                                border-radius: 16px;
+                                margin-bottom: 25px;
+                                border: 2px solid #f3f4f6;
+                              }
+                              .section-title {
+                                font-size: 20px;
+                                font-weight: 800;
+                                color: #1a1a1a;
+                                margin: 0 0 20px 0;
+                                display: flex;
+                                align-items: center;
+                                gap: 10px;
+                              }
+                              .section-title::before {
+                                content: '';
+                                width: 4px;
+                                height: 24px;
+                                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                border-radius: 2px;
+                              }
+                              .info-list {
+                                list-style: none;
+                                padding: 0;
+                                margin: 0;
+                              }
+                              .info-list li {
+                                padding: 15px 0;
+                                border-bottom: 1px solid #f3f4f6;
+                                display: flex;
+                                align-items: flex-start;
+                                gap: 15px;
+                              }
+                              .info-list li:last-child {
+                                border-bottom: none;
+                              }
+                              .info-list li::before {
+                                content: '✓';
+                                color: #10b981;
+                                font-size: 20px;
+                                font-weight: 700;
+                                line-height: 1;
+                                margin-top: -2px;
+                              }
+                              .info-list li p {
+                                margin: 0;
+                                font-size: 16px;
+                                line-height: 1.6;
+                                color: #374151;
+                                font-weight: 500;
+                              }
+                              .highlight-box {
+                                background: linear-gradient(135deg, #fef3e7 0%, #fde68a 100%);
+                                padding: 25px;
+                                border-radius: 16px;
+                                margin: 25px 0;
+                                border: 2px solid rgba(245, 158, 11, 0.3);
+                              }
+                              .highlight-box p {
+                                font-size: 16px;
+                                line-height: 1.7;
+                                color: #1a1a1a;
+                                margin: 0 0 10px 0;
+                                font-weight: 500;
+                              }
+                              .footer {
+                                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                                color: white;
+                                padding: 40px;
+                                text-align: center;
+                              }
+                              .footer-brand {
+                                font-size: 24px;
+                                font-weight: 900;
+                                background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                                -webkit-background-clip: text;
+                                -webkit-text-fill-color: transparent;
+                                background-clip: text;
+                                margin-bottom: 10px;
+                              }
+                              .footer-text {
+                                font-size: 15px;
+                                color: #d1d5db;
+                                margin: 10px 0 0 0;
+                                line-height: 1.6;
+                              }
+                              @media only screen and (max-width: 600px) {
+                                .email-container {
+                                  border-radius: 0;
+                                }
+                                .header {
+                                  padding: 40px 30px;
+                                }
+                                .header h1 {
+                                  font-size: 28px;
+                                }
+                                .header p {
+                                  font-size: 18px;
+                                }
+                                .content {
+                                  padding: 30px 25px;
+                                }
+                              }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="email-container">
+                              <div class="header">
+                                <div class="header-content">
+                                  <h1>🎉 Website Buyout Confirmed!</h1>
+                                  <p>Your website is now completely yours</p>
+                                </div>
+                              </div>
+                              
+                              <div class="content">
+                                <div class="success-badge">
+                                  ✓ Purchase Successful
+                                </div>
+
+                                <div class="message-card">
+                                  <p>
+                                    <strong>Dear ${fullBooking.full_name || 'Valued Customer'},</strong>
+                                  </p>
+                                  <p>
+                                    Congratulations! Your website buyout purchase has been successfully processed. You now own your website completely for a one-time payment of <strong style="color: #10b981;">£299</strong>.
+                                  </p>
+                                </div>
+
+                                <div class="section">
+                                  <h2 class="section-title">What You've Purchased</h2>
+                                  <ul class="info-list">
+                                    <li>
+                                      <p><strong>Full website ownership</strong> - Complete legal ownership of your website. It's yours forever, no strings attached.</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Complete source code</strong> - All HTML, CSS, JavaScript, and assets. Full access to customize everything.</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>All website files</strong> - Images, fonts, and all assets included in your download.</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>No more monthly payments</strong> - You've paid once and own it completely. No recurring charges.</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Deploy anywhere</strong> - Host on any platform: Vercel, Netlify, your own server, or anywhere you choose.</p>
+                                    </li>
+                                  </ul>
+                                </div>
+
+                                <div class="section">
+                                  <h2 class="section-title">What Happens Next</h2>
+                                  <ul class="info-list">
+                                    <li>
+                                      <p><strong>Within 24-48 hours</strong> - You'll receive a download link via email with all your website files</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Download your files</strong> - The email will contain a secure link to download your complete website package</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Deploy your website</strong> - Upload the files to your preferred hosting provider and go live</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Full documentation included</strong> - Setup instructions and documentation will be included in your download</p>
+                                    </li>
+                                  </ul>
+                                </div>
+
+                                <div class="highlight-box">
+                                  <p style="font-weight: 700; font-size: 18px; margin-bottom: 15px; color: #92400e;">📋 Important Information About Your Subscription</p>
+                                  <p>
+                                    <strong>Your website will remain live on PTBoost servers</strong> - Even if you cancel your subscription, your website will stay online. You can cancel your subscription at any time through your account dashboard.
+                                  </p>
+                                  <p style="margin-top: 15px;">
+                                    <strong>Want to remove your website from PTBoost servers?</strong> - If you'd like your website removed from our servers after you've downloaded and deployed it elsewhere, simply email us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #92400e; font-weight: 700; text-decoration: none;">alexander.ptboost@gmail.com</a> and we'll take care of it.
+                                  </p>
+                                </div>
+
+                                <div class="section">
+                                  <h2 class="section-title">Purchase Details</h2>
+                                  <ul class="info-list">
+                                    <li>
+                                      <p><strong>Purchase Amount:</strong> £299 (one-time payment)</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Purchase Date:</strong> ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Business Name:</strong> ${fullBooking.business_name || 'N/A'}</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Email:</strong> ${fullBooking.email}</p>
+                                    </li>
+                                    <li>
+                                      <p><strong>Booking ID:</strong> ${fullBooking.id}</p>
+                                    </li>
+                                  </ul>
+                                </div>
+
+                                <div class="section">
+                                  <h2 class="section-title">Need Help?</h2>
+                                  <p style="font-size: 16px; line-height: 1.7; color: #374151; margin-bottom: 15px;">
+                                    If you have any questions about your purchase, need assistance with downloading your files, or require help with deployment, please don't hesitate to contact us:
+                                  </p>
+                                  <p style="font-size: 16px; line-height: 1.7; color: #374151;">
+                                    <strong>Email:</strong> <a href="mailto:alexander.ptboost@gmail.com" style="color: #10b981; font-weight: 700; text-decoration: none;">alexander.ptboost@gmail.com</a>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class="footer">
+                                <div class="footer-brand">PTBoost</div>
+                                <p class="footer-text">
+                                  Thank you for choosing PTBoost! We're excited to see what you'll build with your new website.
+                                  <br /><br />
+                                  If you have any questions or concerns, please contact us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #f97316; text-decoration: none; font-weight: 700;">alexander.ptboost@gmail.com</a>
+                                </p>
+                              </div>
+                            </div>
+                          </body>
+                        </html>
+                      `,
+                    })
+                    console.log(`✅ Buyout confirmation email sent successfully to: ${customerEmail}`)
+                  } catch (emailError) {
+                    console.error('❌ Failed to send buyout confirmation email to customer:', emailError)
+                    // Don't fail the webhook if email fails
+                  }
+                }
 
                 // Send email notification to alexander.ptboost@gmail.com
                 if (fullBooking && process.env.RESEND_API_KEY) {
