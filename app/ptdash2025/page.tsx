@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard, FileSpreadsheet } from "lucide-react"
+import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard, FileSpreadsheet, FileText, Edit } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
 import { createClient } from '@supabase/supabase-js'
 import type { BookingData, WaitingListEntry } from '@/lib/supabase-types'
 import { toast } from "sonner"
@@ -56,6 +57,13 @@ export default function AdminPage() {
   const [deleteOrderDialogOpen, setDeleteOrderDialogOpen] = useState(false)
   const [orderToDelete, setOrderToDelete] = useState<BookingData | null>(null)
   const [isDeletingOrder, setIsDeletingOrder] = useState(false)
+  const [emailTemplates, setEmailTemplates] = useState<any[]>([])
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false)
+  const [editingTemplate, setEditingTemplate] = useState<any | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editSubject, setEditSubject] = useState("")
+  const [editHtmlContent, setEditHtmlContent] = useState("")
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -92,6 +100,7 @@ export default function AdminPage() {
       fetchPendingOrders()
       fetchWaitingList()
       fetchPaymentLinks()
+      fetchEmailTemplates()
     }
   }, [isAuthenticated])
 
@@ -598,6 +607,72 @@ export default function AdminPage() {
     toast.success(`Exported ${allOrders.length} customer records to CSV`)
   }
 
+  const fetchEmailTemplates = async () => {
+    setIsLoadingTemplates(true)
+    try {
+      const response = await fetch('/api/email-templates')
+      const data = await response.json()
+      if (data.templates) {
+        setEmailTemplates(data.templates)
+      }
+    } catch (error) {
+      console.error('Error fetching email templates:', error)
+    } finally {
+      setIsLoadingTemplates(false)
+    }
+  }
+
+  const handleEditTemplate = (template: any) => {
+    setEditingTemplate(template)
+    setEditSubject(template.subject || '')
+    setEditHtmlContent(template.html_content || '')
+    setEditDialogOpen(true)
+  }
+
+  const handleSaveTemplate = async () => {
+    if (!editingTemplate || !editSubject || !editHtmlContent) {
+      alert('Subject and HTML content are required')
+      return
+    }
+
+    setIsSavingTemplate(true)
+    try {
+      const response = await fetch('/api/email-templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateKey: editingTemplate.template_key,
+          subject: editSubject,
+          htmlContent: editHtmlContent,
+          adminPassword
+        })
+      })
+
+      if (response.ok) {
+        toast.success('Email template updated successfully!')
+        setEditDialogOpen(false)
+        setEditingTemplate(null)
+        fetchEmailTemplates()
+      } else {
+        if (response.status === 401) {
+          setAuthError("Invalid password. Please log in again.")
+          setIsAuthenticated(false)
+          setPassword("")
+          setAdminPassword("")
+          localStorage.removeItem('adminPassword')
+        } else {
+          const errorData = await response.json()
+          alert(errorData.error || 'Failed to update email template')
+        }
+      }
+    } catch (error) {
+      console.error('Error saving email template:', error)
+      alert('Failed to save email template. Please try again.')
+    } finally {
+      setIsSavingTemplate(false)
+    }
+  }
+
   const handleUpdateCapacity = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -721,7 +796,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="capacity" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Capacity</span>
@@ -747,6 +822,10 @@ export default function AdminPage() {
             <TabsTrigger value="payment-links" className="flex items-center gap-2">
               <Link2 className="h-4 w-4" />
               <span className="hidden sm:inline">Payment Links</span>
+            </TabsTrigger>
+            <TabsTrigger value="email-templates" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Email Templates</span>
             </TabsTrigger>
             <TabsTrigger value="info" className="flex items-center gap-2">
               <Info className="h-4 w-4" />
@@ -1413,6 +1492,139 @@ export default function AdminPage() {
           </Card>
           </TabsContent>
 
+          {/* Email Templates Tab */}
+          <TabsContent value="email-templates" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Email Templates
+                    </CardTitle>
+                    <CardDescription>
+                      Edit email templates sent to customers and developers
+                    </CardDescription>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={fetchEmailTemplates}
+                    disabled={isLoadingTemplates}
+                  >
+                    {isLoadingTemplates ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'Refresh'
+                    )}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {isLoadingTemplates ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (
+                  <>
+                    {/* Customer Email Templates Section */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <Users className="h-5 w-5" />
+                        Customer Email Templates
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Templates sent to customers
+                      </p>
+                      <div className="grid gap-4">
+                        {emailTemplates
+                          .filter(t => t.template_type === 'customer')
+                          .map((template) => (
+                            <Card key={template.id} className="border-2">
+                              <CardHeader>
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <CardTitle className="text-base">{template.template_name}</CardTitle>
+                                    <CardDescription className="mt-1">
+                                      {template.description || 'No description'}
+                                    </CardDescription>
+                                    <div className="mt-2 text-xs text-muted-foreground">
+                                      <div>Subject: <span className="font-mono">{template.subject}</span></div>
+                                      <div className="mt-1">
+                                        Last updated: {template.updated_at ? new Date(template.updated_at).toLocaleString() : 'Never'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleEditTemplate(template)}
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit
+                                  </Button>
+                                </div>
+                              </CardHeader>
+                            </Card>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Developer Email Templates Section */}
+                    <div className="space-y-4 pt-6 border-t">
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <Briefcase className="h-5 w-5" />
+                        Developer Email Templates
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Templates sent to developers/administrators
+                      </p>
+                      <div className="grid gap-4">
+                        {emailTemplates
+                          .filter(t => t.template_type === 'developer')
+                          .map((template) => (
+                            <Card key={template.id} className="border-2">
+                              <CardHeader>
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <CardTitle className="text-base">{template.template_name}</CardTitle>
+                                    <CardDescription className="mt-1">
+                                      {template.description || 'No description'}
+                                    </CardDescription>
+                                    <div className="mt-2 text-xs text-muted-foreground">
+                                      <div>Subject: <span className="font-mono">{template.subject}</span></div>
+                                      <div className="mt-1">
+                                        Last updated: {template.updated_at ? new Date(template.updated_at).toLocaleString() : 'Never'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleEditTemplate(template)}
+                                  >
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit
+                                  </Button>
+                                </div>
+                              </CardHeader>
+                            </Card>
+                          ))}
+                      </div>
+                    </div>
+
+                    {emailTemplates.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <FileText className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                        <p>No email templates found. Please run the SQL migration to create default templates.</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Info Tab */}
           <TabsContent value="info" className="space-y-6">
           <Card>
@@ -1761,6 +1973,85 @@ export default function AdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Email Template Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Edit Email Template: {editingTemplate?.template_name}
+            </DialogTitle>
+            <DialogDescription>
+              {editingTemplate?.description || 'Edit the email template subject and HTML content'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {editingTemplate && (
+            <div className="space-y-6 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-subject">Email Subject</Label>
+                <Input
+                  id="edit-subject"
+                  value={editSubject}
+                  onChange={(e) => setEditSubject(e.target.value)}
+                  placeholder="Enter email subject"
+                  className="font-mono"
+                />
+                <p className="text-xs text-muted-foreground">
+                  You can use variables like {'{'}fullName{'}'}, {'{'}businessName{'}'}, etc. in the subject
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-html">HTML Content</Label>
+                <Textarea
+                  id="edit-html"
+                  value={editHtmlContent}
+                  onChange={(e) => setEditHtmlContent(e.target.value)}
+                  placeholder="Enter HTML email content"
+                  className="font-mono text-sm min-h-[400px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Use HTML to format your email. Variables like {'{'}fullName{'}'}, {'{'}email{'}'}, {'{'}businessName{'}'}, etc. will be replaced with actual values.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEditDialogOpen(false)
+                    setEditingTemplate(null)
+                    setEditSubject("")
+                    setEditHtmlContent("")
+                  }}
+                  disabled={isSavingTemplate}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveTemplate}
+                  disabled={isSavingTemplate || !editSubject || !editHtmlContent}
+                  className="flex-1"
+                >
+                  {isSavingTemplate ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Save Template
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

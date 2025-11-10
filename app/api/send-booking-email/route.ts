@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { renderEmailTemplate } from '@/lib/email-templates'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -17,12 +18,24 @@ export async function POST(request: Request) {
 
     // Send confirmation email to customer
     console.log('Attempting to send customer confirmation email...')
-    const customerEmail = await resend.emails.send({
-      from: 'PTBoost <noreply@ptboost.co.uk>',
-      to: [bookingData.email],
-      subject: '🎉 Your Website Order is Confirmed!',
-      html: `
-        <!DOCTYPE html>
+    
+    // Try to get template from database, fallback to hardcoded if not found
+    const customerTemplate = await renderEmailTemplate('customer_booking_confirmation', {
+      fullName: bookingData.fullName,
+      email: bookingData.email,
+      businessName: bookingData.businessName,
+      location: bookingData.location,
+      specialization: bookingData.specialization,
+      preferredColors: bookingData.preferredColors || '',
+      websiteGoals: bookingData.websiteGoals || '',
+      additionalNotes: bookingData.additionalNotes || '',
+      subscriptionPassword: bookingData.subscriptionPassword || '',
+      sessionId: bookingData.sessionId || ''
+    })
+
+    const customerSubject = customerTemplate?.subject || '🎉 Your Website Order is Confirmed!'
+    const customerHtml = customerTemplate?.html || `
+      <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
@@ -417,7 +430,13 @@ export async function POST(request: Request) {
             </div>
           </body>
         </html>
-      `,
+      `
+    
+    const customerEmail = await resend.emails.send({
+      from: 'PTBoost <noreply@ptboost.co.uk>',
+      to: [bookingData.email],
+      subject: customerSubject,
+      html: customerHtml,
     })
 
     if (customerEmail.error) {
@@ -431,11 +450,23 @@ export async function POST(request: Request) {
 
     // Send notification email to admin
     console.log('Sending admin notification email...')
-    const { data, error } = await resend.emails.send({
-      from: 'PT Website Orders <noreply@ptboost.co.uk>',
-      to: ['ptboost.info@gmail.com'],
-      subject: `New Website Order - ${bookingData.businessName}`,
-      html: `
+    
+    // Try to get template from database, fallback to hardcoded if not found
+    const developerTemplate = await renderEmailTemplate('developer_new_booking', {
+      fullName: bookingData.fullName,
+      email: bookingData.email,
+      phone: bookingData.phone || '',
+      businessName: bookingData.businessName,
+      location: bookingData.location,
+      specialization: bookingData.specialization,
+      preferredColors: bookingData.preferredColors || '',
+      websiteGoals: bookingData.websiteGoals || '',
+      additionalNotes: bookingData.additionalNotes || '',
+      sessionId: bookingData.sessionId || ''
+    })
+
+    const developerSubject = developerTemplate?.subject || `New Website Order - ${bookingData.businessName}`
+    const developerHtml = developerTemplate?.html || `
         <!DOCTYPE html>
         <html>
           <head>
@@ -767,7 +798,13 @@ export async function POST(request: Request) {
             </div>
           </body>
         </html>
-      `,
+      `
+    
+    const { data, error } = await resend.emails.send({
+      from: 'PT Website Orders <noreply@ptboost.co.uk>',
+      to: ['ptboost.info@gmail.com'],
+      subject: developerSubject,
+      html: developerHtml,
     })
 
     if (error) {
