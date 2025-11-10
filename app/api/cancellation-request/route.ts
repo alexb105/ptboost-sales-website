@@ -105,6 +105,45 @@ export async function POST(request: Request) {
       `,
     })
 
+    // Send confirmation email to customer
+    await resend.emails.send({
+      from: 'PTBoost <noreply@ptboost.co.uk>',
+      to: [email],
+      subject: 'We’ve received your cancellation request',
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color: #111827; }
+              .container { max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; }
+              .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; padding: 24px; }
+              .content { padding: 24px; line-height: 1.65; }
+              .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1 style="margin:0; font-size:20px;">Cancellation Request Received</h1>
+              </div>
+              <div class="content">
+                <p>Hi ${safe(name) || 'there'},</p>
+                <p>We’ve received your request to cancel your subscription.</p>
+                <p><strong>Your subscription will be cancelled within 24 hours (Monday–Friday).</strong></p>
+                <p>If you submitted this outside of business days, we’ll process it on the next working day.</p>
+                ${stripeCustomerId ? `<p>Your Stripe customer ID for reference: <span class="mono">${safe(stripeCustomerId)}</span></p>` : ''}
+                <p>If this wasn’t you or you have any questions, simply reply to this email.</p>
+                <p>— PTBoost</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    })
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error sending cancellation request:', error)

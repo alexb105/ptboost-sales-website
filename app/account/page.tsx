@@ -40,6 +40,7 @@ function AccountContent() {
   const [cancelReason, setCancelReason] = useState("")
   const [cancelNotes, setCancelNotes] = useState("")
   const [isSubmittingCancellation, setIsSubmittingCancellation] = useState(false)
+  const [cancellationSuccess, setCancellationSuccess] = useState(false)
 
   // Fetch latest user data from server (keeps ownership panel in sync)
   const refreshUserData = async (loginEmail: string, loginPassword: string) => {
@@ -197,6 +198,7 @@ function AccountContent() {
         throw new Error((data as any).error || "Failed to submit cancellation request")
       }
       toast.success("Cancellation request sent. We'll email you shortly.")
+      setCancellationSuccess(true)
       setCancelDialogOpen(false)
       setCancelReason("")
       setCancelNotes("")
@@ -365,6 +367,15 @@ function AccountContent() {
             <CheckCircle className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
               Your subscription settings have been updated successfully!
+            </AlertDescription>
+          </Alert>
+        )}
+        {/* Success message after cancellation request */}
+        {cancellationSuccess && (
+          <Alert className="border-green-500 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              Cancellation request sent. Your subscription will be cancelled within 24 hours (Mon–Fri).
             </AlertDescription>
           </Alert>
         )}
