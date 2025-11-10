@@ -37,6 +37,28 @@ function AccountContent() {
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
 
+  // Check for saved authentication state on mount
+  useEffect(() => {
+    const savedAuth = localStorage.getItem('ptboost_account_auth')
+    const savedUserData = localStorage.getItem('ptboost_account_userData')
+    const savedEmail = localStorage.getItem('ptboost_account_email')
+    
+    if (savedAuth === 'true' && savedUserData && savedEmail) {
+      try {
+        const userData = JSON.parse(savedUserData)
+        setUserData(userData)
+        setEmail(savedEmail)
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error('Error restoring session:', error)
+        // Clear invalid data
+        localStorage.removeItem('ptboost_account_auth')
+        localStorage.removeItem('ptboost_account_userData')
+        localStorage.removeItem('ptboost_account_email')
+      }
+    }
+  }, [])
+
   // Check for success parameter from Stripe portal return
   useEffect(() => {
     const success = searchParams.get('success')
@@ -90,6 +112,12 @@ function AccountContent() {
       const { user } = await response.json()
       setUserData(user)
       setIsAuthenticated(true)
+      
+      // Save authentication state to localStorage
+      localStorage.setItem('ptboost_account_auth', 'true')
+      localStorage.setItem('ptboost_account_userData', JSON.stringify(user))
+      localStorage.setItem('ptboost_account_email', email)
+      
       toast.success("Welcome back!")
     } catch (err) {
       console.error("Error:", err)
@@ -132,6 +160,12 @@ function AccountContent() {
     setUserData(null)
     setEmail("")
     setPassword("")
+    
+    // Clear authentication state from localStorage
+    localStorage.removeItem('ptboost_account_auth')
+    localStorage.removeItem('ptboost_account_userData')
+    localStorage.removeItem('ptboost_account_email')
+    
     toast.info("Logged out successfully")
   }
 
