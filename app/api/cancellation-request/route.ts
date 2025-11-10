@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { supabase } from '@/lib/supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -28,6 +29,23 @@ export async function POST(request: Request) {
 
     const toAddress = 'alexander.ptboost@gmail.com' // intentionally not exposed in UI
 
+    // Lookup Stripe customer id for context
+    let stripeCustomerId: string | null = null
+    try {
+      const { data: booking } = await supabase
+        .from('bookings')
+        .select('stripe_customer_id')
+        .eq('email', email)
+        .eq('payment_status', 'completed')
+        .not('stripe_customer_id', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      stripeCustomerId = booking?.stripe_customer_id ?? null
+    } catch (e) {
+      // Non-fatal; continue without ID
+    }
+
     const subject = `Cancellation Request: ${email}${businessName ? ` (${businessName})` : ''}`
     const safe = (v: string) => String(v || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
@@ -50,6 +68,7 @@ export async function POST(request: Request) {
               .label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
               .value { font-size: 15px; font-weight: 600; }
               .box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
+              .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
             </style>
           </head>
           <body>
@@ -67,6 +86,10 @@ export async function POST(request: Request) {
                     <div class="label">Business</div>
                     <div class="value">${safe(businessName)}</div>
                   </div>` : ''}
+                <div class="row">
+                  <div class="label">Stripe Customer ID</div>
+                  <div class="value mono">${stripeCustomerId ? safe(stripeCustomerId) : 'Not found'}</div>
+                </div>
                 <div class="row">
                   <div class="label">Reason</div>
                   <div class="value">${safe(reason)}</div>
