@@ -42,12 +42,14 @@ function AccountContent() {
     const savedAuth = localStorage.getItem('ptboost_account_auth')
     const savedUserData = localStorage.getItem('ptboost_account_userData')
     const savedEmail = localStorage.getItem('ptboost_account_email')
+    const savedPassword = localStorage.getItem('ptboost_account_password')
     
-    if (savedAuth === 'true' && savedUserData && savedEmail) {
+    if (savedAuth === 'true' && savedUserData && savedEmail && savedPassword) {
       try {
         const userData = JSON.parse(savedUserData)
         setUserData(userData)
         setEmail(savedEmail)
+        setPassword(savedPassword)
         setIsAuthenticated(true)
       } catch (error) {
         console.error('Error restoring session:', error)
@@ -55,6 +57,7 @@ function AccountContent() {
         localStorage.removeItem('ptboost_account_auth')
         localStorage.removeItem('ptboost_account_userData')
         localStorage.removeItem('ptboost_account_email')
+        localStorage.removeItem('ptboost_account_password')
       }
     }
   }, [])
@@ -117,6 +120,7 @@ function AccountContent() {
       localStorage.setItem('ptboost_account_auth', 'true')
       localStorage.setItem('ptboost_account_userData', JSON.stringify(user))
       localStorage.setItem('ptboost_account_email', email)
+      localStorage.setItem('ptboost_account_password', password)
       
       toast.success("Welcome back!")
     } catch (err) {
@@ -165,6 +169,7 @@ function AccountContent() {
     localStorage.removeItem('ptboost_account_auth')
     localStorage.removeItem('ptboost_account_userData')
     localStorage.removeItem('ptboost_account_email')
+    localStorage.removeItem('ptboost_account_password')
     
     toast.info("Logged out successfully")
   }
