@@ -17,7 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_email_templates_type ON email_templates(template_
 
 -- Insert default customer email templates
 INSERT INTO email_templates (template_key, template_name, template_type, subject, html_content, description) VALUES
-('customer_booking_confirmation', 'Booking Confirmation', 'customer', '🎉 Your Website Order is Confirmed!', '', 'Sent to customers when payment is completed'),
+('customer_booking_confirmation', 'Order Confirmation', 'customer', '🎉 Your Website Order is Confirmed!', '', 'Sent to customers when payment is completed'),
 ('customer_waiting_list_notification', 'Waiting List Notification', 'customer', '🎉 Great News! Spots Are Now Available at PTBoost', '', 'Sent to customers when spots open up'),
 ('customer_pending_followup', 'Pending Order Follow-up', 'customer', '⏰ Complete Your Website Order - Limited Time Offer!', '', 'Sent to customers with pending orders'),
 ('customer_waiting_list_confirmation', 'Waiting List Confirmation', 'customer', 'You''re on the List! 🎉', '', 'Sent to customers when they sign up for waiting list')
@@ -25,7 +25,7 @@ ON CONFLICT (template_key) DO NOTHING;
 
 -- Insert default developer email templates
 INSERT INTO email_templates (template_key, template_name, template_type, subject, html_content, description) VALUES
-('developer_new_booking', 'New Booking Notification', 'developer', 'New Website Order - {businessName}', '', 'Sent to developer when a new booking is completed'),
+('developer_new_booking', 'New Order Notification', 'developer', 'New Website Order - {businessName}', '', 'Sent to developer when a new order is completed'),
 ('developer_waiting_list_signup', 'Waiting List Signup Notification', 'developer', '🔔 New Lead: Someone Wants to Be Notified!', '', 'Sent to developer when someone signs up for waiting list'),
 ('developer_buyout_purchase', 'Buyout Purchase Notification', 'developer', '🚀 Website Buyout Purchase - {businessName}', '', 'Sent to developer when a buyout purchase is made')
 ON CONFLICT (template_key) DO NOTHING;
