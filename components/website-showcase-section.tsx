@@ -2,7 +2,8 @@
 
 import { Check, ArrowRight, Sparkles, X, TrendingUp, Users, Calendar, MessageCircle, Zap } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import confetti from "canvas-confetti"
 
 // Case study data for each demo
 const caseStudies = {
@@ -79,8 +80,95 @@ const caseStudies = {
 
 export function WebsiteShowcaseSection() {
   const [selectedDemo, setSelectedDemo] = useState<'style1' | 'style2' | 'style3' | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const confettiTriggered = useRef(false)
+
+  const scrollToCTA = () => {
+    const ctaSection = document.getElementById("cta")
+    if (ctaSection) {
+      ctaSection.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }
+
+  useEffect(() => {
+    if (!sectionRef.current || confettiTriggered.current) return
+
+    let intervalId: NodeJS.Timeout | null = null
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !confettiTriggered.current) {
+            confettiTriggered.current = true
+            
+            // Celebrate with confetti!
+            const duration = 2 * 1000
+            const animationEnd = Date.now() + duration
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 }
+
+            function randomInRange(min: number, max: number) {
+              return Math.random() * (max - min) + min
+            }
+
+            intervalId = setInterval(function() {
+              const timeLeft = animationEnd - Date.now()
+
+              if (timeLeft <= 0) {
+                if (intervalId) clearInterval(intervalId)
+                return
+              }
+
+              const particleCount = 50 * (timeLeft / duration)
+              
+              // Confetti from left
+              confetti({
+                ...defaults,
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                colors: ['#FF6B35', '#F7931E', '#FFD23F', '#06FFA5', '#4ECDC4']
+              })
+              
+              // Confetti from right
+              confetti({
+                ...defaults,
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                colors: ['#FF6B35', '#F7931E', '#FFD23F', '#06FFA5', '#4ECDC4']
+              })
+              
+              // Confetti from center
+              confetti({
+                ...defaults,
+                particleCount: particleCount * 0.5,
+                origin: { x: 0.5, y: 0.5 },
+                colors: ['#FF6B35', '#F7931E', '#FFD23F', '#06FFA5', '#4ECDC4']
+              })
+            }, 250)
+
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        threshold: 0.3,
+        rootMargin: "0px 0px -100px 0px",
+      }
+    )
+
+    observer.observe(sectionRef.current)
+
+    return () => {
+      observer.disconnect()
+      if (intervalId) clearInterval(intervalId)
+    }
+  }, [])
+
   return (
-    <section id="showcase" className="relative -mt-24 pt-32 pb-20 md:pb-32 overflow-hidden bg-gradient-to-b from-transparent via-background to-accent/5">
+    <section 
+      ref={sectionRef}
+      id="showcase" 
+      className="relative -mt-24 pt-32 pb-20 md:pb-32 overflow-hidden bg-gradient-to-b from-transparent via-background to-accent/5"
+    >
       <div className="container mx-auto relative z-10 px-4">
         <div className="mx-auto max-w-6xl">
           {/* Demo Websites Section */}
@@ -334,13 +422,13 @@ export function WebsiteShowcaseSection() {
                   </p>
 
                   {/* CTA Button */}
-                  <a 
-                    href="#cta" 
+                  <button
+                    onClick={scrollToCTA}
                     className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-lg font-black rounded-full shadow-2xl hover:shadow-accent/50 hover:scale-105 transition-all duration-300 animate-gradient-shift"
                   >
                     <span>Claim Yours Now</span>
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </a>
+                  </button>
 
                   {/* Value Props */}
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
@@ -475,7 +563,11 @@ export function WebsiteShowcaseSection() {
                 </p>
                 <a 
                   href="#cta" 
-                  onClick={() => setSelectedDemo(null)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setSelectedDemo(null)
+                    scrollToCTA()
+                  }}
                   className="inline-flex items-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-sm md:text-base font-black rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
                   <span className="md:hidden">Get Started</span>

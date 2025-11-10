@@ -2,6 +2,7 @@
 
 import { X, Check, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useEffect, useRef, useState } from "react"
 
 const painPoints = [
   {
@@ -47,11 +48,69 @@ const painPoints = [
 ]
 
 export function PainPointsSection() {
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set())
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = []
+
+    // Use setTimeout to ensure refs are set after render
+    const timeoutId = setTimeout(() => {
+      cardRefs.current.forEach((card, index) => {
+        if (!card) return
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setVisibleCards((prev) => new Set(prev).add(index))
+                observer.unobserve(entry.target)
+              }
+            })
+          },
+          {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px",
+          }
+        )
+
+        observer.observe(card)
+        observers.push(observer)
+      })
+    }, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      observers.forEach((observer) => observer.disconnect())
+    }
+  }, [])
+
   const scrollToProcess = () => {
     const processSection = document.getElementById("process")
     if (processSection) {
       processSection.scrollIntoView({ behavior: "smooth" })
     }
+  }
+
+  // Funky animation directions for each card
+  const getAnimationClass = (index: number) => {
+    const isVisible = visibleCards.has(index)
+    
+    // Cards start invisible, animations handle the fade-in
+    if (!isVisible) return ""
+
+    const animations = [
+      "animate-slide-in-funky-left",    // Slide from left with rotation
+      "animate-slide-in-funky-right",   // Slide from right with rotation
+      "animate-slide-in-funky-up",      // Slide from bottom with bounce
+      "animate-slide-in-funky-spin",    // Spin and slide from left
+      "animate-slide-in-funky-zoom",    // Zoom and slide from right
+      "animate-slide-in-funky-flip",    // Flip and slide from bottom
+      "animate-slide-in-funky-bounce",  // Bounce from bottom
+      "animate-slide-in-funky-wiggle",  // Wiggle and slide from left
+    ]
+
+    return animations[index % animations.length]
   }
 
   return (
@@ -83,8 +142,15 @@ export function PainPointsSection() {
           {/* Pain Points Grid */}
           <div className="space-y-6 mb-16">
             {painPoints.map((item, index) => (
-              <div key={index} className="group">
-                <div className="relative p-8 rounded-2xl bg-card border-2 border-border hover:border-red-500/50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+              <div
+                key={index}
+                ref={(el) => {
+                  cardRefs.current[index] = el
+                }}
+                className={`group opacity-0 transition-opacity duration-300 ${getAnimationClass(index)}`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="relative p-8 rounded-2xl bg-card border-2 border-border hover:border-red-500/50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02]">
                   {/* Problem Badge */}
                   <div className="flex items-start gap-6 mb-4">
                     <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 border-2 border-red-500/30 group-hover:bg-red-500/20 transition-colors">

@@ -158,7 +158,7 @@ export function AboutSection() {
                 </h3>
                 <p className="text-base text-foreground font-semibold leading-relaxed">
                   I build every site to turn your visitors into paying clients. When I hand over your finished website, 
-                  you get <span className="text-accent font-black">7 days</span> to live with it, test it, show it to people. 
+                  you get <span className="text-accent font-black">30 days</span> to live with it, test it, show it to people. 
                   If you're not thrilled? I'll refund every penny. Simple as that.
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
