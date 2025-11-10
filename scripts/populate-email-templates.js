@@ -56,6 +56,8 @@ function convertTemplateLiterals(html) {
   return html
     // Handle conditional expressions: ${bookingData.preferredColors ? `...` : ''}
     .replace(/\$\{bookingData\.(\w+) \? `([\s\S]*?)` : ''\}/g, '{if_$1}$2{/if_$1}')
+    // Handle conditional expressions with fullBooking: ${fullBooking.website_goals ? `...` : ''}
+    .replace(/\$\{fullBooking\.(\w+) \? `([\s\S]*?)` : ''\}/g, '{if_$1}$2{/if_$1}')
     // Handle process.env references - convert to {siteUrl}
     .replace(/\$\{\(process\.env\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/ptboost\.co\.uk'\)\.replace\(\/\\\/\$\/, ''\)\}/g, '{siteUrl}')
     .replace(/\$\{process\.env\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/ptboost\.co\.uk'\)\.replace\(\/\\\/\$\/, ''\)\}/g, '{siteUrl}')
@@ -63,6 +65,13 @@ function convertTemplateLiterals(html) {
     .replace(/\$\{bookingData\.(\w+)\}/g, '{$1}')
     // Handle booking variables: ${booking.full_name} -> {full_name}
     .replace(/\$\{booking\.(\w+)\}/g, '{$1}')
+    // Handle fullBooking variables: ${fullBooking.full_name} -> {full_name}
+    .replace(/\$\{fullBooking\.(\w+)\}/g, '{$1}')
+    // Handle fullBooking with fallback: ${fullBooking.business_name || fullBooking.full_name} -> {businessName}
+    .replace(/\$\{fullBooking\.business_name \|\| fullBooking\.full_name\}/g, '{businessName}')
+    .replace(/\$\{fullBooking\.(\w+) \|\| 'N/A'\}/g, '{$1}')
+    // Handle new Date() expressions - convert to a placeholder or remove
+    .replace(/\$\{new Date\(fullBooking\.created_at \|\| Date\.now\(\)\)\.toLocaleString\(\)\}/g, '{purchaseDate}')
     // Handle simple variables: ${name} -> {name}
     .replace(/\$\{(\w+)\}/g, '{$1}')
     // Handle template literal backticks and newlines - clean up indentation
@@ -170,6 +179,12 @@ async function main() {
       file: 'app/api/notify/route.ts',
       startPattern: 'subject: \'🔔 New Lead: Someone Wants to Be Notified!\',\n      html: `',
       endPattern: '      `\n    })'
+    },
+    {
+      key: 'developer_buyout_purchase',
+      file: 'app/api/buyout-webhook/route.ts',
+      startPattern: 'subject: `🚀 Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,\n                    html: `',
+      endPattern: '                    `,\n                  })'
     }
   ]
   
