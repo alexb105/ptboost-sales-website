@@ -90,6 +90,7 @@ export async function POST(request: Request) {
     ) || false
 
     // Check line items for buyout keywords (product name or description)
+    // Only check for specific buyout-related terms, not generic "website"
     let lineItemsIndicateBuyout = false
     if (session.line_items) {
       try {
@@ -101,9 +102,10 @@ export async function POST(request: Request) {
             (typeof item.price.product === 'string' ? item.price.product : (item.price.product as any).name?.toLowerCase() || '') : ''
           return description.includes('buyout') || 
                  description.includes('own your website') ||
-                 description.includes('website') ||
+                 description.includes('website buyout') ||
+                 description.includes('purchase website') ||
                  productName.includes('buyout') ||
-                 productName.includes('website')
+                 productName.includes('website buyout')
         }) || false
         console.log('Line items indicate buyout:', lineItemsIndicateBuyout)
       } catch (error) {
@@ -244,7 +246,8 @@ export async function POST(request: Request) {
           const updateData: any = {
             payment_status: 'completed',
             stripe_session_id: session.id,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            website_owned: false  // Explicitly set to false for regular subscriptions
           }
           
           // Add customer ID if available
@@ -285,7 +288,8 @@ export async function POST(request: Request) {
                 .update({
                   stripe_customer_id: session.customer as string,
                   stripe_session_id: session.id,
-                  updated_at: new Date().toISOString()
+                  updated_at: new Date().toISOString(),
+                  website_owned: false  // Explicitly set to false for regular subscriptions
                 })
                 .eq('id', bookingId)
 
