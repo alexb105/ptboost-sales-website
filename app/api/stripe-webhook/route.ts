@@ -113,120 +113,130 @@ export async function POST(request: Request) {
       }
     }
 
-    // IMPORTANT: If this is a subscription mode checkout, it's NOT a buyout
-    // unless explicitly marked in metadata. Regular subscriptions should never be treated as buyouts.
+    // CRITICAL: Subscription mode checkouts are NEVER buyouts
+    // Regular subscriptions should NEVER set website_owned to true
     const isSubscriptionMode = session.mode === 'subscription'
     
-    // Website buyout is detected if:
-    // 1. Payment link matches buyout link, OR
-    // 2. Success URL is /website-purchased, OR
-    // 3. Success URL contains buyout link ID, OR
-    // 4. Line items contain buyout keywords, OR
-    // 5. Metadata explicitly indicates buyout
-    // BUT: If it's subscription mode, ONLY trust explicit metadata (not URL or line item checks)
-    const isWebsiteBuyout = isSubscriptionMode 
-      ? hasBuyoutMetadata  // For subscriptions, only trust explicit metadata
-      : (isBuyoutLink || successUrlIsBuyout || successUrlHasBuyoutId || lineItemsIndicateBuyout || hasBuyoutMetadata)
+    // If this is a subscription, skip buyout detection entirely
+    if (isSubscriptionMode) {
+      console.log('⚠️ Subscription mode detected - skipping buyout detection. This is a regular subscription, NOT a buyout.')
+      console.log('Session details:', {
+        mode: session.mode,
+        subscription: session.subscription,
+        customer: session.customer,
+        email: session.customer_details?.email
+      })
+      // Continue to regular subscription handling below (don't return early)
+    } else {
+      // Only check for buyout if it's NOT a subscription
+      // Website buyout is detected if:
+      // 1. Payment link matches buyout link, OR
+      // 2. Success URL is /website-purchased, OR
+      // 3. Success URL contains buyout link ID, OR
+      // 4. Line items contain buyout keywords, OR
+      // 5. Metadata explicitly indicates buyout
+      const isWebsiteBuyout = isBuyoutLink || successUrlIsBuyout || successUrlHasBuyoutId || lineItemsIndicateBuyout || hasBuyoutMetadata
 
-    console.log('Buyout detection:', {
-      mode: session.mode,
-      isSubscriptionMode,
-      hasBuyoutMetadata,
-      isBuyoutLink,
-      successUrlIsBuyout,
-      successUrlHasBuyoutId,
-      lineItemsIndicateBuyout,
-      isWebsiteBuyout,
-      amountTotal: session.amount_total,
-      paymentLinkId: session.payment_link,
-      successUrl: session.success_url
-    })
+      console.log('Buyout detection:', {
+        mode: session.mode,
+        isSubscriptionMode: false,
+        hasBuyoutMetadata,
+        isBuyoutLink,
+        successUrlIsBuyout,
+        successUrlHasBuyoutId,
+        lineItemsIndicateBuyout,
+        isWebsiteBuyout,
+        amountTotal: session.amount_total,
+        paymentLinkId: session.payment_link,
+        successUrl: session.success_url
+      })
 
-    if (isWebsiteBuyout) {
-      console.log('🎉 Website buyout detected!')
-      
-      // Mark the customer's booking as website_owned = true
-      if (session.customer_details?.email) {
-        const customerEmail = session.customer_details.email.trim()
-        console.log(`Looking for booking with email: ${customerEmail}`)
+      if (isWebsiteBuyout) {
+        console.log('🎉 Website buyout detected!')
         
-        try {
-          // First, find bookings with this email (try exact match first, then case-insensitive)
-          let existingBookings = null
-          let fetchError = null
+        // Mark the customer's booking as website_owned = true
+        if (session.customer_details?.email) {
+          const customerEmail = session.customer_details.email.trim()
+          console.log(`Looking for booking with email: ${customerEmail}`)
           
-          // Try exact match first
-          const { data: exactMatch, error: exactError } = await supabase
-            .from('bookings')
-            .select('id, email, full_name, payment_status, website_owned')
-            .eq('email', customerEmail)
-            .order('created_at', { ascending: false })
-
-          if (exactMatch && exactMatch.length > 0) {
-            existingBookings = exactMatch
-            console.log(`Found ${exactMatch.length} bookings with exact email match`)
-          } else {
-            // Try case-insensitive match using ilike
-            const { data: caseInsensitiveMatch, error: caseError } = await supabase
+          try {
+            // First, find bookings with this email (try exact match first, then case-insensitive)
+            let existingBookings = null
+            let fetchError = null
+            
+            // Try exact match first
+            const { data: exactMatch, error: exactError } = await supabase
               .from('bookings')
               .select('id, email, full_name, payment_status, website_owned')
-              .ilike('email', customerEmail)
+              .eq('email', customerEmail)
               .order('created_at', { ascending: false })
-            
-            if (caseInsensitiveMatch && caseInsensitiveMatch.length > 0) {
-              existingBookings = caseInsensitiveMatch
-              console.log(`Found ${caseInsensitiveMatch.length} bookings with case-insensitive email match`)
+
+            if (exactMatch && exactMatch.length > 0) {
+              existingBookings = exactMatch
+              console.log(`Found ${exactMatch.length} bookings with exact email match`)
             } else {
-              fetchError = caseError || exactError
+              // Try case-insensitive match using ilike
+              const { data: caseInsensitiveMatch, error: caseError } = await supabase
+                .from('bookings')
+                .select('id, email, full_name, payment_status, website_owned')
+                .ilike('email', customerEmail)
+                .order('created_at', { ascending: false })
+              
+              if (caseInsensitiveMatch && caseInsensitiveMatch.length > 0) {
+                existingBookings = caseInsensitiveMatch
+                console.log(`Found ${caseInsensitiveMatch.length} bookings with case-insensitive email match`)
+              } else {
+                fetchError = caseError || exactError
+              }
             }
-          }
 
-          if (fetchError) {
-            console.error('Error fetching bookings:', fetchError)
-          } else if (existingBookings) {
-            console.log(`Found ${existingBookings.length} bookings for ${customerEmail}:`, existingBookings)
-          }
+            if (fetchError) {
+              console.error('Error fetching bookings:', fetchError)
+            } else if (existingBookings) {
+              console.log(`Found ${existingBookings.length} bookings for ${customerEmail}:`, existingBookings)
+            }
 
-          // Update the most recent booking by ID
-          if (existingBookings && existingBookings.length > 0) {
-            const bookingToUpdate = existingBookings[0]
-            console.log(`Updating booking ID: ${bookingToUpdate.id}`)
-            
-            const { data: updatedBooking, error: updateError } = await supabase
-              .from('bookings')
-              .update({ website_owned: true })
-              .eq('id', bookingToUpdate.id)
-              .select()
+            // Update the most recent booking by ID
+            if (existingBookings && existingBookings.length > 0) {
+              const bookingToUpdate = existingBookings[0]
+              console.log(`Updating booking ID: ${bookingToUpdate.id}`)
+              
+              const { data: updatedBooking, error: updateError } = await supabase
+                .from('bookings')
+                .update({ website_owned: true })
+                .eq('id', bookingToUpdate.id)
+                .select()
 
-            if (updateError) {
-              console.error('❌ Error marking website as owned:', updateError)
-              console.error('Update error details:', JSON.stringify(updateError, null, 2))
-            } else if (updatedBooking && updatedBooking.length > 0) {
-              console.log(`✅ Marked website as owned for: ${customerEmail}`)
-              console.log(`✅ Updated booking ID: ${updatedBooking[0].id}`)
-              console.log(`✅ New website_owned value: ${updatedBooking[0].website_owned}`)
+              if (updateError) {
+                console.error('❌ Error marking website as owned:', updateError)
+                console.error('Update error details:', JSON.stringify(updateError, null, 2))
+              } else if (updatedBooking && updatedBooking.length > 0) {
+                console.log(`✅ Marked website as owned for: ${customerEmail}`)
+                console.log(`✅ Updated booking ID: ${updatedBooking[0].id}`)
+                console.log(`✅ New website_owned value: ${updatedBooking[0].website_owned}`)
+              } else {
+                console.warn(`⚠️ Update returned no results for booking ID: ${bookingToUpdate.id}`)
+              }
             } else {
-              console.warn(`⚠️ Update returned no results for booking ID: ${bookingToUpdate.id}`)
+              console.warn(`⚠️ No booking found for email: ${customerEmail}`)
+              console.warn('This might mean:')
+              console.warn('  1. The email in Stripe does not match any booking in the database')
+              console.warn('  2. The booking was created with a different email address')
+              console.warn('  3. The booking does not exist yet')
+              console.warn(`  4. Email in database might be: "${customerEmail}" (check for typos)`)
             }
-          } else {
-            console.warn(`⚠️ No booking found for email: ${customerEmail}`)
-            console.warn('This might mean:')
-            console.warn('  1. The email in Stripe does not match any booking in the database')
-            console.warn('  2. The booking was created with a different email address')
-            console.warn('  3. The booking does not exist yet')
-            console.warn(`  4. Email in database might be: "${customerEmail}" (check for typos)`)
+          } catch (error) {
+            console.error('❌ Error updating website_owned:', error)
+            console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
           }
-        } catch (error) {
-          console.error('❌ Error updating website_owned:', error)
-          console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+        } else {
+          console.warn('⚠️ No customer email found in session')
+          console.warn('Session customer_details:', JSON.stringify(session.customer_details, null, 2))
         }
-      } else {
-        console.warn('⚠️ No customer email found in session')
-        console.warn('Session customer_details:', JSON.stringify(session.customer_details, null, 2))
+        
+        // Don't decrement capacity for website buyouts (they already have a subscription)
+        return NextResponse.json({ received: true })
       }
-      
-      // Don't decrement capacity for website buyouts (they already have a subscription)
-      return NextResponse.json({ received: true })
     }
 
     // Update the existing booking for this customer
@@ -438,47 +448,53 @@ export async function POST(request: Request) {
             console.log('Session success URL:', session.success_url)
             console.log('Session mode:', session.mode)
             
-            // IMPORTANT: If this is a subscription mode checkout, it's NOT a buyout
-            // unless explicitly marked in metadata
+            // CRITICAL: Subscription mode checkouts are NEVER buyouts
+            // Regular subscriptions should NEVER set website_owned to true
             const isSubscriptionMode = session.mode === 'subscription'
             
-            // Check if success URL indicates buyout (but not for subscriptions)
-            const successUrlIsBuyout = !isSubscriptionMode && (session.success_url?.includes('/website-purchased') || false)
-            
-            // Only treat as buyout if: (1) explicit metadata, OR (2) success URL indicates buyout (and not subscription)
-            const isBuyout = hasBuyoutMetadata || successUrlIsBuyout
-            
-            if (isBuyout) {
-              console.log('🎉 Website buyout detected from charge.succeeded!')
+            if (isSubscriptionMode) {
+              console.log('⚠️ Subscription mode detected in charge.succeeded - skipping buyout detection. This is a regular subscription, NOT a buyout.')
+              // Skip buyout processing for subscriptions
+            } else {
+              // Only check for buyout if it's NOT a subscription
+              // Check if success URL indicates buyout
+              const successUrlIsBuyout = session.success_url?.includes('/website-purchased') || false
               
-              // Update database
-              if (charge.billing_details?.email) {
-                const customerEmail = charge.billing_details.email.trim()
-                console.log(`Looking for booking with email: ${customerEmail}`)
+              // Only treat as buyout if: (1) explicit metadata, OR (2) success URL indicates buyout
+              const isBuyout = hasBuyoutMetadata || successUrlIsBuyout
+              
+              if (isBuyout) {
+                console.log('🎉 Website buyout detected from charge.succeeded!')
                 
-                // Find and update booking (same logic as checkout.session.completed)
-                const { data: exactMatch } = await supabase
-                  .from('bookings')
-                  .select('id, email, full_name, payment_status, website_owned')
-                  .eq('email', customerEmail)
-                  .order('created_at', { ascending: false })
-
-                if (exactMatch && exactMatch.length > 0) {
-                  const bookingToUpdate = exactMatch[0]
-                  const { data: updatedBooking, error: updateError } = await supabase
+                // Update database
+                if (charge.billing_details?.email) {
+                  const customerEmail = charge.billing_details.email.trim()
+                  console.log(`Looking for booking with email: ${customerEmail}`)
+                  
+                  // Find and update booking (same logic as checkout.session.completed)
+                  const { data: exactMatch } = await supabase
                     .from('bookings')
-                    .update({ website_owned: true })
-                    .eq('id', bookingToUpdate.id)
-                    .select()
+                    .select('id, email, full_name, payment_status, website_owned')
+                    .eq('email', customerEmail)
+                    .order('created_at', { ascending: false })
 
-                  if (updateError) {
-                    console.error('❌ Error marking website as owned:', updateError)
-                  } else if (updatedBooking && updatedBooking.length > 0) {
-                    console.log(`✅ Marked website as owned for: ${customerEmail}`)
-                    console.log(`✅ Updated booking ID: ${updatedBooking[0].id}`)
+                  if (exactMatch && exactMatch.length > 0) {
+                    const bookingToUpdate = exactMatch[0]
+                    const { data: updatedBooking, error: updateError } = await supabase
+                      .from('bookings')
+                      .update({ website_owned: true })
+                      .eq('id', bookingToUpdate.id)
+                      .select()
+
+                    if (updateError) {
+                      console.error('❌ Error marking website as owned:', updateError)
+                    } else if (updatedBooking && updatedBooking.length > 0) {
+                      console.log(`✅ Marked website as owned for: ${customerEmail}`)
+                      console.log(`✅ Updated booking ID: ${updatedBooking[0].id}`)
+                    }
+                  } else {
+                    console.warn(`⚠️ No booking found for email: ${customerEmail}`)
                   }
-                } else {
-                  console.warn(`⚠️ No booking found for email: ${customerEmail}`)
                 }
               }
             }
@@ -486,6 +502,7 @@ export async function POST(request: Request) {
             console.log('Could not retrieve checkout session:', error)
           }
         } else if (hasBuyoutMetadata) {
+          // Only process buyout if we have explicit metadata and no session (edge case)
           // If we have buyout metadata but no checkout session, still try to update
           console.log('🎉 Website buyout detected from payment intent metadata!')
           
