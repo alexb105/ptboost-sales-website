@@ -99,7 +99,7 @@ export function CTASection() {
               You Train Clients. We Handle Everything Else.
             </h2>
             <p className="text-pretty text-xl text-muted-foreground md:text-2xl leading-relaxed max-w-3xl mx-auto">
-              £7.99/month. Live in 7 days. Hosting and maintenance included. Cancel anytime.
+              1‑month free trial, then £7.99/month. Live in 7 days. Hosting and maintenance included. Cancel anytime.
             </p>
           </div>
 
@@ -309,7 +309,7 @@ export function CTASection() {
                             {/* Payment Info */}
                             <div className="border-t border-b border-accent/20 py-4">
                               <p className="text-center text-sm font-bold text-foreground mb-1">
-                                ✅ Monthly Subscription • Cancel Anytime
+                                ✅ 1‑Month Free Trial • Cancel Anytime
                               </p>
                               <p className="text-center text-xs text-muted-foreground">
                                 Everything included • No setup fees • Secure payment via Stripe
@@ -328,7 +328,7 @@ export function CTASection() {
                                   >
                                     <Sparkles className="mr-1 md:mr-2 h-5 w-5 md:h-6 md:w-6 animate-pulse flex-shrink-0" />
                                     <span className="md:hidden">Get Started</span>
-                                    <span className="hidden md:inline">Start for £7.99/Month!</span>
+                                    <span className="hidden md:inline">Start free — then £7.99/mo</span>
                                     <ArrowRight className="ml-1 md:ml-2 h-5 w-5 md:h-6 md:w-6 transition-transform group-hover/btn:translate-x-1 flex-shrink-0" />
                                   </Button>
                                 </div>

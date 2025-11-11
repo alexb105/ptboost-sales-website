@@ -161,13 +161,13 @@ export function AIEditorSection() {
                 >
                   <Sparkles className="mr-1 md:mr-2 h-5 w-5 md:h-6 md:w-6 animate-pulse flex-shrink-0" />
                   <span className="md:hidden">Get Started</span>
-                  <span className="hidden md:inline whitespace-nowrap">Start for £7.99/Month</span>
+                  <span className="hidden md:inline whitespace-nowrap">Start free for 1 month</span>
                   <ArrowRight className="ml-1 md:ml-2 h-5 w-5 md:h-6 md:w-6 transition-transform group-hover:translate-x-1 flex-shrink-0" />
                 </Button>
               </div>
               
               <p className="mt-4 text-xs md:text-sm font-bold text-muted-foreground px-4">
-                ⚡ Includes AI Editor • Free Hosting • 7-Day Launch
+                ⚡ 1‑Month Free Trial • Includes AI Editor • Free Hosting • 7-Day Launch
               </p>
             </div>
           </div>

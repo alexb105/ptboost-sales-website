@@ -43,7 +43,7 @@ export function HeroSection() {
             <div className={`mb-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent via-orange-500 to-red-500 px-6 md:px-8 py-3 text-xs md:text-sm font-extrabold text-white shadow-2xl border-2 border-white/30 hover:scale-110 transition-all duration-300 relative overflow-hidden group ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <TrendingUp className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0 animate-bounce-slow relative z-10" />
-              <span className="tracking-wide break-words relative z-10">LAUNCH SPECIAL: Just £7.99/Month</span>
+              <span className="tracking-wide break-words relative z-10">LAUNCH SPECIAL: 1‑Month Free Trial</span>
             </div>
 
             {/* Core Hook */}

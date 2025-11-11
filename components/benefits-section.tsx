@@ -312,7 +312,7 @@ export function BenefitsSection() {
                 Ready to Get Started?
               </p>
               <p className="text-sm md:text-base text-muted-foreground mb-6">
-                Get all 8 features for just £7.99/month. Live in 30 days. Cancel anytime.
+                Free for the first month, then £7.99/month. Live in 30 days. Cancel anytime.
               </p>
               
               <Button
@@ -326,7 +326,7 @@ export function BenefitsSection() {
                 }}
               >
                 <Sparkles className="mr-2 h-4 w-4" />
-                Start for £7.99/Month
+                Start free — then £7.99/mo
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>

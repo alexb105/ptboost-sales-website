@@ -55,7 +55,7 @@ export function ProcessSection() {
                   Subscribe & Get Started
                 </h3>
                 <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
-                  Start your subscription at just £7.99/month. Everything included — website, hosting, maintenance, and updates. Cancel anytime.
+                  Start free for the first month, then £7.99/month. Everything included — website, hosting, maintenance, and updates. Cancel anytime.
                 </p>
 
                 {/* Features */}
@@ -190,9 +190,9 @@ export function ProcessSection() {
               <p className="text-2xl md:text-3xl font-black text-foreground mb-3">
                 That's It. Seriously.
               </p>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Within 7 days, you'll have a professional website capturing local leads 24/7. 
-                <span className="block mt-3 font-bold text-foreground">Maintenance included. Everything for £7.99/month. No tech headaches.</span>
+                <span className="block mt-3 font-bold text-foreground">Maintenance included. Free for the first month, then £7.99/month. No tech headaches.</span>
                 <span className="block mt-2 text-foreground">Just a stunning website working for you while you focus on what you do best — transforming clients.</span>
               </p>
             </div>

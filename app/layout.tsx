@@ -12,11 +12,11 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ptboost.co.uk"),
   title: {
-    default: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
+    default: "PTBoost | PT Websites with 1‑Month Free Trial, then £7.99/month | No Agency Prices",
     template: "%s | PTBoost"
   },
   description:
-    "You train clients. We handle everything else. Done-for-you websites for UK personal trainers. £7.99/month. Live in 7 days. Hosting and maintenance included. AI editor for easy updates. Lead capture. Mobile-first. Local SEO. Cancel anytime.",
+    "You train clients. We handle everything else. Done-for-you websites for UK personal trainers. 1‑month free trial, then £7.99/month. Live in 7 days. Hosting and maintenance included. AI editor for easy updates. Lead capture. Mobile-first. Local SEO. Cancel anytime.",
   keywords: [
     "personal trainer website",
     "UK personal trainer",
@@ -73,23 +73,23 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://ptboost.co.uk",
     siteName: "PTBoost",
-    title: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
+    title: "PTBoost | PT Websites with 1‑Month Free Trial, then £7.99/month | No Agency Prices",
     description:
-      "You train clients. We handle everything else. Done-for-you websites for UK personal trainers. £7.99/month. Live in 7 days. Hosting and maintenance included. AI editor for easy updates. Lead capture. Mobile-first. Local SEO. Cancel anytime.",
+      "You train clients. We handle everything else. Done-for-you websites for UK personal trainers. 1‑month free trial, then £7.99/month. Live in 7 days. Hosting and maintenance included. AI editor for easy updates. Lead capture. Mobile-first. Local SEO. Cancel anytime.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "PTBoost - Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
+        alt: "PTBoost - PT Websites with 1‑Month Free Trial, then £7.99/month | No Agency Prices",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month",
+    title: "PTBoost | PT Websites with 1‑Month Free Trial, then £7.99/month",
     description:
-      "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers. No tech skills needed.",
+      "Affordable professional websites for UK personal trainers. 1‑month free trial, then £7.99/month. Get a custom website in 7 days. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers. No tech skills needed.",
     images: ["/og-image.jpg"],
     creator: "@ptboost",
   },

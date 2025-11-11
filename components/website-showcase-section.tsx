@@ -433,6 +433,10 @@ export function WebsiteShowcaseSection() {
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-accent" />
+                      <span>1‑month free trial</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-accent" />
                       <span>Just £7.99/month</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -570,10 +574,10 @@ export function WebsiteShowcaseSection() {
                   className="inline-flex items-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-sm md:text-base font-black rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
                   <span className="md:hidden">Get Started</span>
-                  <span className="hidden md:inline whitespace-nowrap">Start for £7.99/Month</span>
+                  <span className="hidden md:inline whitespace-nowrap">Start free — then £7.99/mo</span>
                   <ArrowRight className="h-5 w-5 flex-shrink-0" />
                 </a>
-                <p className="text-xs text-muted-foreground mt-3">Just £7.99/month • Live in 7 days • Cancel anytime</p>
+                <p className="text-xs text-muted-foreground mt-3">1‑month free trial • Then £7.99/month • Live in 7 days • Cancel anytime</p>
               </div>
             </div>
           )}

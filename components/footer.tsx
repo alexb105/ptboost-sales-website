@@ -33,7 +33,7 @@ export function Footer() {
                 PTBoost
               </h3>
               <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                You train clients. We handle everything else — website, hosting, maintenance, and easy updates. £7.99/month. Live in 7 days.
+                You train clients. We handle everything else — website, hosting, maintenance, and easy updates. Free for the first month, then £7.99/month. Live in 7 days.
               </p>
             </div>
 
@@ -102,7 +102,7 @@ export function Footer() {
               </Link>
             </div>
             <p className="text-xs text-gray-600 max-w-2xl mx-auto">
-              🔒 Secure payments via Stripe • 💯 30-Day Satisfaction Guarantee • 🚀 Launch pricing at £7.99/month
+              🔒 Secure payments via Stripe • 💯 30-Day Satisfaction Guarantee • 🆓 1‑Month Free Trial • 🚀 Then £7.99/month
             </p>
           </div>
         </div>

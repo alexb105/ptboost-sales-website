@@ -107,11 +107,9 @@ export function AboutSection() {
                   <h3 className="text-xl font-bold text-foreground mb-2">My Solution</h3>
                   <p className="mb-3">
                     Most UK PTs can't justify spending thousands when you're just starting to scale. But without one, 
-                    you're stuck chasing DMs on Instagram where the algorithm controls your business — getting tire-kickers instead of serious clients.
+                    you're stuck chasing DMs on Instagram where the algorithm controls your business.
                   </p>
-                  <p className="font-bold text-foreground text-lg">
-                    ✅ That's why I'm offering professional websites for just <span className="text-accent">£7.99/month</span> — attracting serious clients without paying agency prices
-                  </p>
+       
                 </div>
               </div>
             </div>

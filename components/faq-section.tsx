@@ -5,6 +5,10 @@ import { useState } from "react"
 
 const faqs = [
   {
+    question: "Is there a free trial?",
+    answer: "Yes — you get a 1‑month free trial through Stripe. You won’t be charged until after the trial ends, and it’s £7.99/month after that. Cancel anytime."
+  },
+  {
     question: "Why is it only £7.99/month? What's the catch?",
     answer: "No catch. It's launch pricing. You get everything for £7.99/month — website, hosting, maintenance, and updates. Your price is locked for as long as you stay subscribed. Cancel anytime."
   },
@@ -136,7 +140,7 @@ export function FAQSection() {
               className="inline-flex items-center gap-2 px-6 md:px-8 py-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white text-base md:text-lg font-bold rounded-full hover:scale-105 transition-all shadow-xl"
             >
               <span className="md:hidden">Get Started</span>
-              <span className="hidden md:inline whitespace-nowrap">Start for £7.99/Month</span>
+              <span className="hidden md:inline whitespace-nowrap">Start free — then £7.99/mo</span>
               <ArrowRight className="h-5 w-5 flex-shrink-0" />
             </button>
           </div>

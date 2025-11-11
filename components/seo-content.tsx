@@ -8,7 +8,7 @@ export function SEOContent() {
     <div className="sr-only" aria-hidden="true">
       <h2>Done-for-You Personal Trainer Websites for UK Trainers</h2>
       <p>
-        You train clients. We handle everything else. PTBoost builds and runs your professional website for £7.99/month. Live in 7 days. Hosting and maintenance included.
+        You train clients. We handle everything else. PTBoost builds and runs your professional website with a 1‑month free trial, then £7.99/month. Live in 7 days. Hosting and maintenance included.
       </p>
 
       <h3>Who We Serve</h3>
@@ -18,7 +18,7 @@ export function SEOContent() {
 
       <h3>What We Offer</h3>
       <p>
-        £7.99/month covers everything: a custom, mobile-first website, hosting and maintenance, smart lead capture, local SEO, and an AI editor for easy updates. You're live in 7 days.
+        1‑month free trial, then £7.99/month covers everything: a custom, mobile-first website, hosting and maintenance, smart lead capture, local SEO, and an AI editor for easy updates. You're live in 7 days.
       </p>
 
       <h3>Local SEO for Personal Trainers</h3>
@@ -28,12 +28,12 @@ export function SEOContent() {
 
       <h3>Why Choose PTBoost Over Agencies</h3>
       <p>
-        No big fees. No long timelines. Agencies charge thousands upfront. We charge £7.99/month and handle the lot. You focus on clients.
+        No big fees. No long timelines. Agencies charge thousands upfront. We offer a 1‑month free trial, then £7.99/month and handle the lot. You focus on clients.
       </p>
 
       <h3>Common Questions About Personal Trainer Websites</h3>
       <p>
-        Cost: £7.99/month. Timeline: 7 days. Skills needed: none. Will it help? A professional site boosts trust and conversions. Can you edit it? Yes — with the AI editor.
+        Cost: 1‑month free trial, then £7.99/month. Timeline: 7 days. Skills needed: none. Will it help? A professional site boosts trust and conversions. Can you edit it? Yes — with the AI editor.
       </p>
 
       <h3>Target Audience</h3>
@@ -53,7 +53,7 @@ export function SEOContent() {
 
       <h3>Pricing</h3>
       <p>
-        £7.99/month covers the lot — website, hosting, maintenance, and updates. No hidden fees. Cancel anytime.
+        1‑month free trial, then £7.99/month covers the lot — website, hosting, maintenance, and updates. No hidden fees. Cancel anytime.
       </p>
     </div>
   )

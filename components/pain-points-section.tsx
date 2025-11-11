@@ -38,7 +38,7 @@ const painPoints = [
   {
     problem: "You can't justify spending £2,000–£5,000 on a website.",
     reality: "You know you need one, but the price is ridiculous. You're stuck between 'too expensive' and 'too technical.' You need something affordable, done-for-you, and built for real trainers — not big agencies.",
-    solution: "Just £7.99/month — no massive upfront cost. Everything included: website, hosting, maintenance. Built specifically for trainers who need professional results without agency prices."
+    solution: "Start free for the first month, then just £7.99/month — no massive upfront cost. Everything included: website, hosting, maintenance. Built specifically for trainers who need professional results without agency prices."
   },
   {
     problem: "You're stuck doing admin when you should be growing.",
@@ -213,7 +213,7 @@ export function PainPointsSection() {
               </div>
               
               <p className="text-xs md:text-sm text-muted-foreground px-4">
-                ⚡ £7.99/month launch pricing • 🚀 Live in 7 days • ✅ Cancel anytime
+                🆓 1‑month free trial • Then £7.99/month • 🚀 Live in 7 days • ✅ Cancel anytime
               </p>
             </div>
           </div>
