@@ -35,7 +35,10 @@ function AccountContent() {
   const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
   const [buyoutLink, setBuyoutLink] = useState("")
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
-  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [deleteReason, setDeleteReason] = useState("")
+  const [deleteNotes, setDeleteNotes] = useState("")
+  const [isSubmittingDeletion, setIsSubmittingDeletion] = useState(false)
+  const [deletionSuccess, setDeletionSuccess] = useState(false)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [cancelReason, setCancelReason] = useState("")
   const [cancelNotes, setCancelNotes] = useState("")
@@ -234,33 +237,42 @@ function AccountContent() {
     }
   }
 
-  const handleDeleteAccount = async () => {
-    setIsDeletingAccount(true)
+  const handleSubmitDeletion = async () => {
+    if (!email || !password) {
+      toast.error("Please log in again and try submitting your request.")
+      return
+    }
+    if (!deleteReason.trim()) {
+      toast.error("Please select a reason.")
+      return
+    }
+    setIsSubmittingDeletion(true)
     try {
-      const response = await fetch("/api/delete-account", {
-        method: "DELETE",
+      const response = await fetch("/api/account-deletion-request", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          name: userData?.name || "",
+          businessName: userData?.businessName || "",
+          reason: deleteReason,
+          notes: deleteNotes,
+        }),
       })
-
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to delete account")
+        const data = await response.json().catch(() => ({}))
+        throw new Error((data as any).error || "Failed to submit deletion request")
       }
-
-      toast.success("Account deleted successfully. All website files have been permanently deleted.")
-      
-      // Logout and redirect
-      handleLogout()
-      setTimeout(() => {
-        window.location.href = "/"
-      }, 2000)
+      toast.success("Deletion request sent. We'll process it within 2 business days.")
+      setDeletionSuccess(true)
+      setDeleteAccountDialogOpen(false)
+      setDeleteReason("")
+      setDeleteNotes("")
     } catch (err) {
       console.error("Error:", err)
-      toast.error(err instanceof Error ? err.message : "Failed to delete account")
+      toast.error(err instanceof Error ? err.message : "Failed to send request")
     } finally {
-      setIsDeletingAccount(false)
-      setDeleteAccountDialogOpen(false)
+      setIsSubmittingDeletion(false)
     }
   }
 
@@ -376,6 +388,15 @@ function AccountContent() {
             <CheckCircle className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
               Cancellation request sent. Your subscription will be cancelled within 24 hours (Mon–Fri).
+            </AlertDescription>
+          </Alert>
+        )}
+        {/* Success message after deletion request */}
+        {deletionSuccess && (
+          <Alert className="border-orange-500 bg-orange-50">
+            <Info className="h-4 w-4 text-orange-600" />
+            <AlertDescription className="text-orange-800">
+              Account deletion request sent. Your account will be deleted within 2 business days (Mon–Fri).
             </AlertDescription>
           </Alert>
         )}
@@ -854,118 +875,110 @@ function AccountContent() {
               <CardTitle className="text-lg text-red-900 dark:text-red-400">Danger Zone</CardTitle>
             </div>
             <CardDescription className="text-red-800 dark:text-red-300">
-              Permanently delete your account and all website files. This action cannot be undone.
+              Submit a request to permanently delete your account and all website files. We'll process your request within 2 business days (Monday to Friday).
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <AlertDialog open={deleteAccountDialogOpen} onOpenChange={setDeleteAccountDialogOpen}>
-              <AlertDialogTrigger asChild>
+            <Dialog open={deleteAccountDialogOpen} onOpenChange={setDeleteAccountDialogOpen}>
+              <DialogTrigger asChild>
                 <Button 
                   variant="destructive"
                   className="w-full h-12 bg-red-600 hover:bg-red-700"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Account
+                  Request Account Deletion
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <AlertDialogHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-                      <AlertTriangle className="h-6 w-6 text-red-600" />
-                    </div>
-                    <AlertDialogTitle className="text-2xl text-red-900 dark:text-red-400">
-                      ⚠️ Permanent Account Deletion
-                    </AlertDialogTitle>
-                  </div>
-                  <AlertDialogDescription className="text-base pt-2">
-                    This action is <strong className="text-red-600">IRREVERSIBLE</strong> and will permanently delete your account and all website files.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                
-                <div className="space-y-4 pt-4">
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Request Account Deletion</DialogTitle>
+                  <DialogDescription>
+                    Fill in the details below and we'll process your account deletion within 2 business days (Monday to Friday).
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 pt-2">
                   {/* Warning Box */}
-                  <div className="bg-red-50 dark:bg-red-950/50 border-2 border-red-500/50 rounded-lg p-4">
-                    <p className="font-bold text-red-900 dark:text-red-400 mb-3 text-lg flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5" />
-                      WARNING: What Will Be Deleted
-                    </p>
-                    <ul className="list-disc list-inside space-y-2 ml-2 text-sm text-red-900 dark:text-red-100">
-                      <li><strong>All website files will be permanently deleted</strong> - This action is IRREVERSIBLE and cannot be undone</li>
-                      <li><strong>Your website will be immediately taken offline</strong> - Your website will no longer be accessible</li>
-                      <li><strong>All data will be permanently removed</strong> - This includes your website files, content, images, and all associated data</li>
-                      <li><strong>No recovery possible</strong> - Once your account is deleted, we cannot recover your website or any data</li>
-                      <li><strong>No refunds</strong> - Account deletion does not entitle you to any refunds</li>
-                      <li><strong>Stripe subscription will be cancelled</strong> - Your active subscription will be cancelled immediately</li>
-                    </ul>
+                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-bold text-red-900 text-sm mb-2">⚠️ Warning: This action is permanent</p>
+                        <ul className="text-sm text-red-800 space-y-1">
+                          <li>• Your website will be taken offline</li>
+                          <li>• All files and data will be permanently deleted</li>
+                          <li>• Your subscription will be cancelled</li>
+                          <li>• This cannot be undone</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Important Notice */}
-                  <div className="bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-500/50 rounded-lg p-4">
-                    <p className="font-bold text-yellow-900 dark:text-yellow-400 mb-2 text-sm">📋 Important Notice:</p>
-                    <p className="text-sm text-yellow-900 dark:text-yellow-100 mb-2">
-                      Before deleting your account, please ensure you have:
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-yellow-900 dark:text-yellow-100">
-                      <li>Downloaded or backed up any content, images, or data you wish to keep</li>
-                      <li>Saved any important information from your website</li>
-                      <li>Exported any data you need for your records</li>
-                    </ul>
-                    <p className="text-sm text-red-700 dark:text-red-400 font-semibold mt-3">
-                      We are not responsible for any data loss resulting from account deletion.
+                  <div className="space-y-2">
+                    <Label htmlFor="delete-reason">Reason for deleting your account</Label>
+                    <select
+                      id="delete-reason"
+                      value={deleteReason}
+                      onChange={(e) => setDeleteReason(e.target.value)}
+                      className="h-11 w-full rounded-md border bg-background px-3 text-sm"
+                    >
+                      <option value="">Select a reason…</option>
+                      <option value="no-longer-needed">No longer need the service</option>
+                      <option value="too-expensive">Too expensive</option>
+                      <option value="switching-providers">Switching providers</option>
+                      <option value="unhappy-with-service">Unhappy with service</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="delete-notes">Additional information (optional)</Label>
+                    <textarea
+                      id="delete-notes"
+                      value={deleteNotes}
+                      onChange={(e) => setDeleteNotes(e.target.value)}
+                      rows={4}
+                      className="w-full rounded-md border bg-background p-3 text-sm"
+                      placeholder="Please let us know if there's anything specific we should be aware of."
+                    />
+                  </div>
+
+                  {/* Important Info */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="font-semibold text-blue-900 text-sm mb-2">📋 What happens next:</p>
+                    <p className="text-sm text-blue-800">
+                      We'll process your deletion request within <strong>2 business days (Monday to Friday)</strong>. You'll receive a confirmation email once your account has been deleted.
                     </p>
                   </div>
 
-                  {/* Terms Reference */}
-                  <div className="bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-300 dark:border-accent/30 rounded-lg p-4">
-                    <p className="font-bold text-zinc-900 dark:text-white mb-2 text-sm">📄 Terms & Conditions:</p>
-                    <p className="text-sm text-zinc-800 dark:text-zinc-200">
-                      By deleting your account, you acknowledge that you have read and understood our{" "}
-                      <Link href="/terms" className="text-accent hover:underline font-semibold">
-                        Terms & Conditions
-                      </Link>
-                      {" "}regarding account deletion (Section 14.2). This action confirms your understanding that all website files will be permanently deleted and cannot be recovered.
-                    </p>
-                  </div>
-
-                  {/* Confirmation Text */}
-                  <div className="bg-red-50 dark:bg-red-950/40 border border-red-500/50 rounded-lg p-4">
-                    <p className="text-sm text-red-900 dark:text-red-100 text-center font-semibold">
-                      Are you absolutely sure you want to permanently delete your account and all website files?
-                    </p>
-                    <p className="text-xs text-red-700 dark:text-red-400 text-center mt-2">
-                      This action cannot be undone.
-                    </p>
+                  <div className="flex gap-2 justify-end pt-2">
+                    <Button 
+                      variant="outline"
+                      onClick={() => setDeleteAccountDialogOpen(false)}
+                      disabled={isSubmittingDeletion}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleSubmitDeletion}
+                      disabled={isSubmittingDeletion}
+                      variant="destructive"
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      {isSubmittingDeletion ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending…
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Submit Deletion Request
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </div>
-
-                <AlertDialogFooter className="flex-col sm:flex-row gap-2 pt-4">
-                  <AlertDialogCancel 
-                    disabled={isDeletingAccount}
-                    className="w-full sm:w-auto"
-                  >
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAccount}
-                    disabled={isDeletingAccount}
-                    className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    {isDeletingAccount ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Deleting Account...
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Yes, Delete My Account Permanently
-                      </>
-                    )}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
 

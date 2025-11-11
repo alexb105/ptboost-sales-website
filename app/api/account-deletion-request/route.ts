@@ -1,20 +1,7 @@
-// API endpoint for account deletion requests
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-
-// Use service role key for admin operations
-const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
-  ? createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    )
-  : createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
 
 export async function POST(request: Request) {
   try {
@@ -27,27 +14,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Verify user exists
-    const { data: booking, error: fetchError } = await supabaseAdmin
-      .from('bookings')
-      .select('id, email, full_name, business_name, stripe_customer_id, subscription_password')
-      .eq('email', email)
-      .eq('payment_status', 'completed')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (fetchError || !booking) {
-      return NextResponse.json(
-        { error: 'Account not found' },
-        { status: 404 }
-      )
-    }
-
     // Send confirmation email to customer
     if (process.env.RESEND_API_KEY) {
       try {
-        console.log(`Sending account deletion request confirmation to customer: ${email}`)
+        console.log(`Sending account deletion request confirmation to: ${email}`)
         await resend.emails.send({
           from: 'PTBoost <noreply@ptboost.co.uk>',
           to: [email],
@@ -134,7 +104,7 @@ export async function POST(request: Request) {
                     box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
                   }
                   .message-card {
-                    background: linear-gradient(135deg, #fef3e7 0%, #fff5e6 100%);
+                    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
                     padding: 30px;
                     border-radius: 16px;
                     margin-bottom: 25px;
@@ -146,6 +116,9 @@ export async function POST(request: Request) {
                     color: #1a1a1a;
                     margin: 0 0 15px 0;
                     font-weight: 500;
+                  }
+                  .message-card p:last-child {
+                    margin-bottom: 0;
                   }
                   .section {
                     background: #ffffff;
@@ -199,6 +172,20 @@ export async function POST(request: Request) {
                     color: #374151;
                     font-weight: 500;
                   }
+                  .highlight-box {
+                    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+                    padding: 25px;
+                    border-radius: 12px;
+                    border: 2px solid rgba(59, 130, 246, 0.2);
+                    margin-top: 20px;
+                  }
+                  .highlight-box p {
+                    font-size: 16px;
+                    color: #1e40af;
+                    margin: 0;
+                    font-weight: 600;
+                    line-height: 1.6;
+                  }
                   .footer {
                     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
                     color: white;
@@ -243,14 +230,14 @@ export async function POST(request: Request) {
                 <div class="email-container">
                   <div class="header">
                     <div class="header-content">
-                      <h1>Request Received</h1>
-                      <p>Your account deletion request has been received</p>
+                      <h1>Deletion Request Received</h1>
+                      <p>We've received your account deletion request</p>
                     </div>
                   </div>
                   
                   <div class="content">
                     <div class="info-badge">
-                      📋 Request Confirmed
+                      📋 Request Submitted
                     </div>
 
                     <div class="message-card">
@@ -258,7 +245,10 @@ export async function POST(request: Request) {
                         <strong>Dear ${name},</strong>
                       </p>
                       <p>
-                        Your request to delete your PTBoost account has been received and will be processed within <strong>2 business days (Monday to Friday)</strong>.
+                        Your request to delete your account has been received and will be processed shortly.
+                      </p>
+                      <p>
+                        We will process your deletion request within <strong>2 business days (Monday to Friday)</strong>.
                       </p>
                     </div>
 
@@ -266,42 +256,43 @@ export async function POST(request: Request) {
                       <h2 class="section-title">What Happens Next</h2>
                       <ul class="info-list">
                         <li>
-                          <p>Your account deletion request will be reviewed by our team</p>
+                          <p>Our team will review your deletion request within 2 business days</p>
                         </li>
                         <li>
-                          <p>We will process the deletion within 2 business days (Monday to Friday)</p>
+                          <p>You'll receive a final confirmation email once the deletion is complete</p>
                         </li>
                         <li>
-                          <p>You will receive a confirmation email once your account has been deleted</p>
+                          <p>Your subscription will be cancelled, and your website will be taken offline</p>
                         </li>
                         <li>
-                          <p>All website files, data, and your subscription will be permanently removed</p>
+                          <p>All your data and website files will be permanently deleted</p>
                         </li>
                       </ul>
                     </div>
 
                     <div class="section">
-                      <h2 class="section-title">Important Information</h2>
+                      <h2 class="section-title">Changed Your Mind?</h2>
                       <ul class="info-list">
                         <li>
-                          <p>This action is <strong>irreversible</strong> - once your account is deleted, we cannot recover your website or data</p>
+                          <p>If you'd like to cancel this deletion request, please contact us immediately at <a href="mailto:alexander.ptboost@gmail.com" style="color: #f97316; font-weight: 700; text-decoration: none;">alexander.ptboost@gmail.com</a></p>
                         </li>
                         <li>
-                          <p>If you change your mind, please contact us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #f97316; font-weight: 700;">alexander.ptboost@gmail.com</a> as soon as possible</p>
-                        </li>
-                        <li>
-                          <p>If you did not request this deletion, please contact us immediately</p>
+                          <p>Once the deletion is processed, it cannot be undone</p>
                         </li>
                       </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                      <p>
+                        ⚠️ <strong>Important:</strong> This is a confirmation that we received your request. Your account has NOT been deleted yet. You'll receive another email once the deletion is complete.
+                      </p>
                     </div>
                   </div>
 
                   <div class="footer">
                     <div class="footer-brand">PTBoost</div>
                     <p class="footer-text">
-                      Thank you for being a part of PTBoost.
-                      <br /><br />
-                      If you have any questions or concerns, please contact us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #f97316; text-decoration: none; font-weight: 700;">alexander.ptboost@gmail.com</a>
+                      We're sorry to see you go. If you have any questions, please contact us at <a href="mailto:alexander.ptboost@gmail.com" style="color: #f97316; text-decoration: none; font-weight: 700;">alexander.ptboost@gmail.com</a>
                     </p>
                   </div>
                 </div>
@@ -309,10 +300,9 @@ export async function POST(request: Request) {
             </html>
           `,
         })
-        console.log(`Customer notification email sent successfully to: ${email}`)
+        console.log(`Account deletion request confirmation sent to customer: ${email}`)
       } catch (emailError) {
-        console.error('Error sending customer notification email:', emailError)
-        // Continue to send admin notification even if customer email fails
+        console.error('Error sending customer confirmation email:', emailError)
       }
 
       // Send notification email to admin
@@ -321,7 +311,7 @@ export async function POST(request: Request) {
         await resend.emails.send({
           from: 'PTBoost <noreply@ptboost.co.uk>',
           to: ['alexander.ptboost@gmail.com'],
-          subject: '🚨 Account Deletion Request',
+          subject: `🚨 Account Deletion Request - ${name} (${email})`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -338,7 +328,7 @@ export async function POST(request: Request) {
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                     line-height: 1.6;
                     color: #1a1a1a;
-                    background: #f5f5f5;
+                    background: #f3f4f6;
                     padding: 20px;
                   }
                   .email-container {
@@ -347,7 +337,7 @@ export async function POST(request: Request) {
                     background: #ffffff;
                     border-radius: 16px;
                     overflow: hidden;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
                   }
                   .header {
                     background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
@@ -356,46 +346,46 @@ export async function POST(request: Request) {
                     text-align: center;
                   }
                   .header h1 {
-                    font-size: 32px;
+                    font-size: 28px;
                     font-weight: 900;
                     margin: 0 0 10px 0;
                   }
                   .header p {
-                    font-size: 18px;
+                    font-size: 16px;
                     margin: 0;
                     opacity: 0.95;
                   }
                   .content {
                     padding: 40px;
                   }
-                  .alert-box {
-                    background: #fee2e2;
-                    border: 2px solid #dc2626;
-                    border-radius: 12px;
-                    padding: 20px;
-                    margin-bottom: 30px;
-                  }
-                  .alert-box p {
-                    font-size: 18px;
+                  .alert-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: #dc2626;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 50px;
                     font-weight: 700;
-                    color: #dc2626;
-                    margin: 0;
+                    font-size: 14px;
+                    margin-bottom: 25px;
                   }
                   .info-section {
                     background: #f9fafb;
-                    border-radius: 12px;
                     padding: 25px;
-                    margin-bottom: 25px;
+                    border-radius: 12px;
+                    margin-bottom: 20px;
+                    border-left: 4px solid #dc2626;
                   }
-                  .info-section h2 {
-                    font-size: 20px;
+                  .info-section h3 {
+                    font-size: 18px;
                     font-weight: 800;
                     color: #1a1a1a;
                     margin: 0 0 15px 0;
                   }
                   .info-row {
                     display: flex;
-                    padding: 12px 0;
+                    padding: 10px 0;
                     border-bottom: 1px solid #e5e7eb;
                   }
                   .info-row:last-child {
@@ -408,40 +398,33 @@ export async function POST(request: Request) {
                   }
                   .info-value {
                     color: #1a1a1a;
-                    font-weight: 500;
+                    font-weight: 600;
                   }
-                  .action-required {
-                    background: #fff7ed;
-                    border: 2px solid #f97316;
-                    border-radius: 12px;
+                  .action-box {
+                    background: #fef2f2;
+                    border: 2px solid #fecaca;
                     padding: 25px;
-                    margin-top: 30px;
+                    border-radius: 12px;
+                    margin-top: 25px;
                   }
-                  .action-required h3 {
+                  .action-box h3 {
                     font-size: 18px;
                     font-weight: 800;
-                    color: #f97316;
+                    color: #dc2626;
                     margin: 0 0 15px 0;
                   }
-                  .action-required ul {
+                  .action-box p {
+                    font-size: 15px;
+                    color: #991b1b;
                     margin: 0;
-                    padding-left: 20px;
-                  }
-                  .action-required li {
-                    color: #1a1a1a;
-                    margin-bottom: 8px;
-                    font-weight: 500;
+                    line-height: 1.6;
                   }
                   .footer {
                     background: #1a1a1a;
-                    color: white;
+                    color: #d1d5db;
                     padding: 30px;
                     text-align: center;
-                  }
-                  .footer p {
                     font-size: 14px;
-                    color: #d1d5db;
-                    margin: 0;
                   }
                 </style>
               </head>
@@ -449,80 +432,97 @@ export async function POST(request: Request) {
                 <div class="email-container">
                   <div class="header">
                     <h1>🚨 Account Deletion Request</h1>
-                    <p>A customer has requested account deletion</p>
+                    <p>Action Required - Customer wants to delete their account</p>
                   </div>
                   
                   <div class="content">
-                    <div class="alert-box">
-                      <p>⚠️ ACTION REQUIRED: Process account deletion within 2 business days</p>
+                    <div class="alert-badge">
+                      ⚠️ Action Required
                     </div>
 
                     <div class="info-section">
-                      <h2>Customer Information</h2>
+                      <h3>Customer Details</h3>
                       <div class="info-row">
-                        <span class="info-label">Name:</span>
-                        <span class="info-value">${name}</span>
+                        <div class="info-label">Name:</div>
+                        <div class="info-value">${name}</div>
                       </div>
                       <div class="info-row">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">${email}</span>
+                        <div class="info-label">Email:</div>
+                        <div class="info-value">${email}</div>
                       </div>
+                      ${businessName ? `
                       <div class="info-row">
-                        <span class="info-label">Business Name:</span>
-                        <span class="info-value">${businessName || 'N/A'}</span>
-                      </div>
-                      <div class="info-row">
-                        <span class="info-label">Stripe Customer ID:</span>
-                        <span class="info-value">${booking.stripe_customer_id || 'N/A'}</span>
-                      </div>
-                    </div>
-
-                    <div class="info-section">
-                      <h2>Deletion Request Details</h2>
-                      <div class="info-row">
-                        <span class="info-label">Reason:</span>
-                        <span class="info-value">${reason || 'Not provided'}</span>
-                      </div>
-                      ${notes ? `
-                      <div class="info-row">
-                        <span class="info-label">Additional Notes:</span>
-                        <span class="info-value">${notes}</span>
+                        <div class="info-label">Business:</div>
+                        <div class="info-value">${businessName}</div>
                       </div>
                       ` : ''}
+                      <div class="info-row">
+                        <div class="info-label">Request Date:</div>
+                        <div class="info-value">${new Date().toLocaleString('en-GB', { 
+                          dateStyle: 'full', 
+                          timeStyle: 'short',
+                          timeZone: 'Europe/London'
+                        })}</div>
+                      </div>
                     </div>
 
-                    <div class="action-required">
-                      <h3>📋 Action Required</h3>
-                      <ul>
-                        <li>Process this deletion request within 2 business days (Monday to Friday)</li>
-                        <li>Cancel the Stripe subscription for this customer</li>
-                        <li>Delete all website files and data associated with this account</li>
-                        <li>Delete the customer's Stripe record</li>
-                        <li>Send final confirmation email to the customer once completed</li>
-                      </ul>
+                    ${reason ? `
+                    <div class="info-section">
+                      <h3>Deletion Reason</h3>
+                      <div class="info-row">
+                        <div class="info-value">${reason}</div>
+                      </div>
+                    </div>
+                    ` : ''}
+
+                    ${notes ? `
+                    <div class="info-section">
+                      <h3>Additional Notes</h3>
+                      <div class="info-row">
+                        <div class="info-value">${notes}</div>
+                      </div>
+                    </div>
+                    ` : ''}
+
+                    <div class="action-box">
+                      <h3>⏰ Action Required</h3>
+                      <p>
+                        <strong>Process this deletion request within 2 business days (Monday to Friday).</strong>
+                      </p>
+                      <p style="margin-top: 15px;">
+                        The customer has been notified that their account will be deleted within 2 business days.
+                      </p>
+                      <p style="margin-top: 15px;">
+                        <strong>Steps to complete:</strong><br>
+                        1. Cancel their Stripe subscription<br>
+                        2. Delete their website files<br>
+                        3. Delete their account from the database<br>
+                        4. Send final confirmation email to customer
+                      </p>
                     </div>
                   </div>
 
                   <div class="footer">
-                    <p>PTBoost Admin Notification System</p>
+                    <strong>PTBoost Admin Notification</strong><br>
+                    This is an automated notification. Please process this request promptly.
                   </div>
                 </div>
               </body>
             </html>
           `,
         })
-        console.log('Admin notification email sent successfully')
-      } catch (adminEmailError) {
-        console.error('Error sending admin notification email:', adminEmailError)
+        console.log('Account deletion request notification sent to admin')
+      } catch (emailError) {
+        console.error('Error sending admin notification email:', emailError)
       }
     }
 
     return NextResponse.json({ 
       success: true,
-      message: 'Account deletion request submitted successfully. You will receive confirmation within 2 business days.'
+      message: 'Account deletion request submitted successfully'
     })
   } catch (error) {
-    console.error('Error in delete-account-request:', error)
+    console.error('Error in account-deletion-request:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
