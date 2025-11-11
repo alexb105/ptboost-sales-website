@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | PTBoost"
   },
   description:
-    "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow. No tech skills needed. No £2,000-5,000 agency prices.",
+    "You train clients. We handle everything else. Done-for-you websites for UK personal trainers. £7.99/month. Live in 7 days. Hosting and maintenance included. AI editor for easy updates. Lead capture. Mobile-first. Local SEO. Cancel anytime.",
   keywords: [
     "personal trainer website",
     "UK personal trainer",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     siteName: "PTBoost",
     title: "PTBoost | Professional Websites for UK Personal Trainers | £7.99/month | No Agency Prices",
     description:
-      "Affordable professional websites for UK personal trainers. Get a custom website in 7 days for just £7.99/month. Stop chasing DMs, start attracting serious clients. Perfect for budget-conscious trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow. No tech skills needed. No £2,000-5,000 agency prices.",
+      "You train clients. We handle everything else. Done-for-you websites for UK personal trainers. £7.99/month. Live in 7 days. Hosting and maintenance included. AI editor for easy updates. Lead capture. Mobile-first. Local SEO. Cancel anytime.",
     images: [
       {
         url: "/og-image.jpg",

@@ -33,7 +33,7 @@ export function Footer() {
                 PTBoost
               </h3>
               <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
-                High-converting websites for UK personal trainers who are ready to scale. Serving trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow, and across the United Kingdom.
+                You train clients. We handle everything else — website, hosting, maintenance, and easy updates. £7.99/month. Live in 7 days.
               </p>
             </div>
 
@@ -102,7 +102,7 @@ export function Footer() {
               </Link>
             </div>
             <p className="text-xs text-gray-600 max-w-2xl mx-auto">
-              🔒 Secure payments via Stripe • 💯 7-Day Satisfaction Guarantee • 🚀 Launch pricing at £7.99/month
+              🔒 Secure payments via Stripe • 💯 30-Day Satisfaction Guarantee • 🚀 Launch pricing at £7.99/month
             </p>
           </div>
         </div>

@@ -12,7 +12,7 @@ const caseStudies = {
     style: "STYLE #1",
     clientName: "Liam Hogan",
     clientType: "Certified Personal Trainer",
-    location: "London, UK",
+    location: "United Kingdom",
     results: [
       { metric: "3-5", label: "New Leads Daily", icon: TrendingUp },
       { metric: "24/7", label: "Working For You", icon: Users },
@@ -35,7 +35,7 @@ const caseStudies = {
     style: "STYLE #2",
     clientName: "Sophie Martinez",
     clientType: "Female Wellness Coach",
-    location: "Manchester, UK",
+    location: "United Kingdom",
     results: [
       { metric: "99%", label: "Mobile Ready", icon: TrendingUp },
       { metric: "5★", label: "Professional", icon: Users },
@@ -58,7 +58,7 @@ const caseStudies = {
     style: "STYLE #3",
     clientName: "Zarnder Fitness",
     clientType: "Transformation & Results Coach",
-    location: "Birmingham, UK",
+    location: "United Kingdom",
     results: [
       { metric: "Live", label: "In Just 7 Days", icon: TrendingUp },
       { metric: "100%", label: "Custom Design", icon: Users },
@@ -195,8 +195,7 @@ export function WebsiteShowcaseSection() {
               </h2>
               
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Professional websites like these — <span className="font-bold text-foreground">fully customized</span> for your brand, 
-                style, and personality. No templates, no cookie-cutter designs.
+                Professional, done-for-you websites. <span className="font-bold text-foreground">Fully customised</span> to your brand. No templates.
               </p>
             </div>
 

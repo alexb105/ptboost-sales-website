@@ -30,7 +30,7 @@ export function AboutSection() {
             Built for UK Personal Trainers
           </h2>
           <p className="text-center text-accent font-semibold text-lg mb-12">
-            By a developer who understands your business. Serving trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow, and across the United Kingdom.
+            You train clients. We handle your website, hosting, and updates.
           </p>
 
           {/* Main content grid */}
@@ -47,35 +47,16 @@ export function AboutSection() {
                   <div>
                     <h3 className="text-xl font-bold text-foreground mb-2">The Problem I Noticed</h3>
                     <p>
-                      I'm a web developer who specializes in high-converting websites. After working with businesses across different industries, 
-                      I noticed UK personal trainers face a unique challenge:
+                      I'm a web developer who specializes in high‑converting websites. After building many PT websites over my career, 
+                      I evolved a proven design system — tested in the real world — that's now distilled into a simple, all‑in‑one package
+                      for UK personal trainers.
                     </p>
                   </div>
                 </div>
                 <div className="pl-16">
                   <p className="font-bold text-foreground text-lg">
-                    ❌ You're tired of chasing DMs and need a professional online presence that brings in serious clients — but agencies charge £2,000-5,000
+                    ❌ You're tired of wasting time and need a professional online presence that brings in serious clients — but agencies charge £2,000-5,000
                   </p>
-                </div>
-              </div>
-
-              <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-lg">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">My Solution</h3>
-                    <p className="mb-3">
-                      Most UK PTs can't justify spending thousands when you're just starting to scale. But without one, 
-                      you're stuck chasing DMs on Instagram where the algorithm controls your business — getting tire-kickers instead of serious clients.
-                    </p>
-                    <p className="font-bold text-foreground text-lg">
-                      ✅ That's why I'm offering professional websites for just <span className="text-accent">£7.99/month</span> — attracting serious clients without paying agency prices
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -110,29 +91,28 @@ export function AboutSection() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Why this price */}
-              <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30">
-                <h4 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          {/* My Solution - spans both columns */}
+          <div className="mb-12">
+            <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-lg text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  Why So Affordable?
-                </h4>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-accent">•</span>
-                    <span>Building portfolio in fitness niche</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-accent">•</span>
-                    <span>Streamlined process = lower costs</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-accent">•</span>
-                    <span>Want to help PTs succeed online</span>
-                  </li>
-                </ul>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">My Solution</h3>
+                  <p className="mb-3">
+                    Most UK PTs can't justify spending thousands when you're just starting to scale. But without one, 
+                    you're stuck chasing DMs on Instagram where the algorithm controls your business — getting tire-kickers instead of serious clients.
+                  </p>
+                  <p className="font-bold text-foreground text-lg">
+                    ✅ That's why I'm offering professional websites for just <span className="text-accent">£7.99/month</span> — attracting serious clients without paying agency prices
+                  </p>
+                </div>
               </div>
             </div>
           </div>

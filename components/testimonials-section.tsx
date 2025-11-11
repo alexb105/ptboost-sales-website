@@ -4,21 +4,21 @@ import { Star } from "lucide-react"
 const testimonials = [
   {
     name: "Tom R.",
-    role: "Personal Trainer, London",
+    role: "Personal Trainer, United Kingdom",
     content:
       "I was skeptical at first because of the price, but the site he built me looks completely professional. Already got 2 enquiries in the first week. Worth every penny.",
     rating: 5,
   },
   {
     name: "Sarah M.",
-    role: "Online Coach, Manchester",
+    role: "Online Coach, United Kingdom",
     content:
       "Really impressed with the turnaround time and the final product. It's exactly what I needed to look more professional and stop relying only on Instagram. Communication was great throughout.",
     rating: 5,
   },
   {
     name: "James K.",
-    role: "Strength Coach, Birmingham",
+    role: "Strength Coach, United Kingdom",
     content:
       "Took a chance on the £7.99/month offer and I'm glad I did. The website actually looks better than some trainers charging £200+ per session. Already recommended to 2 other trainers.",
     rating: 5,

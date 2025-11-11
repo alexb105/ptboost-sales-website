@@ -225,15 +225,15 @@ export function BenefitsSection() {
           
           <h2 className="mb-4 text-3xl md:text-5xl lg:text-6xl font-black leading-tight">
             <span className="block mb-2 bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent">
-              Everything You Need
+              Time Back. Professional Results.
             </span>
             <span className="block text-foreground text-2xl md:text-4xl lg:text-5xl">
-              To Dominate Your Market
+              We handle the website. You handle the coaching.
             </span>
           </h2>
           
           <p className="text-base md:text-lg text-muted-foreground">
-            Professional tools that work 24/7 to attract, convert, and grow your client base. Optimized for UK personal trainers in London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow, and across the United Kingdom.
+            Built for UK personal trainers. Automated lead capture. Mobile-first. Local SEO. Easy updates with AI.
           </p>
         </div>
 
@@ -312,7 +312,7 @@ export function BenefitsSection() {
                 Ready to Get Started?
               </p>
               <p className="text-sm md:text-base text-muted-foreground mb-6">
-                Get all 8 features for just £7.99/month. Live in 7 days. Cancel anytime.
+                Get all 8 features for just £7.99/month. Live in 30 days. Cancel anytime.
               </p>
               
               <Button

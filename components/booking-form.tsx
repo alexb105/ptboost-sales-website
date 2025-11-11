@@ -343,7 +343,7 @@ export function BookingForm({ open, onOpenChange }: BookingFormProps) {
         <Label htmlFor="location">Location *</Label>
         <Input
           id="location"
-          placeholder="London, UK"
+          placeholder="City, UK"
           value={formData.location}
           onChange={(e) => updateFormData("location", e.target.value)}
           className="h-12"

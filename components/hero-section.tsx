@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Check, Star, TrendingUp, Users, Shield, Award, ChevronDown, Zap, Clock, Target } from "lucide-react"
+import { ArrowRight, Check, Star, TrendingUp, Users, Shield, Award, ChevronDown, Zap, Clock, Target, Smartphone, Search } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export function HeroSection() {
@@ -46,54 +46,54 @@ export function HeroSection() {
               <span className="tracking-wide break-words relative z-10">LAUNCH SPECIAL: Just £7.99/Month</span>
             </div>
 
-            {/* Pain Point Headline - UK PT Audience Hook */}
+            {/* Core Hook */}
             <h1 className={`mb-8 text-balance font-sans text-5xl font-black leading-[1.05] tracking-tight text-foreground md:text-7xl lg:text-8xl ${isVisible ? 'animate-fade-in-up-delayed' : 'opacity-0'}`}>
               <span className="block mb-4 bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent drop-shadow-2xl animate-gradient-shift bg-[length:200%_auto]">
-                Stop Chasing DMs.
+                You Train Clients.
               </span>
               <span className="block text-foreground animate-slide-in-left">
-                Start Attracting Serious Clients Who Actually Book.
+                We Handle Everything Else.
               </span>
             </h1>
 
-            {/* Subheadline - UK PT Audience with Local SEO */}
+            {/* Subheadline - Focused message for PTs */}
             <p className={`mb-10 text-pretty text-2xl text-foreground md:text-3xl lg:text-4xl leading-tight font-bold max-w-4xl mx-auto ${isVisible ? 'animate-fade-in-up-delayed-2' : 'opacity-0'}`}>
-              For UK personal trainers in <span className="text-accent font-black">London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Edinburgh, Glasgow</span> and across the UK — tired of chasing DMs — get a professional online presence that brings in <span className="bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">serious clients 24/7</span> — without paying £2,000-5,000 agency prices.
+              Built for <span className="text-accent font-black">personal trainers</span>. Designed to <span className="font-black">grow your business</span> while you <span className="text-accent font-black">focus on clients</span>.
             </p>
 
-            {/* Value Proposition - Stats Grid with Stagger Animation */}
+            {/* Value Proposition - Customer Benefits Grid with Stagger Animation */}
             <div className={`mb-10 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto ${isVisible ? 'animate-fade-in-up-delayed-3' : 'opacity-0'}`}>
               <div className="p-6 rounded-2xl bg-gradient-to-br from-accent/10 via-orange-500/10 to-transparent border-2 border-accent/30 backdrop-blur-sm hover:scale-110 hover:rotate-1 transition-all duration-300 group relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="flex items-center justify-center mb-3 relative z-10">
                   <div className="p-3 rounded-full bg-gradient-to-br from-accent to-orange-500 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-lg group-hover:shadow-accent/50">
-                    <Clock className="h-6 w-6 text-white animate-pulse-slow" />
+                    <Target className="h-6 w-6 text-white animate-pulse-slow" />
                   </div>
                 </div>
-                <p className="text-3xl font-black text-foreground mb-2 relative z-10 group-hover:scale-105 transition-transform">24/7</p>
-                <p className="text-sm font-semibold text-muted-foreground relative z-10">Client Generation</p>
+                <p className="text-xl font-black text-foreground mb-2 relative z-10 group-hover:scale-105 transition-transform">Client Generation</p>
+                <p className="text-sm font-semibold text-muted-foreground relative z-10">Lead Capture • 24/7 Leads</p>
               </div>
               
               <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/10 via-red-500/10 to-transparent border-2 border-orange-500/30 backdrop-blur-sm hover:scale-110 hover:-rotate-1 transition-all duration-300 group relative overflow-hidden" style={{ animationDelay: '0.1s' }}>
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="flex items-center justify-center mb-3 relative z-10">
                   <div className="p-3 rounded-full bg-gradient-to-br from-orange-500 to-red-500 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-lg group-hover:shadow-orange-500/50">
-                    <Target className="h-6 w-6 text-white animate-pulse-slow" style={{ animationDelay: '0.2s' }} />
+                    <Zap className="h-6 w-6 text-white animate-pulse-slow" style={{ animationDelay: '0.2s' }} />
                   </div>
                 </div>
-                <p className="text-3xl font-black text-foreground mb-2 relative z-10 group-hover:scale-105 transition-transform">7 Days</p>
-                <p className="text-sm font-semibold text-muted-foreground relative z-10">Launch Ready</p>
+                <p className="text-xl font-black text-foreground mb-2 relative z-10 group-hover:scale-105 transition-transform">7-Day Turnaround </p>
+                <p className="text-sm font-semibold text-muted-foreground relative z-10">Live and attracting clients within 7 days</p>
               </div>
               
               <div className="p-6 rounded-2xl bg-gradient-to-br from-red-500/10 via-accent/10 to-transparent border-2 border-red-500/30 backdrop-blur-sm hover:scale-110 hover:rotate-1 transition-all duration-300 group relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="flex items-center justify-center mb-3 relative z-10">
                   <div className="p-3 rounded-full bg-gradient-to-br from-red-500 to-accent group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-lg group-hover:shadow-red-500/50">
-                    <Zap className="h-6 w-6 text-white fill-white animate-pulse-slow" style={{ animationDelay: '0.4s' }} />
+                    <Shield className="h-6 w-6 text-white animate-pulse-slow" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
-                <p className="text-3xl font-black text-foreground mb-2 relative z-10 group-hover:scale-105 transition-transform">£7.99</p>
-                <p className="text-sm font-semibold text-muted-foreground relative z-10">Per Month</p>
+                <p className="text-xl font-black text-foreground mb-2 relative z-10 group-hover:scale-105 transition-transform">Professionalism & Trust</p>
+                <p className="text-sm font-semibold text-muted-foreground relative z-10">Mobile-Optimised Design</p>
               </div>
             </div>
 

@@ -473,7 +473,7 @@ export async function POST(request: Request) {
                       My Personal 7-Day Money-Back Guarantee
                     </p>
                     <p style="font-size: 15px; line-height: 1.7;">
-                      I'll build your site. You test it for 7 days. Show it to friends, family, potential clients. 
+                      I'll build your site. You test it for 30 days. Show it to friends, family, potential clients. 
                       If you're not 100% thrilled with it, I'll refund every penny. No questions asked, no hard feelings.
                     </p>
                     <p style="font-size: 14px; margin-top: 12px; color: #1e40af; font-weight: 600;">

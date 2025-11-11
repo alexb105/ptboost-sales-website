@@ -96,10 +96,10 @@ export function CTASection() {
           {/* Section Header */}
           <div className="text-center mb-12">
             <h2 className="mb-4 text-balance font-sans text-4xl font-black leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
-              Ready to Get Your Professional Website?
+              You Train Clients. We Handle Everything Else.
             </h2>
             <p className="text-pretty text-xl text-muted-foreground md:text-2xl leading-relaxed max-w-3xl mx-auto">
-              Lock in <span className="font-black text-accent">launch pricing</span> at just £7.99/month before rates increase
+              £7.99/month. Live in 7 days. Hosting and maintenance included. Cancel anytime.
             </p>
           </div>
 
@@ -241,9 +241,9 @@ export function CTASection() {
                                   <Check className="h-5 w-5 text-green-600 stroke-[3]" />
                                 </div>
                                 <div>
-                                  <p className="text-sm font-bold text-foreground mb-1">7-Day Satisfaction Guarantee</p>
+                                  <p className="text-sm font-bold text-foreground mb-1">30-Day Satisfaction Guarantee</p>
                                   <p className="text-xs text-muted-foreground leading-relaxed">
-                                    Not satisfied after delivery? Get a full refund within 7 days of receiving your completed website.
+                                    Not satisfied after delivery? Get a full refund within 30 days of receiving your completed website.
                                     You have nothing to lose and a professional website to gain.
                                   </p>
                                 </div>
