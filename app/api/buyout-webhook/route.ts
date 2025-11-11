@@ -72,6 +72,8 @@ export async function POST(request: Request) {
     }
 
     // Method 3: Check line items
+    // NOTE: We only check for specific buyout keywords, NOT generic "website" keyword
+    // to avoid false positives with subscription products
     let lineItemsIndicateBuyout = false
     try {
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 })
@@ -85,9 +87,7 @@ export async function POST(request: Request) {
         
         const isBuyout = description.includes('buyout') || 
                         description.includes('own your website') ||
-                        description.includes('website') ||
-                        productName.includes('buyout') ||
-                        productName.includes('website')
+                        productName.includes('buyout')
         
         if (isBuyout) {
           console.log('Found buyout indicator in line item:', {
