@@ -113,15 +113,24 @@ export async function POST(request: Request) {
       }
     }
 
+    // IMPORTANT: If this is a subscription mode checkout, it's NOT a buyout
+    // unless explicitly marked in metadata. Regular subscriptions should never be treated as buyouts.
+    const isSubscriptionMode = session.mode === 'subscription'
+    
     // Website buyout is detected if:
     // 1. Payment link matches buyout link, OR
     // 2. Success URL is /website-purchased, OR
     // 3. Success URL contains buyout link ID, OR
     // 4. Line items contain buyout keywords, OR
-    // 5. Metadata indicates buyout
-    const isWebsiteBuyout = isBuyoutLink || successUrlIsBuyout || successUrlHasBuyoutId || lineItemsIndicateBuyout || hasBuyoutMetadata
+    // 5. Metadata explicitly indicates buyout
+    // BUT: If it's subscription mode, ONLY trust explicit metadata (not URL or line item checks)
+    const isWebsiteBuyout = isSubscriptionMode 
+      ? hasBuyoutMetadata  // For subscriptions, only trust explicit metadata
+      : (isBuyoutLink || successUrlIsBuyout || successUrlHasBuyoutId || lineItemsIndicateBuyout || hasBuyoutMetadata)
 
     console.log('Buyout detection:', {
+      mode: session.mode,
+      isSubscriptionMode,
       hasBuyoutMetadata,
       isBuyoutLink,
       successUrlIsBuyout,
@@ -427,11 +436,19 @@ export async function POST(request: Request) {
             const session = await stripe.checkout.sessions.retrieve(checkoutSessionId)
             console.log('Found checkout session:', session.id)
             console.log('Session success URL:', session.success_url)
+            console.log('Session mode:', session.mode)
             
-            // Check if success URL indicates buyout
-            const successUrlIsBuyout = session.success_url?.includes('/website-purchased') || false
+            // IMPORTANT: If this is a subscription mode checkout, it's NOT a buyout
+            // unless explicitly marked in metadata
+            const isSubscriptionMode = session.mode === 'subscription'
             
-            if (successUrlIsBuyout || hasBuyoutMetadata) {
+            // Check if success URL indicates buyout (but not for subscriptions)
+            const successUrlIsBuyout = !isSubscriptionMode && (session.success_url?.includes('/website-purchased') || false)
+            
+            // Only treat as buyout if: (1) explicit metadata, OR (2) success URL indicates buyout (and not subscription)
+            const isBuyout = hasBuyoutMetadata || successUrlIsBuyout
+            
+            if (isBuyout) {
               console.log('🎉 Website buyout detected from charge.succeeded!')
               
               // Update database
