@@ -71,7 +71,7 @@ export default function WebsitePurchasedPage() {
                     Payment Confirmed
                   </h3>
                   <p className="text-green-800 text-sm leading-relaxed">
-                    Thank you for purchasing your website! Your payment of <span className="font-bold">£299</span> has been processed successfully.
+                    Thank you for purchasing your website! Your payment has been processed successfully.
                   </p>
                 </div>
               </div>

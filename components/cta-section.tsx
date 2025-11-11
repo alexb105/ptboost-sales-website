@@ -280,7 +280,7 @@ export function CTASection() {
                                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur animate-pulse"></div>
                                 <div className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-white/50 px-4 md:px-6 py-3 shadow-xl">
                                   <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white animate-spin flex-shrink-0" style={{ animationDuration: '3s' }} />
-                                  <span className="text-sm md:text-lg font-black text-white whitespace-nowrap">Save 47% - Launch Offer</span>
+                                  <span className="text-sm md:text-lg font-black text-white whitespace-nowrap">Save 50% - Launch Offer</span>
                                 </div>
                               </div>
                             </div>

@@ -30,7 +30,7 @@ export function AboutSection() {
             Built for UK Personal Trainers
           </h2>
           <p className="text-center text-accent font-semibold text-lg mb-12">
-            You train clients. We handle your website, hosting, and updates.
+            You train clients. We handle your website, hosting, and updates. <span className="text-foreground font-black">Free for the first month</span>, then £7.99/month.
           </p>
 
           {/* Main content grid */}
@@ -118,7 +118,7 @@ export function AboutSection() {
           {/* Urgency banner */}
           <div className="mb-8 text-center px-4">
             <p className="text-lg md:text-2xl font-bold text-foreground bg-gradient-to-r from-accent via-orange-500 to-red-500 bg-clip-text text-transparent inline-block animate-pulse">
-              ⚡ Lock in £7.99/month before rates increase. This introductory pricing won't last forever.
+              ⚡ Lock in £7.99/month after your free trail ends. This introductory pricing will soon change to £14.99/month.
             </p>
           </div>
 
@@ -139,10 +139,7 @@ export function AboutSection() {
                   you get <span className="text-accent font-black">30 days</span> to live with it, test it, show it to people. 
                   If you're not thrilled? I'll refund every penny. Simple as that.
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  (Full details in{" "}
-                  <a href="/terms" className="text-accent hover:underline font-semibold">Terms & Conditions</a>)
-                </p>
+
               </div>
             </div>
           </div>

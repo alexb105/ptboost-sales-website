@@ -195,7 +195,7 @@ export function PainPointsSection() {
                   You don't need to hire an expensive agency (£2,000+). You don't need to learn web design. 
                   You don't need to spend weeks figuring this out. 
                   <span className="block mt-3 text-foreground font-semibold">
-                    Get a professional website for just £7.99/month (launch special pricing), and you'll be live in 7 days — attracting serious clients without paying agency prices.
+                    Get a professional website built for your brand, within just 7 days — attracting serious clients without paying agency prices.
                   </span>
                 </p>
               </div>

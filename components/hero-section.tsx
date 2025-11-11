@@ -58,7 +58,7 @@ export function HeroSection() {
 
             {/* Subheadline - Focused message for PTs */}
             <p className={`mb-10 text-pretty text-2xl text-foreground md:text-3xl lg:text-4xl leading-tight font-bold max-w-4xl mx-auto ${isVisible ? 'animate-fade-in-up-delayed-2' : 'opacity-0'}`}>
-              Built for <span className="text-accent font-black">personal trainers</span>. Designed to <span className="font-black">grow your business</span> while you <span className="text-accent font-black">focus on clients</span>.
+              A professional <span className="text-accent font-black">website</span> built for <span className="text-accent font-black">personal trainers</span>. Designed to <span className="font-black">grow your business</span> while you <span className="text-accent font-black">focus on clients</span>.
             </p>
 
             {/* Value Proposition - Customer Benefits Grid with Stagger Animation */}

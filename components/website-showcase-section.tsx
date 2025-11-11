@@ -408,7 +408,7 @@ export function WebsiteShowcaseSection() {
                       <Check className="h-7 w-7 text-white stroke-[3]" />
                     </div>
                     <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground">
-                      100% Custom. 100% Yours.
+                      100% Custom And Built For Your Needs.
                     </h3>
                   </div>
 

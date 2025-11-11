@@ -1,6 +1,6 @@
 "use client"
 
-import { Rocket, Brain, Smartphone, Users, Zap, Shield, Search, Wand2, Check, ArrowRight, Sparkles } from "lucide-react"
+import { Rocket, Brain, Smartphone, Users, Zap, Shield, Search, Wand2, Check, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useState, useRef, useEffect } from "react"
@@ -131,6 +131,54 @@ export function BenefitsSection() {
     }, 2000)
   }
 
+  // Navigate to next card
+  const scrollToNext = () => {
+    if (!carouselRef.current) return
+    const carousel = carouselRef.current
+    const cardWidth = 320 + 24 // card width + gap on mobile
+    const mdCardWidth = 380 + 24 // card width + gap on md+
+    
+    // Use larger card width if screen is md or larger
+    const scrollAmount = window.innerWidth >= 768 ? mdCardWidth : cardWidth
+    
+    carousel.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    })
+    
+    // Pause auto-scroll temporarily
+    setIsPaused(true)
+    isPausedRef.current = true
+    setTimeout(() => {
+      setIsPaused(false)
+      isPausedRef.current = false
+    }, 3000)
+  }
+  
+  // Navigate to previous card
+  const scrollToPrev = () => {
+    if (!carouselRef.current) return
+    const carousel = carouselRef.current
+    const cardWidth = 320 + 24 // card width + gap on mobile
+    const mdCardWidth = 380 + 24 // card width + gap on md+
+    
+    // Use larger card width if screen is md or larger
+    const scrollAmount = window.innerWidth >= 768 ? mdCardWidth : cardWidth
+    
+    carousel.scrollBy({
+      left: -scrollAmount,
+      behavior: 'smooth'
+    })
+    
+    // Pause auto-scroll temporarily
+    setIsPaused(true)
+    isPausedRef.current = true
+    setTimeout(() => {
+      setIsPaused(false)
+      isPausedRef.current = false
+    }, 3000)
+  }
+
   // Auto-scroll and infinite loop handling
   useEffect(() => {
     if (!carouselRef.current) return
@@ -161,24 +209,19 @@ export function BenefitsSection() {
     // Small delay to ensure cards are rendered
     const initTimeout = setTimeout(initializeScroll, 100)
 
-    // Auto-scroll interval
-    let autoScrollInterval: NodeJS.Timeout | null = null
+    // Auto-advance to next card every 15 seconds
+    let autoAdvanceInterval: NodeJS.Timeout | null = null
 
     if (!isPaused && !isDragging) {
-      autoScrollInterval = setInterval(() => {
+      autoAdvanceInterval = setInterval(() => {
         if (carousel && !isDraggingRef.current && !isPausedRef.current) {
-          const singleSetWidth = getSingleSetWidth()
-          if (singleSetWidth > 0) {
-            carousel.scrollLeft += 1
-            
-            // Reset to middle set when reaching the end of second set
-            // This creates seamless infinite scroll
-            if (carousel.scrollLeft >= singleSetWidth * 2 - 50) {
-              carousel.scrollLeft = singleSetWidth
-            }
-          }
+          const cardWidth = window.innerWidth >= 768 ? 380 + 24 : 320 + 24
+          carousel.scrollBy({
+            left: cardWidth,
+            behavior: 'smooth'
+          })
         }
-      }, 30) // Smooth scroll speed
+      }, 15000) // Advance every 15 seconds
     }
 
     // Handle infinite loop on manual scroll - reset when reaching boundaries
@@ -200,7 +243,7 @@ export function BenefitsSection() {
     
     return () => {
       clearTimeout(initTimeout)
-      if (autoScrollInterval) clearInterval(autoScrollInterval)
+      if (autoAdvanceInterval) clearInterval(autoAdvanceInterval)
       carousel.removeEventListener('scroll', handleScroll)
     }
   }, [isDragging, isPaused])
@@ -239,14 +282,31 @@ export function BenefitsSection() {
 
         {/* Auto-Scrolling Carousel Container */}
         <div className="relative mb-12 overflow-hidden">
+          {/* Navigation Buttons */}
+          <button
+            onClick={scrollToPrev}
+            className="absolute left-2 md:left-4 bottom-6 md:top-1/2 md:-translate-y-1/2 z-20 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+            aria-label="Previous card"
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          
+          <button
+            onClick={scrollToNext}
+            className="absolute right-2 md:right-4 bottom-6 md:top-1/2 md:-translate-y-1/2 z-20 bg-gradient-to-r from-accent via-orange-500 to-red-500 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+            aria-label="Next card"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          
           {/* Gradient fade on edges */}
           <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background via-background/40 md:via-background/80 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background via-background/40 md:via-background/80 to-transparent z-10 pointer-events-none" />
           
-          {/* Draggable Infinite Scrolling Carousel */}
+          {/* Draggable Infinite Scrolling Carousel with Snap */}
           <div
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab select-none"
+            className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab select-none scroll-smooth snap-x snap-mandatory"
             style={{
               WebkitOverflowScrolling: 'touch',
               scrollBehavior: 'auto',
@@ -266,7 +326,7 @@ export function BenefitsSection() {
                 <Card
                   key={`${index}-${benefit.title}`}
                   data-card-index={index % benefits.length}
-                  className={`relative flex-shrink-0 w-[320px] md:w-[380px] border-2 ${benefit.borderColor} bg-card/90 backdrop-blur-sm shadow-lg overflow-hidden`}
+                  className={`relative flex-shrink-0 w-[320px] md:w-[380px] border-2 ${benefit.borderColor} bg-card/90 backdrop-blur-sm shadow-lg overflow-hidden snap-center`}
                 >
                   <CardContent className="relative p-6 flex flex-col items-center text-center h-full">
                     {/* Icon */}

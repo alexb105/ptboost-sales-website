@@ -192,7 +192,7 @@ export function ProcessSection() {
               </p>
                 <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Within 7 days, you'll have a professional website capturing local leads 24/7. 
-                <span className="block mt-3 font-bold text-foreground">Maintenance included. Free for the first month, then £7.99/month. No tech headaches.</span>
+                <span className="block mt-3 font-bold text-foreground">Maintenance included. <span className="text-accent">Free for the first month</span>, then £7.99/month. No tech headaches.</span>
                 <span className="block mt-2 text-foreground">Just a stunning website working for you while you focus on what you do best — transforming clients.</span>
               </p>
             </div>
