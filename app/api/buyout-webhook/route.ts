@@ -130,7 +130,7 @@ export async function POST(request: Request) {
           // Find booking with exact email match
           const { data: exactMatch, error: exactError } = await supabase
             .from('bookings')
-            .select('id, email, full_name, payment_status, website_owned')
+            .select('id, email, full_name, subscribed, website_owned')
             .eq('email', customerEmail)
             .order('created_at', { ascending: false })
 

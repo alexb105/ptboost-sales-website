@@ -151,7 +151,7 @@ export default function AdminPage() {
       const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .eq('payment_status', 'completed')
+        .eq('subscribed', true)
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -246,7 +246,7 @@ export default function AdminPage() {
       const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .eq('payment_status', 'pending')
+        .eq('subscribed', false)
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -519,7 +519,7 @@ export default function AdminPage() {
       'Preferred Colors',
       'Website Goals',
       'Additional Notes',
-      'Payment Status',
+      'Subscription Status',
       'Stripe Customer ID',
       'Stripe Session ID',
       'Website Owned',
@@ -568,7 +568,7 @@ export default function AdminPage() {
           escapeCSV(order.preferred_colors || 'Not specified'),
           escapeCSV(order.website_goals || 'Not specified'),
           escapeCSV(order.additional_notes || 'Not specified'),
-          escapeCSV(order.payment_status),
+          escapeCSV(order.subscribed ? 'Subscribed' : 'Not Subscribed'),
           escapeCSV(order.stripe_customer_id || ''),
           escapeCSV(order.stripe_session_id || ''),
           escapeCSV(order.website_owned ? 'Yes' : 'No'),
@@ -1683,15 +1683,13 @@ export default function AdminPage() {
                     <span>{new Date(selectedOrder.created_at || '').toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">Payment Status:</span>
+                    <span className="font-medium">Subscription Status:</span>
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      selectedOrder.payment_status === 'completed' 
+                      selectedOrder.subscribed 
                         ? 'bg-green-100 text-green-800' 
-                        : selectedOrder.payment_status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
+                        : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {selectedOrder.payment_status.toUpperCase()}
+                      {selectedOrder.subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}
                     </span>
                   </div>
                   {selectedOrder.stripe_session_id && (

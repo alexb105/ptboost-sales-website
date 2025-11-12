@@ -35,8 +35,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Security check: Only process if payment is pending (not already completed)
-    if (booking.payment_status === 'completed') {
+    // Security check: Only process if not already subscribed
+    if (booking.subscribed) {
       console.log('Booking already completed, skipping')
       return NextResponse.json({ 
         success: true,
@@ -46,11 +46,11 @@ export async function POST(request: Request) {
       })
     }
 
-    // Update booking status to completed
+    // Update booking status to subscribed
     const { error: updateError } = await supabase
       .from('bookings')
       .update({ 
-        payment_status: 'completed',
+        subscribed: true,
         updated_at: new Date().toISOString()
       })
       .eq('id', bookingId)

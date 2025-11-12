@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       .from('bookings')
       .select('id, full_name, email, business_name, stripe_customer_id, subscription_password, created_at, website_owned')
       .eq('email', email)
-      .eq('payment_status', 'completed')
+      .eq('subscribed', true)
       .not('stripe_customer_id', 'is', null)
       .order('created_at', { ascending: false })
       .limit(1)

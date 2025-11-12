@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         website_goals: formData.websiteGoals || 'Not specified',
         additional_notes: formData.additionalNotes || 'Not specified',
         images: formData.images || [],
-        payment_status: 'pending',
+        subscribed: false,
         email_sent: false,
         subscription_password: subscriptionPassword
       })

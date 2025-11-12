@@ -37,7 +37,7 @@ export async function DELETE(request: Request) {
       .from('bookings')
       .select('id, email, full_name, subscription_password, stripe_customer_id')
       .eq('email', email)
-      .eq('payment_status', 'completed')
+      .eq('subscribed', true)
       .not('stripe_customer_id', 'is', null)
       .order('created_at', { ascending: false })
       .limit(1)
