@@ -183,6 +183,17 @@ export default function AdminPage() {
           }
         })
         
+        // Debug logging for subscription end dates
+        const ordersWithEndDates = processedData.filter(o => !o.subscribed && o.subscription_end_date)
+        if (ordersWithEndDates.length > 0) {
+          console.log('📅 Orders with subscription end dates:', ordersWithEndDates.map(o => ({
+            name: o.full_name,
+            subscribed: o.subscribed,
+            subscription_end_date: o.subscription_end_date,
+            daysRemaining: o.subscription_end_date ? Math.ceil((new Date(o.subscription_end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null
+          })))
+        }
+        
         // Debug logging
         const ordersWithImages = processedData.filter(o => o.images && o.images.length > 0)
         if (ordersWithImages.length > 0) {
@@ -258,14 +269,8 @@ export default function AdminPage() {
       })
 
       if (response.ok) {
-        // Update local state to reflect unsubscribed status
-        setCompletedOrders(prev => 
-          prev.map(order => 
-            order.id === orderToUnsubscribe.id 
-              ? { ...order, subscribed: false } 
-              : order
-          )
-        )
+        // Refetch completed orders to get the latest data including subscription_end_date
+        await fetchCompletedOrders()
         setUnsubscribeDialogOpen(false)
         setOrderToUnsubscribe(null)
         toast.success('User unsubscribed successfully and notification email sent!')

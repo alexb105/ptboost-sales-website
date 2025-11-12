@@ -78,8 +78,27 @@ export async function POST(request: Request) {
         ['active', 'trialing', 'past_due'].includes(sub.status)
       )
 
+      // Also check canceled subscriptions for end date (in case already canceled but DB not updated)
+      const canceledSubscriptions = subscriptions.data.filter(sub => 
+        sub.status === 'canceled' && sub.current_period_end
+      )
+
       if (activeSubscriptions.length === 0) {
         console.log('⚠️ No active subscriptions found to cancel')
+        
+        // If already canceled, try to get end date from canceled subscription
+        if (canceledSubscriptions.length > 0) {
+          const mostRecentCanceled = canceledSubscriptions.sort((a, b) => 
+            (b.current_period_end || 0) - (a.current_period_end || 0)
+          )[0]
+          
+          if (mostRecentCanceled.current_period_end) {
+            const endDate = new Date(mostRecentCanceled.current_period_end * 1000)
+            subscriptionEndDate = endDate.toISOString()
+            console.log(`📅 Found end date from canceled subscription: ${endDate.toISOString()}`)
+            console.log(`⏰ Days remaining: ${Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days`)
+          }
+        }
       }
 
       for (const subscription of activeSubscriptions) {
@@ -87,6 +106,11 @@ export async function POST(request: Request) {
         
         // IMPORTANT: Get the end date BEFORE canceling
         const currentPeriodEnd = subscription.current_period_end
+        if (!currentPeriodEnd) {
+          console.warn(`⚠️ Subscription ${subscription.id} has no current_period_end, skipping end date capture`)
+          continue
+        }
+        
         const endDate = new Date(currentPeriodEnd * 1000) // Convert Unix timestamp to Date
         const daysRemaining = Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
         
