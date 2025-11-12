@@ -20,26 +20,27 @@ export async function GET() {
     if (error) {
       // If table doesn't exist or no data, return empty
       if (error.code === 'PGRST116' || error.code === '42P01') {
-        return NextResponse.json({ promoCode: '', percentageOff: '' })
+        return NextResponse.json({ promoCode: '', percentageOff: '', months: '' })
       }
       console.error('Error fetching promo settings:', error)
-      return NextResponse.json({ promoCode: '', percentageOff: '' })
+      return NextResponse.json({ promoCode: '', percentageOff: '', months: '' })
     }
 
     return NextResponse.json({
       promoCode: data?.promo_code || '',
-      percentageOff: data?.percentage_off || ''
+      percentageOff: data?.percentage_off || '',
+      months: data?.months || ''
     })
   } catch (error) {
     console.error('Error in GET promo-settings:', error)
-    return NextResponse.json({ promoCode: '', percentageOff: '' })
+    return NextResponse.json({ promoCode: '', percentageOff: '', months: '' })
   }
 }
 
 // POST - Save promo settings
 export async function POST(request: Request) {
   try {
-    const { promoCode, percentageOff } = await request.json()
+    const { promoCode, percentageOff, months } = await request.json()
 
     if (!promoCode || !percentageOff) {
       return NextResponse.json(
@@ -63,6 +64,7 @@ export async function POST(request: Request) {
         .update({
           promo_code: promoCode,
           percentage_off: percentageOff,
+          months: months || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', existing.id)
@@ -80,7 +82,8 @@ export async function POST(request: Request) {
         .from('promo_settings')
         .insert({
           promo_code: promoCode,
-          percentage_off: percentageOff
+          percentage_off: percentageOff,
+          months: months || null
         })
 
       if (error) {

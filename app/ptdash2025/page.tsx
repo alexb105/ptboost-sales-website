@@ -63,6 +63,7 @@ export default function AdminPage() {
   const [orderForPromoMail, setOrderForPromoMail] = useState<BookingData | null>(null)
   const [promoCode, setPromoCode] = useState("")
   const [percentageOff, setPercentageOff] = useState("")
+  const [months, setMonths] = useState("")
   const [isSendingPromoMail, setIsSendingPromoMail] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
@@ -1306,6 +1307,7 @@ export default function AdminPage() {
                                   const data = await response.json()
                                   if (data.promoCode) setPromoCode(data.promoCode)
                                   if (data.percentageOff) setPercentageOff(data.percentageOff)
+                                  if (data.months) setMonths(data.months)
                                 }
                               } catch (error) {
                                 console.error('Error loading promo settings:', error)
@@ -1978,6 +1980,21 @@ export default function AdminPage() {
                 Enter the discount percentage (0-100)
               </p>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="months">Months</Label>
+              <Input
+                id="months"
+                type="number"
+                value={months}
+                onChange={(e) => setMonths(e.target.value)}
+                placeholder="e.g., 3"
+                min="1"
+                disabled={isSendingPromoMail}
+              />
+              <p className="text-xs text-muted-foreground">
+                Enter how many months this offer applies for
+              </p>
+            </div>
             <div className="flex gap-2 justify-end pt-2">
               <Button
                 variant="outline"
@@ -1985,6 +2002,7 @@ export default function AdminPage() {
                   setPromoMailDialogOpen(false)
                   setPromoCode("")
                   setPercentageOff("")
+                  setMonths("")
                 }}
                 disabled={isSendingPromoMail}
               >
@@ -1992,8 +2010,8 @@ export default function AdminPage() {
               </Button>
               <Button
                 onClick={async () => {
-                  if (!promoCode.trim() || !percentageOff.trim()) {
-                    toast.error("Please enter both promo code and percentage off")
+                  if (!promoCode.trim() || !percentageOff.trim() || !months.trim()) {
+                    toast.error("Please enter promo code, percentage off, and months")
                     return
                   }
                   if (!orderForPromoMail) return
@@ -2004,7 +2022,7 @@ export default function AdminPage() {
                     await fetch('/api/promo-settings', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ promoCode, percentageOff })
+                      body: JSON.stringify({ promoCode, percentageOff, months })
                     })
                     
                     // Send email
@@ -2015,7 +2033,8 @@ export default function AdminPage() {
                         email: orderForPromoMail.email,
                         name: orderForPromoMail.full_name,
                         promoCode,
-                        percentageOff: parseFloat(percentageOff)
+                        percentageOff: parseFloat(percentageOff),
+                        months: parseInt(months)
                       })
                     })
                     
@@ -2028,6 +2047,7 @@ export default function AdminPage() {
                     setPromoMailDialogOpen(false)
                     setPromoCode("")
                     setPercentageOff("")
+                    setMonths("")
                   } catch (error) {
                     console.error('Error sending promo mail:', error)
                     toast.error(error instanceof Error ? error.message : 'Failed to send promo mail')

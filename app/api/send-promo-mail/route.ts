@@ -5,11 +5,11 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: Request) {
   try {
-    const { email, name, promoCode, percentageOff } = await request.json()
+    const { email, name, promoCode, percentageOff, months } = await request.json()
 
-    if (!email || !name || !promoCode || percentageOff === undefined) {
+    if (!email || !name || !promoCode || percentageOff === undefined || !months) {
       return NextResponse.json(
-        { error: 'Email, name, promo code, and percentage off are required' },
+        { error: 'Email, name, promo code, percentage off, and months are required' },
         { status: 400 }
       )
     }
@@ -29,8 +29,11 @@ export async function POST(request: Request) {
 
     // Website CTA link
     const websiteLink = "https://ptboost.co.uk/account"
+    
+    // Format months text
+    const monthsText = months === 1 ? 'month' : 'months'
 
-    console.log(`Sending promo mail to ${email} with code ${promoCode} and ${percentageOff}% off`)
+    console.log(`Sending promo mail to ${email} with code ${promoCode}, ${percentageOff}% off for ${months} months`)
 
     const emailResult = await resend.emails.send({
       from: 'PTBoost <noreply@ptboost.co.uk>',
@@ -257,7 +260,10 @@ export async function POST(request: Request) {
                       <br>
                       Now just <strong style="color: #10b981; font-size: 32px;">£${discountedPrice.toFixed(2)}</strong>/month
                     </div>
-                    <p style="font-size: 14px; color: #92400e; margin-top: 15px; font-weight: 600;">
+                    <p style="font-size: 16px; color: #92400e; margin-top: 15px; font-weight: 700;">
+                      This offer applies for <strong style="font-size: 18px;">${months} ${monthsText}</strong>
+                    </p>
+                    <p style="font-size: 14px; color: #92400e; margin-top: 10px; font-weight: 600;">
                       Use this code when you resubscribe to claim your discount!
                     </p>
                   </div>
