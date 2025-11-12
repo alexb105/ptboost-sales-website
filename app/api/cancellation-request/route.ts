@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         .from('bookings')
         .select('stripe_customer_id')
         .eq('email', email)
-        .eq('subscribed', true)
+        .eq('payment_status', 'completed')
         .not('stripe_customer_id', 'is', null)
         .order('created_at', { ascending: false })
         .limit(1)

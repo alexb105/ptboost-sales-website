@@ -20,6 +20,7 @@ interface UserData {
   businessName: string
   hasActiveSubscription: boolean
   websiteOwned: boolean
+  subscribed: boolean
 }
 
 function AccountContent() {
@@ -34,6 +35,7 @@ function AccountContent() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
   const [buyoutLink, setBuyoutLink] = useState("")
+  const [subscriptionLink, setSubscriptionLink] = useState("")
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [deleteReason, setDeleteReason] = useState("")
   const [deleteNotes, setDeleteNotes] = useState("")
@@ -129,6 +131,9 @@ function AccountContent() {
       } else {
         // Fallback to default if not set
         setBuyoutLink("https://buy.stripe.com/14AdRafsueO70xr3RR0co05")
+      }
+      if (data.subscriptionLink) {
+        setSubscriptionLink(data.subscriptionLink)
       }
     } catch (error) {
       console.error('Error fetching payment links:', error)
@@ -234,6 +239,15 @@ function AccountContent() {
       window.open(buyoutLink, "_blank")
     } else {
       toast.error("Payment link not configured. Please contact support.")
+    }
+  }
+
+  const handleSubscribe = () => {
+    // Open the Stripe subscription payment link
+    if (subscriptionLink) {
+      window.location.href = subscriptionLink
+    } else {
+      toast.error("Subscription link not configured. Please contact support.")
     }
   }
 
@@ -401,6 +415,16 @@ function AccountContent() {
           </Alert>
         )}
 
+        {/* Subscription status warning */}
+        {!userData?.subscribed && (
+          <Alert className="border-red-500 bg-red-50">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              <strong>Your subscription is not active.</strong> Subscribe now to continue accessing your website and services.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Header */}
         <Card>
           <CardHeader>
@@ -410,7 +434,20 @@ function AccountContent() {
                   <User className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Welcome back, {userData?.name}!</CardTitle>
+                  <div className="flex items-center gap-3">
+                    <CardTitle className="text-xl">Welcome back, {userData?.name}!</CardTitle>
+                    {userData?.subscribed ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-100 border border-green-300 rounded-full">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        <span className="text-xs font-bold text-green-700">SUBSCRIBED</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-100 border border-red-300 rounded-full">
+                        <div className="w-2 h-2 bg-red-500 rounded-full" />
+                        <span className="text-xs font-bold text-red-700">NOT SUBSCRIBED</span>
+                      </div>
+                    )}
+                  </div>
                   <CardDescription>{userData?.email}</CardDescription>
                 </div>
               </div>
@@ -428,26 +465,43 @@ function AccountContent() {
           <Card className="relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent/20 to-orange-500/20 rounded-full -mr-16 -mt-16" />
             <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                  <Settings className="h-5 w-5 text-accent" />
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Settings className="h-5 w-5 text-accent" />
+                  </div>
+                  <CardTitle className="text-lg">Manage Subscription</CardTitle>
                 </div>
-                <CardTitle className="text-lg">Manage Subscription</CardTitle>
+                {userData?.subscribed ? (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-green-100 border border-green-300 rounded-full">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-xs font-semibold text-green-700">Active</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 border border-gray-300 rounded-full">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                    <span className="text-xs font-semibold text-gray-600">Inactive</span>
+                  </div>
+                )}
               </div>
               <CardDescription>
-                Submit a cancellation request. We'll process it and email you confirmation.
+                {userData?.subscribed 
+                  ? "Submit a cancellation request. We'll process it and email you confirmation."
+                  : "Reactivate your subscription to continue using our services."
+                }
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    className="w-full h-12 bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
-                  >
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Request Cancellation
-                  </Button>
-                </DialogTrigger>
+              {userData?.subscribed ? (
+                <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      className="w-full h-12 bg-gradient-to-r from-accent to-orange-500 hover:from-accent/90 hover:to-orange-500/90"
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Request Cancellation
+                    </Button>
+                  </DialogTrigger>
                 <DialogContent className="sm:max-w-lg">
                   <DialogHeader>
                     <DialogTitle>Request Subscription Cancellation</DialogTitle>
@@ -509,6 +563,15 @@ function AccountContent() {
                   </div>
                 </DialogContent>
               </Dialog>
+              ) : (
+                <Button 
+                  onClick={handleSubscribe}
+                  className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Subscribe Now
+                </Button>
+              )}
             </CardContent>
           </Card>
 

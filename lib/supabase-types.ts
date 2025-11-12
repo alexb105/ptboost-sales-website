@@ -13,11 +13,12 @@ export interface BookingData {
   website_goals: string
   additional_notes: string
   images?: string[] // Array of image URLs
-  subscribed: boolean
+  payment_status: 'pending' | 'completed' | 'failed'
   stripe_session_id?: string
   stripe_customer_id?: string
   email_sent?: boolean
   website_owned?: boolean
+  subscribed?: boolean // Active subscription status
 }
 
 export interface CapacityStatus {

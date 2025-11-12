@@ -38,10 +38,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if booking has already been subscribed
-    if (booking.subscribed) {
+    // Check if booking is still pending
+    if (booking.payment_status !== 'pending') {
       return NextResponse.json(
-        { error: 'Booking has already been completed' },
+        { error: 'Booking is not pending' },
         { status: 400 }
       )
     }

@@ -56,9 +56,6 @@ export default function AdminPage() {
   const [deleteOrderDialogOpen, setDeleteOrderDialogOpen] = useState(false)
   const [orderToDelete, setOrderToDelete] = useState<BookingData | null>(null)
   const [isDeletingOrder, setIsDeletingOrder] = useState(false)
-  const [unsubscribeDialogOpen, setUnsubscribeDialogOpen] = useState(false)
-  const [orderToUnsubscribe, setOrderToUnsubscribe] = useState<BookingData | null>(null)
-  const [isUnsubscribing, setIsUnsubscribing] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -154,7 +151,7 @@ export default function AdminPage() {
       const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .eq('subscribed', true)
+        .eq('payment_status', 'completed')
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -222,7 +219,6 @@ export default function AdminPage() {
         setPendingOrders(prev => prev.filter(order => order.id !== orderToDelete.id))
         setDeleteOrderDialogOpen(false)
         setOrderToDelete(null)
-        toast.success("Order deleted successfully")
       } else {
         if (response.status === 401) {
           setAuthError("Invalid password. Please log in again.")
@@ -233,56 +229,14 @@ export default function AdminPage() {
           setDeleteOrderDialogOpen(false)
         } else {
           const errorData = await response.json()
-          toast.error(errorData.error || 'Failed to delete order. Please try again.')
+          alert(errorData.error || 'Failed to delete order. Please try again.')
         }
       }
     } catch (error) {
       console.error('Error deleting order:', error)
-      toast.error('Failed to delete order. Please try again.')
+      alert('Failed to delete order. Please try again.')
     } finally {
       setIsDeletingOrder(false)
-    }
-  }
-
-  const handleUnsubscribeOrder = async () => {
-    if (!orderToUnsubscribe || !orderToUnsubscribe.id) return
-
-    setIsUnsubscribing(true)
-    try {
-      const response = await fetch('/api/unsubscribe-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          orderId: orderToUnsubscribe.id,
-          adminPassword 
-        })
-      })
-
-      if (response.ok) {
-        // Update local state - move from completed to pending
-        setCompletedOrders(prev => prev.filter(order => order.id !== orderToUnsubscribe.id))
-        setPendingOrders(prev => [...prev, { ...orderToUnsubscribe, subscribed: false }])
-        setUnsubscribeDialogOpen(false)
-        setOrderToUnsubscribe(null)
-        toast.success("Order unsubscribed successfully. Stripe subscription cancelled.")
-      } else {
-        if (response.status === 401) {
-          setAuthError("Invalid password. Please log in again.")
-          setIsAuthenticated(false)
-          setPassword("")
-          setAdminPassword("")
-          localStorage.removeItem('adminPassword')
-          setUnsubscribeDialogOpen(false)
-        } else {
-          const errorData = await response.json()
-          toast.error(errorData.error || 'Failed to unsubscribe order. Please try again.')
-        }
-      }
-    } catch (error) {
-      console.error('Error unsubscribing order:', error)
-      toast.error('Failed to unsubscribe order. Please try again.')
-    } finally {
-      setIsUnsubscribing(false)
     }
   }
 
@@ -292,7 +246,7 @@ export default function AdminPage() {
       const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .eq('subscribed', false)
+        .eq('payment_status', 'pending')
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -565,7 +519,7 @@ export default function AdminPage() {
       'Preferred Colors',
       'Website Goals',
       'Additional Notes',
-      'Subscription Status',
+      'Payment Status',
       'Stripe Customer ID',
       'Stripe Session ID',
       'Website Owned',
@@ -614,7 +568,7 @@ export default function AdminPage() {
           escapeCSV(order.preferred_colors || 'Not specified'),
           escapeCSV(order.website_goals || 'Not specified'),
           escapeCSV(order.additional_notes || 'Not specified'),
-          escapeCSV(order.subscribed ? 'Subscribed' : 'Not Subscribed'),
+          escapeCSV(order.payment_status),
           escapeCSV(order.stripe_customer_id || ''),
           escapeCSV(order.stripe_session_id || ''),
           escapeCSV(order.website_owned ? 'Yes' : 'No'),
@@ -1194,18 +1148,6 @@ export default function AdminPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setOrderToUnsubscribe(order)
-                            setUnsubscribeDialogOpen(true)
-                          }}
-                          className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                          title="Unsubscribe user and cancel Stripe subscription"
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
                             setOrderToDelete(order)
                             setDeleteOrderDialogOpen(true)
                           }}
@@ -1741,13 +1683,15 @@ export default function AdminPage() {
                     <span>{new Date(selectedOrder.created_at || '').toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">Subscription Status:</span>
+                    <span className="font-medium">Payment Status:</span>
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      selectedOrder.subscribed 
+                      selectedOrder.payment_status === 'completed' 
                         ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
+                        : selectedOrder.payment_status === 'pending'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800'
                     }`}>
-                      {selectedOrder.subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}
+                      {selectedOrder.payment_status.toUpperCase()}
                     </span>
                   </div>
                   {selectedOrder.stripe_session_id && (
@@ -1777,52 +1721,6 @@ export default function AdminPage() {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Unsubscribe Order Confirmation Dialog */}
-      <AlertDialog open={unsubscribeDialogOpen} onOpenChange={setUnsubscribeDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Unsubscribe Order</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to unsubscribe <strong>{orderToUnsubscribe?.full_name}</strong>?
-              <br /><br />
-              This will:
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Set their subscription status to <strong>false</strong></li>
-                <li>Cancel their active Stripe subscription</li>
-                <li>Move them to the pending orders list</li>
-              </ul>
-              {orderToUnsubscribe?.stripe_customer_id && (
-                <div className="mt-3 p-2 bg-orange-50 border border-orange-200 rounded text-orange-800 text-sm">
-                  ⚠️ Stripe Customer ID: {orderToUnsubscribe.stripe_customer_id}
-                  <br />
-                  Their Stripe subscription will be cancelled immediately.
-                </div>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isUnsubscribing}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleUnsubscribeOrder}
-              disabled={isUnsubscribing}
-              className="bg-orange-600 text-white hover:bg-orange-700"
-            >
-              {isUnsubscribing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Unsubscribing...
-                </>
-              ) : (
-                <>
-                  <XCircle className="mr-2 h-4 w-4" />
-                  Unsubscribe Order
-                </>
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Delete Order Confirmation Dialog */}
       <AlertDialog open={deleteOrderDialogOpen} onOpenChange={setDeleteOrderDialogOpen}>

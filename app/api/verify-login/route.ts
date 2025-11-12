@@ -22,9 +22,9 @@ export async function POST(request: Request) {
     // Find the booking with this email and password
     const { data: booking, error: fetchError } = await supabase
       .from('bookings')
-      .select('id, full_name, email, business_name, stripe_customer_id, subscription_password, created_at, website_owned')
+      .select('id, full_name, email, business_name, stripe_customer_id, subscription_password, created_at, website_owned, subscribed')
       .eq('email', email)
-      .eq('subscribed', true)
+      .eq('payment_status', 'completed')
       .not('stripe_customer_id', 'is', null)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -54,7 +54,8 @@ export async function POST(request: Request) {
         email: booking.email,
         businessName: booking.business_name,
         hasActiveSubscription: !!booking.stripe_customer_id,
-        websiteOwned: !!booking.website_owned
+        websiteOwned: !!booking.website_owned,
+        subscribed: !!booking.subscribed // Current subscription status
       }
     })
   } catch (error: any) {

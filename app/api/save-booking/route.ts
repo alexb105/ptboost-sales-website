@@ -23,9 +23,10 @@ export async function POST(request: Request) {
         website_goals: formData.websiteGoals || 'Not specified',
         additional_notes: formData.additionalNotes || 'Not specified',
         images: formData.images || [],
-        subscribed: false,
+        payment_status: 'pending',
         email_sent: false,
-        subscription_password: subscriptionPassword
+        subscription_password: subscriptionPassword,
+        subscribed: false // Initially not subscribed until payment completes
       })
       .select('id, subscription_password')
       .single()
