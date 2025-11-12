@@ -45,8 +45,10 @@ export default function AdminPage() {
   const [emailStatus, setEmailStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
   const [rememberMe, setRememberMe] = useState(true)
   const [subscriptionLink, setSubscriptionLink] = useState("")
+  const [resubscriptionLink, setResubscriptionLink] = useState("")
   const [buyoutLink, setBuyoutLink] = useState("")
   const [newSubscriptionLink, setNewSubscriptionLink] = useState("")
+  const [newResubscriptionLink, setNewResubscriptionLink] = useState("")
   const [newBuyoutLink, setNewBuyoutLink] = useState("")
   const [isLoadingLinks, setIsLoadingLinks] = useState(false)
   const [linksUpdateStatus, setLinksUpdateStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -336,8 +338,10 @@ export default function AdminPage() {
       const response = await fetch('/api/payment-links')
       const data = await response.json()
       setSubscriptionLink(data.subscriptionLink || '')
+      setResubscriptionLink(data.resubscriptionLink || '')
       setBuyoutLink(data.buyoutLink || '')
       setNewSubscriptionLink(data.subscriptionLink || '')
+      setNewResubscriptionLink(data.resubscriptionLink || '')
       setNewBuyoutLink(data.buyoutLink || '')
       setLinksLastUpdated(data.updatedAt)
     } catch (error) {
@@ -356,6 +360,7 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           subscriptionLink: newSubscriptionLink.trim() || null,
+          resubscriptionLink: newResubscriptionLink.trim() || null,
           buyoutLink: newBuyoutLink.trim() || null,
           adminPassword 
         })
@@ -364,8 +369,10 @@ export default function AdminPage() {
       if (response.ok) {
         const data = await response.json()
         setSubscriptionLink(data.subscriptionLink || '')
+        setResubscriptionLink(data.resubscriptionLink || '')
         setBuyoutLink(data.buyoutLink || '')
         setNewSubscriptionLink(data.subscriptionLink || '')
+        setNewResubscriptionLink(data.resubscriptionLink || '')
         setNewBuyoutLink(data.buyoutLink || '')
         setLinksLastUpdated(data.updatedAt)
         setLinksUpdateStatus('success')
@@ -1368,7 +1375,7 @@ export default function AdminPage() {
                 Stripe Payment Links
               </CardTitle>
               <CardDescription>
-                Manage your Stripe payment links for subscriptions and buyouts
+                Manage your Stripe payment links for subscriptions, resubscriptions, and buyouts
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -1379,7 +1386,7 @@ export default function AdminPage() {
                       Subscription Payment Link
                     </Label>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Used for monthly subscription payments (booking form)
+                      Used for monthly subscription payments (new customers with free trial)
                     </p>
                     <Input
                       id="subscription-link"
@@ -1393,6 +1400,32 @@ export default function AdminPage() {
                     {subscriptionLink && (
                       <div className="text-sm text-muted-foreground">
                         Current: <a href={subscriptionLink} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline break-all">{subscriptionLink}</a>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="resubscription-link" className="text-lg font-bold flex items-center gap-2">
+                      Resubscription Payment Link
+                      <span className="px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-700 rounded-full">
+                        NO TRIAL
+                      </span>
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Used when users re-subscribe (no free trial for returning customers)
+                    </p>
+                    <Input
+                      id="resubscription-link"
+                      type="url"
+                      placeholder="https://buy.stripe.com/eVq00k1BE5dxfslcon0co07"
+                      value={newResubscriptionLink}
+                      onChange={(e) => setNewResubscriptionLink(e.target.value)}
+                      className="text-base font-mono"
+                      disabled={isLoadingLinks}
+                    />
+                    {resubscriptionLink && (
+                      <div className="text-sm text-muted-foreground">
+                        Current: <a href={resubscriptionLink} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline break-all">{resubscriptionLink}</a>
                       </div>
                     )}
                   </div>
