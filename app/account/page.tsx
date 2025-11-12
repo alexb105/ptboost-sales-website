@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle, Info, Code, Shield, Zap, Globe, Trash2, AlertTriangle } from "lucide-react"
+import { Loader2, CreditCard, User, XCircle, LogOut, ShoppingCart, Settings, CheckCircle, Info, Code, Shield, Zap, Globe, Trash2, AlertTriangle, Calendar } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
@@ -21,6 +21,7 @@ interface UserData {
   hasActiveSubscription: boolean
   websiteOwned: boolean
   subscribed: boolean
+  subscriptionEndDate: string | null // When canceled subscription expires
 }
 
 function AccountContent() {
@@ -469,12 +470,65 @@ function AccountContent() {
 
         {/* Subscription status warning */}
         {!userData?.subscribed && (
-          <Alert className="border-red-500 bg-red-50">
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
-              <strong>Your subscription is not active.</strong> Subscribe now to continue accessing your website and services.
-            </AlertDescription>
-          </Alert>
+          <div className="space-y-3">
+            <Alert className="border-red-500 bg-red-50">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                <strong>Your subscription is not active.</strong> Subscribe now to continue accessing your website and services.
+              </AlertDescription>
+            </Alert>
+            
+            {/* Countdown notification for canceled subscriptions */}
+            {userData?.subscriptionEndDate && (() => {
+              const endDate = new Date(userData.subscriptionEndDate)
+              const now = new Date()
+              const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+              const isExpiringSoon = daysRemaining <= 7
+              const hasExpired = daysRemaining <= 0
+              
+              return (
+                <Alert className={`border-2 ${
+                  hasExpired 
+                    ? 'border-red-700 bg-red-900 text-white' 
+                    : isExpiringSoon 
+                      ? 'border-orange-500 bg-orange-50' 
+                      : 'border-yellow-500 bg-yellow-50'
+                }`}>
+                  <Calendar className={`h-5 w-5 ${
+                    hasExpired ? 'text-white' : isExpiringSoon ? 'text-orange-700' : 'text-yellow-700'
+                  } flex-shrink-0 animate-pulse`} />
+                  <AlertDescription className={hasExpired ? 'text-white' : isExpiringSoon ? 'text-orange-900' : 'text-yellow-900'}>
+                    <div className="space-y-1">
+                      <div className="font-bold text-base">
+                        {hasExpired ? (
+                          <>⚠️ Your subscription has expired</>
+                        ) : (
+                          <>
+                            ⏰ <strong>{daysRemaining}</strong> {daysRemaining === 1 ? 'day' : 'days'} remaining
+                          </>
+                        )}
+                      </div>
+                      <div className="text-sm opacity-90">
+                        {hasExpired ? (
+                          'Your website access has ended. Please resubscribe to continue using your services.'
+                        ) : (
+                          <>
+                            Your subscription will remain active until{' '}
+                            <strong>{endDate.toLocaleDateString('en-GB', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}</strong>.
+                            {isExpiringSoon && ' Resubscribe now to avoid interruption!'}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )
+            })()}
+          </div>
         )}
 
         {/* Header */}
