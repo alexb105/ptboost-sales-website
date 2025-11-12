@@ -36,6 +36,7 @@ function AccountContent() {
   const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
   const [buyoutLink, setBuyoutLink] = useState("")
   const [subscriptionLink, setSubscriptionLink] = useState("")
+  const [resubscriptionLink, setResubscriptionLink] = useState("")
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [deleteReason, setDeleteReason] = useState("")
   const [deleteNotes, setDeleteNotes] = useState("")
@@ -134,6 +135,9 @@ function AccountContent() {
       }
       if (data.subscriptionLink) {
         setSubscriptionLink(data.subscriptionLink)
+      }
+      if (data.resubscriptionLink) {
+        setResubscriptionLink(data.resubscriptionLink)
       }
     } catch (error) {
       console.error('Error fetching payment links:', error)
@@ -243,9 +247,16 @@ function AccountContent() {
   }
 
   const handleSubscribe = () => {
-    // Open the Stripe subscription payment link
-    if (subscriptionLink) {
-      window.location.href = subscriptionLink
+    // Determine which link to use:
+    // - If user has stripe_customer_id (hasActiveSubscription), they've been subscribed before 
+    //   -> use resubscription link (no free trial)
+    // - Otherwise use regular subscription link (with free trial for new customers)
+    const hasBeenSubscribedBefore = userData?.hasActiveSubscription // This checks if stripe_customer_id exists
+    const linkToUse = hasBeenSubscribedBefore ? resubscriptionLink : subscriptionLink
+    
+    if (linkToUse) {
+      console.log(`Using ${hasBeenSubscribedBefore ? 'resubscription' : 'subscription'} link:`, linkToUse)
+      window.location.href = linkToUse
     } else {
       toast.error("Subscription link not configured. Please contact support.")
     }

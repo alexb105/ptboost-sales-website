@@ -15,6 +15,7 @@ export async function GET() {
         { 
           error: 'Failed to fetch payment links',
           subscriptionLink: '',
+          resubscriptionLink: '',
           buyoutLink: ''
         },
         { status: 500 }
@@ -23,6 +24,7 @@ export async function GET() {
 
     return NextResponse.json({
       subscriptionLink: data.subscription_link || '',
+      resubscriptionLink: data.resubscription_link || '',
       buyoutLink: data.buyout_link || '',
       updatedAt: data.updated_at
     })
@@ -32,6 +34,7 @@ export async function GET() {
       { 
         error: 'Failed to fetch payment links',
         subscriptionLink: '',
+        resubscriptionLink: '',
         buyoutLink: ''
       },
       { status: 500 }
@@ -42,7 +45,7 @@ export async function GET() {
 // POST - Update payment links (for admin use)
 export async function POST(request: Request) {
   try {
-    const { subscriptionLink, buyoutLink, adminPassword } = await request.json()
+    const { subscriptionLink, resubscriptionLink, buyoutLink, adminPassword } = await request.json()
 
     // Simple password protection for admin endpoint
     if (adminPassword !== process.env.ADMIN_PASSWORD) {
@@ -60,6 +63,13 @@ export async function POST(request: Request) {
       )
     }
 
+    if (resubscriptionLink && !isValidStripeUrl(resubscriptionLink)) {
+      return NextResponse.json(
+        { error: 'Invalid resubscription link URL. Must be a Stripe payment link.' },
+        { status: 400 }
+      )
+    }
+
     if (buyoutLink && !isValidStripeUrl(buyoutLink)) {
       return NextResponse.json(
         { error: 'Invalid buyout link URL. Must be a Stripe payment link.' },
@@ -71,6 +81,7 @@ export async function POST(request: Request) {
       .from('payment_links')
       .update({ 
         subscription_link: subscriptionLink || null,
+        resubscription_link: resubscriptionLink || null,
         buyout_link: buyoutLink || null,
         updated_at: new Date().toISOString()
       })
@@ -89,6 +100,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       subscriptionLink: data.subscription_link,
+      resubscriptionLink: data.resubscription_link,
       buyoutLink: data.buyout_link,
       updatedAt: data.updated_at
     })
