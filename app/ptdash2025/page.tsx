@@ -56,6 +56,9 @@ export default function AdminPage() {
   const [deleteOrderDialogOpen, setDeleteOrderDialogOpen] = useState(false)
   const [orderToDelete, setOrderToDelete] = useState<BookingData | null>(null)
   const [isDeletingOrder, setIsDeletingOrder] = useState(false)
+  const [unsubscribeDialogOpen, setUnsubscribeDialogOpen] = useState(false)
+  const [orderToUnsubscribe, setOrderToUnsubscribe] = useState<BookingData | null>(null)
+  const [isUnsubscribing, setIsUnsubscribing] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -237,6 +240,53 @@ export default function AdminPage() {
       alert('Failed to delete order. Please try again.')
     } finally {
       setIsDeletingOrder(false)
+    }
+  }
+
+  const handleUnsubscribeUser = async () => {
+    if (!orderToUnsubscribe || !orderToUnsubscribe.id) return
+
+    setIsUnsubscribing(true)
+    try {
+      const response = await fetch('/api/unsubscribe-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          orderId: orderToUnsubscribe.id,
+          adminPassword 
+        })
+      })
+
+      if (response.ok) {
+        // Update local state to reflect unsubscribed status
+        setCompletedOrders(prev => 
+          prev.map(order => 
+            order.id === orderToUnsubscribe.id 
+              ? { ...order, subscribed: false } 
+              : order
+          )
+        )
+        setUnsubscribeDialogOpen(false)
+        setOrderToUnsubscribe(null)
+        toast.success('User unsubscribed successfully and notification email sent!')
+      } else {
+        if (response.status === 401) {
+          setAuthError("Invalid password. Please log in again.")
+          setIsAuthenticated(false)
+          setPassword("")
+          setAdminPassword("")
+          localStorage.removeItem('adminPassword')
+          setUnsubscribeDialogOpen(false)
+        } else {
+          const errorData = await response.json()
+          toast.error(errorData.error || 'Failed to unsubscribe user. Please try again.')
+        }
+      }
+    } catch (error) {
+      console.error('Error unsubscribing user:', error)
+      toast.error('Failed to unsubscribe user. Please try again.')
+    } finally {
+      setIsUnsubscribing(false)
     }
   }
 
@@ -1121,11 +1171,26 @@ export default function AdminPage() {
 
                       {/* Subscription Indicator */}
                       {order.stripe_customer_id && (
-                        <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                        <div className={`mb-3 p-2 rounded-md ${
+                          order.subscribed 
+                            ? 'bg-green-50 border border-green-200' 
+                            : 'bg-red-50 border border-red-200'
+                        }`}>
                           <div className="flex items-center gap-2 text-sm">
-                            <CheckCircle className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                            <span className="text-blue-900 font-medium">Active Subscription</span>
-                            <span className="text-blue-700 text-xs">(Customer ID: {order.stripe_customer_id.substring(0, 12)}...)</span>
+                            {order.subscribed ? (
+                              <>
+                                <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                <span className="text-green-900 font-medium">Active Subscription</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                                <span className="text-red-900 font-medium">Subscription Cancelled</span>
+                              </>
+                            )}
+                            <span className={order.subscribed ? 'text-green-700 text-xs' : 'text-red-700 text-xs'}>
+                              (Customer ID: {order.stripe_customer_id.substring(0, 12)}...)
+                            </span>
                           </div>
                         </div>
                       )}
@@ -1144,6 +1209,20 @@ export default function AdminPage() {
                           <Eye className="h-4 w-4 mr-2" />
                           View Details
                         </Button>
+                        {order.subscribed && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setOrderToUnsubscribe(order)
+                              setUnsubscribeDialogOpen(true)
+                            }}
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                          >
+                            <XCircle className="h-4 w-4 mr-1" />
+                            Unsubscribe
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"
@@ -1723,6 +1802,49 @@ export default function AdminPage() {
       </Dialog>
 
       {/* Delete Order Confirmation Dialog */}
+      {/* Unsubscribe User Dialog */}
+      <AlertDialog open={unsubscribeDialogOpen} onOpenChange={setUnsubscribeDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unsubscribe User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to unsubscribe <strong>{orderToUnsubscribe?.full_name}</strong>?
+              <br /><br />
+              This will:
+              <ul className="list-disc ml-5 mt-2 space-y-1">
+                <li>Set their subscription status to inactive</li>
+                <li>Send them an email notification about the cancellation</li>
+                <li>Allow them to re-subscribe from their account page</li>
+              </ul>
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded text-blue-800 text-sm">
+                📧 An email will be automatically sent to <strong>{orderToUnsubscribe?.email}</strong> notifying them of the cancellation.
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUnsubscribing}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleUnsubscribeUser}
+              disabled={isUnsubscribing}
+              className="bg-orange-600 text-white hover:bg-orange-700"
+            >
+              {isUnsubscribing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Unsubscribing...
+                </>
+              ) : (
+                <>
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Unsubscribe User
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Order Dialog */}
       <AlertDialog open={deleteOrderDialogOpen} onOpenChange={setDeleteOrderDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
