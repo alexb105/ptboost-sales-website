@@ -36,7 +36,6 @@ function AccountContent() {
   const [buyoutDialogOpen, setBuyoutDialogOpen] = useState(false)
   const [buyoutLink, setBuyoutLink] = useState("")
   const [subscriptionLink, setSubscriptionLink] = useState("")
-  const [resubscriptionLink, setResubscriptionLink] = useState("")
   const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
   const [deleteReason, setDeleteReason] = useState("")
   const [deleteNotes, setDeleteNotes] = useState("")
@@ -107,13 +106,33 @@ function AccountContent() {
     return () => window.removeEventListener('focus', handleFocus)
   }, [])
 
-  // Check for success parameter from Stripe portal return
+  // Check for success parameter from Stripe portal/checkout return
   useEffect(() => {
     const success = searchParams.get('success')
+    const sessionId = searchParams.get('session_id')
+    
     if (success === 'true') {
       setShowSuccessMessage(true)
       toast.success("Your subscription settings have been updated!")
+      
+      // Refresh user data to reflect updated subscription status
+      const savedEmail = localStorage.getItem('ptboost_account_email')
+      const savedPassword = localStorage.getItem('ptboost_account_password')
+      if (savedEmail && savedPassword) {
+        refreshUserData(savedEmail, savedPassword)
+      }
+      
       // Clear the success parameter from URL
+      window.history.replaceState({}, '', '/account')
+    } else if (sessionId) {
+      // Returning from Stripe checkout - refresh user data
+      toast.success("Payment completed! Updating your subscription status...")
+      const savedEmail = localStorage.getItem('ptboost_account_email')
+      const savedPassword = localStorage.getItem('ptboost_account_password')
+      if (savedEmail && savedPassword) {
+        refreshUserData(savedEmail, savedPassword)
+      }
+      // Clear the session_id parameter from URL
       window.history.replaceState({}, '', '/account')
     }
   }, [searchParams])
@@ -135,9 +154,6 @@ function AccountContent() {
       }
       if (data.subscriptionLink) {
         setSubscriptionLink(data.subscriptionLink)
-      }
-      if (data.resubscriptionLink) {
-        setResubscriptionLink(data.resubscriptionLink)
       }
     } catch (error) {
       console.error('Error fetching payment links:', error)
