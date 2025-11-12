@@ -1,6 +1,45 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+// Helper function to decrement capacity by 1
+export async function decrementCapacity(): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Get current capacity
+    const { data: currentData, error: fetchError } = await supabase
+      .from('capacity_status')
+      .select('capacity_count')
+      .eq('id', 1)
+      .single()
+
+    if (fetchError || !currentData) {
+      console.error('Error fetching current capacity:', fetchError)
+      return { success: false, error: 'Failed to fetch current capacity' }
+    }
+
+    const newCapacity = Math.max(0, currentData.capacity_count - 1)
+
+    // Update capacity
+    const { error: updateError } = await supabase
+      .from('capacity_status')
+      .update({
+        capacity_count: newCapacity,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', 1)
+
+    if (updateError) {
+      console.error('Error decrementing capacity:', updateError)
+      return { success: false, error: 'Failed to decrement capacity' }
+    }
+
+    console.log(`✅ Capacity decremented: ${currentData.capacity_count} → ${newCapacity}`)
+    return { success: true }
+  } catch (error) {
+    console.error('Error in decrementCapacity:', error)
+    return { success: false, error: 'Failed to decrement capacity' }
+  }
+}
+
 // GET - Fetch capacity status
 export async function GET() {
   try {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import Stripe from 'stripe'
+import { decrementCapacity } from '@/app/api/capacity/route'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia',
@@ -46,6 +47,10 @@ export async function POST(request: Request) {
       })
     }
 
+    // Check if this is a first-time subscription before updating
+    // (no stripe_customer_id means it's a new subscription)
+    const isFirstTimeSubscription = !booking.stripe_customer_id
+
     // Update booking status to completed and set subscribed to true
     const { error: updateError } = await supabase
       .from('bookings')
@@ -58,6 +63,20 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Error updating booking:', updateError)
+    } else {
+      // Decrement capacity for first-time subscriptions only
+      // Note: This is a backup - the webhook should handle this primarily
+      // But if webhook hasn't run yet, this ensures capacity is decremented
+      if (isFirstTimeSubscription) {
+        console.log('📉 Decrementing capacity for first-time subscription (backup from complete-booking)')
+        const capacityResult = await decrementCapacity()
+        if (!capacityResult.success) {
+          console.error('⚠️ Failed to decrement capacity:', capacityResult.error)
+          // Don't fail the request if capacity decrement fails, but log it
+        }
+      } else {
+        console.log('ℹ️ Skipping capacity decrement - customer already has stripe_customer_id (likely resubscription)')
+      }
     }
 
     // If customer ID is missing, try to fetch it from Stripe
