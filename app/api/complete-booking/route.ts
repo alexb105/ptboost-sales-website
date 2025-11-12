@@ -36,47 +36,48 @@ export async function POST(request: Request) {
       )
     }
 
-    // Security check: Only process if payment is pending (not already completed)
-    if (booking.payment_status === 'completed') {
-      console.log('Booking already completed, skipping')
-      return NextResponse.json({ 
-        success: true,
-        email: booking.email,
-        subscriptionPassword: booking.subscription_password,
-        alreadyProcessed: true 
-      })
+    // Check if booking is already completed
+    const isAlreadyCompleted = booking.payment_status === 'completed'
+    
+    if (isAlreadyCompleted) {
+      console.log('Booking already completed by webhook, but checking if email needs to be sent...')
     }
 
     // Check if this is a first-time subscription before updating
     // (no stripe_customer_id means it's a new subscription)
     const isFirstTimeSubscription = !booking.stripe_customer_id
 
-    // Update booking status to completed and set subscribed to true
-    const { error: updateError } = await supabase
-      .from('bookings')
-      .update({ 
-        payment_status: 'completed',
-        subscribed: true, // User is now subscribed
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', bookingId)
+    // Only update booking status if not already completed
+    if (!isAlreadyCompleted) {
+      // Update booking status to completed and set subscribed to true
+      const { error: updateError } = await supabase
+        .from('bookings')
+        .update({ 
+          payment_status: 'completed',
+          subscribed: true, // User is now subscribed
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', bookingId)
 
-    if (updateError) {
-      console.error('Error updating booking:', updateError)
-    } else {
-      // Decrement capacity for first-time subscriptions only
-      // Note: This is a backup - the webhook should handle this primarily
-      // But if webhook hasn't run yet, this ensures capacity is decremented
-      if (isFirstTimeSubscription) {
-        console.log('📉 Decrementing capacity for first-time subscription (backup from complete-booking)')
-        const capacityResult = await decrementCapacity()
-        if (!capacityResult.success) {
-          console.error('⚠️ Failed to decrement capacity:', capacityResult.error)
-          // Don't fail the request if capacity decrement fails, but log it
-        }
+      if (updateError) {
+        console.error('Error updating booking:', updateError)
       } else {
-        console.log('ℹ️ Skipping capacity decrement - customer already has stripe_customer_id (likely resubscription)')
+        // Decrement capacity for first-time subscriptions only
+        // Note: This is a backup - the webhook should handle this primarily
+        // But if webhook hasn't run yet, this ensures capacity is decremented
+        if (isFirstTimeSubscription) {
+          console.log('📉 Decrementing capacity for first-time subscription (backup from complete-booking)')
+          const capacityResult = await decrementCapacity()
+          if (!capacityResult.success) {
+            console.error('⚠️ Failed to decrement capacity:', capacityResult.error)
+            // Don't fail the request if capacity decrement fails, but log it
+          }
+        } else {
+          console.log('ℹ️ Skipping capacity decrement - customer already has stripe_customer_id (likely resubscription)')
+        }
       }
+    } else {
+      console.log('Booking already completed, skipping status update')
     }
 
     // If customer ID is missing, try to fetch it from Stripe

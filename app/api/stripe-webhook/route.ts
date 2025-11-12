@@ -164,6 +164,49 @@ export async function POST(request: Request) {
             console.log('ℹ️ Skipping capacity decrement (resubscription or not first-time)')
           }
 
+          // Send emails for first-time subscriptions if not already sent
+          if (!isResubscription && bookingData && !bookingData.email_sent) {
+            console.log('📧 Sending confirmation emails for first-time subscription')
+            try {
+              const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+              const emailResponse = await fetch(`${baseUrl}/api/send-booking-email`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  fullName: bookingData.full_name,
+                  email: bookingData.email,
+                  phone: bookingData.phone,
+                  businessName: bookingData.business_name,
+                  location: bookingData.location,
+                  specialization: bookingData.specialization,
+                  preferredColors: bookingData.preferred_colors,
+                  websiteGoals: bookingData.website_goals,
+                  additionalNotes: bookingData.additional_notes,
+                  sessionId: bookingData.id,
+                  subscriptionPassword: bookingData.subscription_password,
+                }),
+              })
+
+              if (emailResponse.ok) {
+                // Mark email as sent
+                await supabase
+                  .from('bookings')
+                  .update({ email_sent: true })
+                  .eq('id', bookingData.id)
+                console.log('✅ Confirmation emails sent successfully via webhook')
+              } else {
+                const emailError = await emailResponse.text()
+                console.error('⚠️ Failed to send emails via webhook:', emailResponse.status, emailError)
+                // Don't fail the webhook if email fails, but log it
+              }
+            } catch (emailError) {
+              console.error('⚠️ Error sending emails via webhook:', emailError)
+              // Don't fail the webhook if email fails, but log it
+            }
+          } else if (bookingData?.email_sent) {
+            console.log('ℹ️ Emails already sent for this booking')
+          }
+
           // Clean up old canceled subscriptions for resubscriptions
           if (isResubscription && bookingData) {
             try {
