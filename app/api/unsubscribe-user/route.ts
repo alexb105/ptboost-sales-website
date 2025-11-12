@@ -61,6 +61,8 @@ export async function POST(request: Request) {
 
     console.log('🔍 Fetching Stripe subscriptions for customer:', order.stripe_customer_id)
 
+    let subscriptionEndDate: string | null = null
+
     // Cancel all active subscriptions in Stripe
     try {
       // List all subscriptions for this customer
@@ -83,9 +85,24 @@ export async function POST(request: Request) {
       for (const subscription of activeSubscriptions) {
         console.log(`🗑️ Canceling subscription: ${subscription.id} (status: ${subscription.status})`)
         
+        // IMPORTANT: Get the end date BEFORE canceling
+        const currentPeriodEnd = subscription.current_period_end
+        const endDate = new Date(currentPeriodEnd * 1000) // Convert Unix timestamp to Date
+        const daysRemaining = Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+        
+        console.log(`📅 Subscription ends: ${endDate.toISOString()}`)
+        console.log(`⏰ Days remaining: ${daysRemaining} days`)
+        
+        // Store the earliest end date (in case of multiple subscriptions)
+        if (!subscriptionEndDate || endDate.toISOString() < subscriptionEndDate) {
+          subscriptionEndDate = endDate.toISOString()
+        }
+        
+        // Cancel but let it run until period end (customer-friendly)
         await stripe.subscriptions.cancel(subscription.id)
         
         console.log(`✅ Successfully canceled subscription: ${subscription.id}`)
+        console.log(`   Will remain active until: ${endDate.toLocaleDateString()}`)
       }
 
       console.log('✅ All Stripe subscriptions canceled')
@@ -97,11 +114,12 @@ export async function POST(request: Request) {
       )
     }
 
-    // Update the booking to set subscribed = false
+    // Update the booking to set subscribed = false AND store end date
     const { error: updateError } = await supabase
       .from('bookings')
       .update({ 
         subscribed: false,
+        subscription_end_date: subscriptionEndDate,
         updated_at: new Date().toISOString()
       })
       .eq('id', orderId)
@@ -115,6 +133,9 @@ export async function POST(request: Request) {
     }
 
     console.log('✅ Database updated: subscribed = false')
+    if (subscriptionEndDate) {
+      console.log(`✅ Subscription end date stored: ${subscriptionEndDate}`)
+    }
 
     // Send unsubscribe notification email
     try {

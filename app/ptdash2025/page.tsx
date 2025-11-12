@@ -1171,27 +1171,87 @@ export default function AdminPage() {
 
                       {/* Subscription Indicator */}
                       {order.stripe_customer_id && (
-                        <div className={`mb-3 p-2 rounded-md ${
-                          order.subscribed 
-                            ? 'bg-green-50 border border-green-200' 
-                            : 'bg-red-50 border border-red-200'
-                        }`}>
-                          <div className="flex items-center gap-2 text-sm">
-                            {order.subscribed ? (
-                              <>
-                                <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                <span className="text-green-900 font-medium">Active Subscription</span>
-                              </>
-                            ) : (
-                              <>
-                                <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
-                                <span className="text-red-900 font-medium">Subscription Cancelled</span>
-                              </>
-                            )}
-                            <span className={order.subscribed ? 'text-green-700 text-xs' : 'text-red-700 text-xs'}>
-                              (Customer ID: {order.stripe_customer_id.substring(0, 12)}...)
-                            </span>
+                        <div className="mb-3 space-y-2">
+                          <div className={`p-2 rounded-md ${
+                            order.subscribed 
+                              ? 'bg-green-50 border border-green-200' 
+                              : 'bg-red-50 border border-red-200'
+                          }`}>
+                            <div className="flex items-center gap-2 text-sm">
+                              {order.subscribed ? (
+                                <>
+                                  <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                  <span className="text-green-900 font-medium">Active Subscription</span>
+                                </>
+                              ) : (
+                                <>
+                                  <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                                  <span className="text-red-900 font-medium">Subscription Cancelled</span>
+                                </>
+                              )}
+                              <span className={order.subscribed ? 'text-green-700 text-xs' : 'text-red-700 text-xs'}>
+                                (Customer ID: {order.stripe_customer_id.substring(0, 12)}...)
+                              </span>
+                            </div>
                           </div>
+                          
+                          {/* Countdown Timer for Cancelled Subscriptions */}
+                          {!order.subscribed && order.subscription_end_date && (() => {
+                            const endDate = new Date(order.subscription_end_date)
+                            const now = new Date()
+                            const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+                            const isExpiringSoon = daysRemaining <= 7
+                            const hasExpired = daysRemaining <= 0
+                            
+                            return (
+                              <div className={`p-3 rounded-md border-2 ${
+                                hasExpired 
+                                  ? 'bg-red-900 border-red-700' 
+                                  : isExpiringSoon 
+                                    ? 'bg-orange-50 border-orange-400' 
+                                    : 'bg-yellow-50 border-yellow-300'
+                              }`}>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className={`h-5 w-5 ${
+                                      hasExpired ? 'text-white' : isExpiringSoon ? 'text-orange-700' : 'text-yellow-700'
+                                    } flex-shrink-0 animate-pulse`} />
+                                    <div>
+                                      <div className={`text-sm font-bold ${
+                                        hasExpired ? 'text-white' : isExpiringSoon ? 'text-orange-900' : 'text-yellow-900'
+                                      }`}>
+                                        {hasExpired ? (
+                                          '⚠️ DEACTIVATE WEBSITE NOW'
+                                        ) : (
+                                          <>
+                                            {daysRemaining} {daysRemaining === 1 ? 'Day' : 'Days'} Remaining
+                                          </>
+                                        )}
+                                      </div>
+                                      <div className={`text-xs ${
+                                        hasExpired ? 'text-red-200' : isExpiringSoon ? 'text-orange-700' : 'text-yellow-700'
+                                      }`}>
+                                        {hasExpired ? (
+                                          'Subscription expired - disable on Netlify'
+                                        ) : (
+                                          `Website access ends: ${endDate.toLocaleDateString('en-GB', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric'
+                                          })}`
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {hasExpired && (
+                                    <div className="text-white text-2xl font-bold animate-pulse">
+                                      ⚠️
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          })()}
                         </div>
                       )}
 
