@@ -60,6 +60,71 @@ export async function POST(request: Request) {
       )
     }
 
+    // Clean up any active checkout sessions that might block subscription cancellation
+    console.log('🧹 Cleaning up active checkout sessions for customer:', booking.stripe_customer_id)
+    try {
+      // List all checkout sessions for this customer
+      const checkoutSessions = await stripe.checkout.sessions.list({
+        customer: booking.stripe_customer_id,
+        limit: 100,
+      })
+
+      // Expire any open checkout sessions (these block subscription cancellation)
+      const openSessions = checkoutSessions.data.filter(session => 
+        session.status === 'open'
+      )
+
+      for (const session of openSessions) {
+        console.log(`🗑️ Expiring checkout session: ${session.id}`)
+        await stripe.checkout.sessions.expire(session.id)
+        console.log(`✅ Expired checkout session: ${session.id}`)
+      }
+
+      if (openSessions.length > 0) {
+        console.log(`✅ Cleaned up ${openSessions.length} open checkout session(s)`)
+      } else {
+        console.log('✅ No open checkout sessions to clean up')
+      }
+    } catch (cleanupError: any) {
+      console.warn('⚠️ Error cleaning up checkout sessions (non-critical):', cleanupError.message)
+      // Don't fail the request if cleanup fails
+    }
+
+    // Clean up incomplete subscriptions that might be blocking
+    console.log('🧹 Cleaning up incomplete subscriptions for customer:', booking.stripe_customer_id)
+    try {
+      const subscriptions = await stripe.subscriptions.list({
+        customer: booking.stripe_customer_id,
+        status: 'all',
+        limit: 100,
+      })
+
+      // Find incomplete subscriptions
+      const incompleteSubscriptions = subscriptions.data.filter(sub => 
+        sub.status === 'incomplete' || sub.status === 'incomplete_expired'
+      )
+
+      for (const subscription of incompleteSubscriptions) {
+        console.log(`🗑️ Canceling incomplete subscription: ${subscription.id} (status: ${subscription.status})`)
+        try {
+          await stripe.subscriptions.cancel(subscription.id)
+          console.log(`✅ Canceled incomplete subscription: ${subscription.id}`)
+        } catch (cancelError: any) {
+          // If it's already canceled or doesn't exist, that's fine
+          if (cancelError.code !== 'resource_missing') {
+            console.warn(`⚠️ Could not cancel subscription ${subscription.id}:`, cancelError.message)
+          }
+        }
+      }
+
+      if (incompleteSubscriptions.length > 0) {
+        console.log(`✅ Cleaned up ${incompleteSubscriptions.length} incomplete subscription(s)`)
+      }
+    } catch (cleanupError: any) {
+      console.warn('⚠️ Error cleaning up subscriptions (non-critical):', cleanupError.message)
+      // Don't fail the request if cleanup fails
+    }
+
     // Create a checkout session with the existing customer ID
     const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')
     
