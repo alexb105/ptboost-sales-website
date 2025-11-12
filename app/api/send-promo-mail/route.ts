@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     const discountedPrice = basePrice - discountAmount
 
     // Website CTA link
-    const websiteLink = "https://ptboost.co.uk/#cta"
+    const websiteLink = "https://ptboost.co.uk/account"
 
     console.log(`Sending promo mail to ${email} with code ${promoCode} and ${percentageOff}% off`)
 
