@@ -84,6 +84,8 @@ export async function POST(request: Request) {
       },
       // Allow customer to update payment method
       payment_method_collection: 'if_required',
+      // Enable coupon codes for this checkout session
+      allow_promotion_codes: true,
     })
 
     console.log('✅ Created resubscribe checkout session:', session.id, 'for customer:', booking.stripe_customer_id)
