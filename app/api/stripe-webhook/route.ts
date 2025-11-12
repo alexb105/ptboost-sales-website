@@ -73,6 +73,7 @@ export async function POST(request: Request) {
               .from('bookings')
               .update({
                 subscribed: true,
+                subscription_end_date: null, // Clear end date on resubscription
                 updated_at: new Date().toISOString(),
               })
               .eq('id', session.metadata.booking_id)
@@ -81,6 +82,48 @@ export async function POST(request: Request) {
               console.error('❌ Error updating resubscription:', resubError)
             } else {
               console.log('✅ Resubscription updated successfully')
+            }
+
+            // Clean up old inactive/canceled subscriptions for this customer
+            try {
+              console.log('🧹 Cleaning up old subscriptions for customer:', customerId)
+              const allSubscriptions = await stripe.subscriptions.list({
+                customer: customerId,
+                status: 'all',
+                limit: 100,
+              })
+
+              const oldSubscriptions = allSubscriptions.data.filter(sub => 
+                sub.id !== subscriptionId && // Don't touch the new subscription
+                ['canceled', 'incomplete', 'incomplete_expired', 'past_due', 'unpaid'].includes(sub.status)
+              )
+
+              console.log(`📋 Found ${oldSubscriptions.length} old inactive subscriptions to clean up`)
+
+              for (const oldSub of oldSubscriptions) {
+                // If already canceled, we can't do anything (Stripe doesn't allow deleting)
+                // But we can log it for visibility
+                if (oldSub.status === 'canceled') {
+                  console.log(`ℹ️ Subscription ${oldSub.id} is already canceled (status: ${oldSub.status})`)
+                } else {
+                  // Cancel any incomplete/past_due subscriptions
+                  try {
+                    await stripe.subscriptions.cancel(oldSub.id)
+                    console.log(`✅ Canceled old subscription: ${oldSub.id} (was ${oldSub.status})`)
+                  } catch (cancelError: any) {
+                    console.warn(`⚠️ Could not cancel subscription ${oldSub.id}:`, cancelError.message)
+                  }
+                }
+              }
+
+              if (oldSubscriptions.length > 0) {
+                console.log(`✅ Cleaned up ${oldSubscriptions.length} old subscription(s)`)
+              } else {
+                console.log('✅ No old subscriptions to clean up')
+              }
+            } catch (cleanupError: any) {
+              console.error('❌ Error cleaning up old subscriptions:', cleanupError)
+              // Don't fail the webhook if cleanup fails
             }
           }
         }
@@ -98,6 +141,7 @@ export async function POST(request: Request) {
           .from('bookings')
           .update({
             subscribed: true,
+            subscription_end_date: null, // Clear end date on new subscription
             updated_at: new Date().toISOString(),
           })
           .eq('stripe_customer_id', customerId)
@@ -106,6 +150,46 @@ export async function POST(request: Request) {
           console.error('❌ Error updating subscription status:', error)
         } else {
           console.log('✅ Subscription status updated to true')
+        }
+
+        // Clean up old inactive subscriptions for this customer
+        // Only if this is an active subscription (not incomplete)
+        if (subscription.status === 'active' || subscription.status === 'trialing') {
+          try {
+            console.log('🧹 Cleaning up old subscriptions for customer:', customerId)
+            const allSubscriptions = await stripe.subscriptions.list({
+              customer: customerId,
+              status: 'all',
+              limit: 100,
+            })
+
+            const oldSubscriptions = allSubscriptions.data.filter(sub => 
+              sub.id !== subscription.id && // Don't touch the new subscription
+              ['canceled', 'incomplete', 'incomplete_expired', 'past_due', 'unpaid'].includes(sub.status)
+            )
+
+            console.log(`📋 Found ${oldSubscriptions.length} old inactive subscriptions to clean up`)
+
+            for (const oldSub of oldSubscriptions) {
+              if (oldSub.status === 'canceled') {
+                console.log(`ℹ️ Subscription ${oldSub.id} is already canceled`)
+              } else {
+                try {
+                  await stripe.subscriptions.cancel(oldSub.id)
+                  console.log(`✅ Canceled old subscription: ${oldSub.id} (was ${oldSub.status})`)
+                } catch (cancelError: any) {
+                  console.warn(`⚠️ Could not cancel subscription ${oldSub.id}:`, cancelError.message)
+                }
+              }
+            }
+
+            if (oldSubscriptions.length > 0) {
+              console.log(`✅ Cleaned up ${oldSubscriptions.length} old subscription(s)`)
+            }
+          } catch (cleanupError: any) {
+            console.error('❌ Error cleaning up old subscriptions:', cleanupError)
+            // Don't fail the webhook if cleanup fails
+          }
         }
         break
       }
