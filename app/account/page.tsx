@@ -246,19 +246,44 @@ function AccountContent() {
     }
   }
 
-  const handleSubscribe = () => {
-    // Determine which link to use:
+  const handleSubscribe = async () => {
+    // Determine subscription type:
     // - If user has stripe_customer_id (hasActiveSubscription), they've been subscribed before 
-    //   -> use resubscription link (no free trial)
+    //   -> create checkout session with existing customer ID (no free trial)
     // - Otherwise use regular subscription link (with free trial for new customers)
     const hasBeenSubscribedBefore = userData?.hasActiveSubscription // This checks if stripe_customer_id exists
-    const linkToUse = hasBeenSubscribedBefore ? resubscriptionLink : subscriptionLink
     
-    if (linkToUse) {
-      console.log(`Using ${hasBeenSubscribedBefore ? 'resubscription' : 'subscription'} link:`, linkToUse)
-      window.location.href = linkToUse
+    if (hasBeenSubscribedBefore) {
+      // For returning customers, create a checkout session that reuses their Stripe customer ID
+      try {
+        setIsLoading(true)
+        const response = await fetch('/api/create-resubscribe-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        })
+
+        if (!response.ok) {
+          const data = await response.json()
+          throw new Error(data.error || 'Failed to create checkout session')
+        }
+
+        const { sessionUrl } = await response.json()
+        console.log('Redirecting to resubscription checkout (existing customer):', sessionUrl)
+        window.location.href = sessionUrl
+      } catch (err) {
+        console.error('Error creating resubscribe session:', err)
+        toast.error(err instanceof Error ? err.message : 'Failed to start checkout. Please try again.')
+        setIsLoading(false)
+      }
     } else {
-      toast.error("Subscription link not configured. Please contact support.")
+      // For new customers, use regular subscription link with free trial
+      if (subscriptionLink) {
+        console.log('Using subscription link (new customer with trial):', subscriptionLink)
+        window.location.href = subscriptionLink
+      } else {
+        toast.error("Subscription link not configured. Please contact support.")
+      }
     }
   }
 
