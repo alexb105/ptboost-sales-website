@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard, FileSpreadsheet } from "lucide-react"
+import { Lock, CheckCircle, XCircle, Loader2, Users, Mail, Calendar, Phone, MapPin, Briefcase, Settings, Info, Trash2, Send, Link2, Eye, Image as ImageIcon, User, Download, CreditCard, FileSpreadsheet, Gift } from "lucide-react"
 import { createClient } from '@supabase/supabase-js'
 import type { BookingData, WaitingListEntry } from '@/lib/supabase-types'
 import { toast } from "sonner"
@@ -59,6 +59,11 @@ export default function AdminPage() {
   const [unsubscribeDialogOpen, setUnsubscribeDialogOpen] = useState(false)
   const [orderToUnsubscribe, setOrderToUnsubscribe] = useState<BookingData | null>(null)
   const [isUnsubscribing, setIsUnsubscribing] = useState(false)
+  const [promoMailDialogOpen, setPromoMailDialogOpen] = useState(false)
+  const [orderForPromoMail, setOrderForPromoMail] = useState<BookingData | null>(null)
+  const [promoCode, setPromoCode] = useState("")
+  const [percentageOff, setPercentageOff] = useState("")
+  const [isSendingPromoMail, setIsSendingPromoMail] = useState(false)
 
   // Load saved password on mount (but don't auto-login)
   useEffect(() => {
@@ -1288,6 +1293,31 @@ export default function AdminPage() {
                             Unsubscribe
                           </Button>
                         )}
+                        {!order.subscribed && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={async () => {
+                              setOrderForPromoMail(order)
+                              // Load saved promo settings
+                              try {
+                                const response = await fetch('/api/promo-settings')
+                                if (response.ok) {
+                                  const data = await response.json()
+                                  if (data.promoCode) setPromoCode(data.promoCode)
+                                  if (data.percentageOff) setPercentageOff(data.percentageOff)
+                                }
+                              } catch (error) {
+                                console.error('Error loading promo settings:', error)
+                              }
+                              setPromoMailDialogOpen(true)
+                            }}
+                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                          >
+                            <Gift className="h-4 w-4 mr-1" />
+                            Send Promo Mail
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"
@@ -1908,6 +1938,122 @@ export default function AdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Send Promo Mail Dialog */}
+      <Dialog open={promoMailDialogOpen} onOpenChange={setPromoMailDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Gift className="h-5 w-5 text-green-600" />
+              Send Promo Mail
+            </DialogTitle>
+            <DialogDescription>
+              Customize the promotional offer for <strong>{orderForPromoMail?.full_name}</strong> ({orderForPromoMail?.email})
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="promo-code">Promo Code</Label>
+              <Input
+                id="promo-code"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="e.g., WELCOMEBACK20"
+                disabled={isSendingPromoMail}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="percentage-off">Percentage Off</Label>
+              <Input
+                id="percentage-off"
+                type="number"
+                value={percentageOff}
+                onChange={(e) => setPercentageOff(e.target.value)}
+                placeholder="e.g., 20"
+                min="0"
+                max="100"
+                disabled={isSendingPromoMail}
+              />
+              <p className="text-xs text-muted-foreground">
+                Enter the discount percentage (0-100)
+              </p>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPromoMailDialogOpen(false)
+                  setPromoCode("")
+                  setPercentageOff("")
+                }}
+                disabled={isSendingPromoMail}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!promoCode.trim() || !percentageOff.trim()) {
+                    toast.error("Please enter both promo code and percentage off")
+                    return
+                  }
+                  if (!orderForPromoMail) return
+                  
+                  setIsSendingPromoMail(true)
+                  try {
+                    // Save settings first
+                    await fetch('/api/promo-settings', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ promoCode, percentageOff })
+                    })
+                    
+                    // Send email
+                    const response = await fetch('/api/send-promo-mail', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        email: orderForPromoMail.email,
+                        name: orderForPromoMail.full_name,
+                        promoCode,
+                        percentageOff: parseFloat(percentageOff)
+                      })
+                    })
+                    
+                    if (!response.ok) {
+                      const data = await response.json()
+                      throw new Error(data.error || 'Failed to send promo mail')
+                    }
+                    
+                    toast.success("Promo mail sent successfully!")
+                    setPromoMailDialogOpen(false)
+                    setPromoCode("")
+                    setPercentageOff("")
+                  } catch (error) {
+                    console.error('Error sending promo mail:', error)
+                    toast.error(error instanceof Error ? error.message : 'Failed to send promo mail')
+                  } finally {
+                    setIsSendingPromoMail(false)
+                  }
+                }}
+                disabled={isSendingPromoMail}
+                className="bg-green-600 text-white hover:bg-green-700"
+              >
+                {isSendingPromoMail ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Send Promo Mail
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Order Dialog */}
       <AlertDialog open={deleteOrderDialogOpen} onOpenChange={setDeleteOrderDialogOpen}>
