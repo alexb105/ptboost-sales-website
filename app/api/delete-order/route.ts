@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+import { Resend } from 'resend'
+import { getAdminAccountDeletionEmail } from '@/emails/admin-account-deletion'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia',
 })
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Use service role key for admin operations (more secure)
 // If service role key is not available, fall back to anon key but require admin password
@@ -37,10 +41,10 @@ export async function DELETE(request: Request) {
       )
     }
 
-    // First, get the booking to check for Stripe customer ID
+    // First, get the booking to check for Stripe customer ID and user details
     const { data: booking, error: fetchError } = await supabaseAdmin
       .from('bookings')
-      .select('id, stripe_customer_id')
+      .select('id, stripe_customer_id, email, full_name, business_name')
       .eq('id', orderId)
       .single()
 
@@ -49,6 +53,29 @@ export async function DELETE(request: Request) {
         { error: 'Order not found' },
         { status: 404 }
       )
+    }
+
+    // Send email notification to user before deletion
+    if (booking.email && process.env.RESEND_API_KEY) {
+      try {
+        const emailHtml = getAdminAccountDeletionEmail({
+          fullName: booking.full_name || 'Customer',
+          email: booking.email,
+          businessName: booking.business_name || undefined,
+          siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk'
+        })
+
+        await resend.emails.send({
+          from: 'PTBoost <noreply@ptboost.co.uk>',
+          to: booking.email,
+          subject: '⚠️ Your PTBoost Account Has Been Deleted',
+          html: emailHtml,
+        })
+        console.log(`Admin deletion notification email sent successfully to: ${booking.email}`)
+      } catch (emailError) {
+        console.error('Error sending admin deletion notification email:', emailError)
+        // Continue with deletion even if email fails
+      }
     }
 
     // If there's a Stripe customer ID, delete from Stripe first

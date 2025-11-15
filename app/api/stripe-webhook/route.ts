@@ -152,14 +152,19 @@ export async function POST(request: Request) {
             }
           }
 
-          // Decrement capacity for first-time subscriptions only (not resubscriptions)
-          if (!isResubscription && isFirstTimeSubscription) {
+          // Decrement capacity for first-time subscriptions only (not resubscriptions or buyouts)
+          // Check if this is a website buyout (don't decrement capacity for buyouts)
+          const isWebsiteBuyout = bookingData?.website_owned === true
+          
+          if (!isResubscription && isFirstTimeSubscription && !isWebsiteBuyout) {
             console.log('📉 Decrementing capacity for first-time subscription')
             const capacityResult = await decrementCapacity()
             if (!capacityResult.success) {
               console.error('⚠️ Failed to decrement capacity:', capacityResult.error)
               // Don't fail the webhook if capacity decrement fails, but log it
             }
+          } else if (isWebsiteBuyout) {
+            console.log('ℹ️ Skipping capacity decrement - this is a website buyout (one-time payment, not a subscription)')
           } else {
             console.log('ℹ️ Skipping capacity decrement (resubscription or not first-time)')
           }

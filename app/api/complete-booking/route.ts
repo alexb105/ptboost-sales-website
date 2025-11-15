@@ -46,6 +46,9 @@ export async function POST(request: Request) {
     // Check if this is a first-time subscription before updating
     // (no stripe_customer_id means it's a new subscription)
     const isFirstTimeSubscription = !booking.stripe_customer_id
+    
+    // Check if this is a website buyout (don't decrement capacity for buyouts)
+    const isWebsiteBuyout = booking.website_owned === true
 
     // Only update booking status if not already completed
     if (!isAlreadyCompleted) {
@@ -65,13 +68,16 @@ export async function POST(request: Request) {
         // Decrement capacity for first-time subscriptions only
         // Note: This is a backup - the webhook should handle this primarily
         // But if webhook hasn't run yet, this ensures capacity is decremented
-        if (isFirstTimeSubscription) {
+        // IMPORTANT: Don't decrement for website buyouts (one-time payments)
+        if (isFirstTimeSubscription && !isWebsiteBuyout) {
           console.log('📉 Decrementing capacity for first-time subscription (backup from complete-booking)')
           const capacityResult = await decrementCapacity()
           if (!capacityResult.success) {
             console.error('⚠️ Failed to decrement capacity:', capacityResult.error)
             // Don't fail the request if capacity decrement fails, but log it
           }
+        } else if (isWebsiteBuyout) {
+          console.log('ℹ️ Skipping capacity decrement - this is a website buyout (one-time payment, not a subscription)')
         } else {
           console.log('ℹ️ Skipping capacity decrement - customer already has stripe_customer_id (likely resubscription)')
         }
