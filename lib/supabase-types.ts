@@ -20,6 +20,8 @@ export interface BookingData {
   website_owned?: boolean
   subscribed?: boolean // Active subscription status
   subscription_end_date?: string // When canceled subscription will expire (ISO 8601 date)
+  admin_dashboard_url?: string | null // Custom URL for admin dashboard access
+  visit_website_url?: string | null // Custom URL for website access
 }
 
 export interface CapacityStatus {

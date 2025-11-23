@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
     // Mail-Tester address from query params or use default
     const { searchParams } = new URL(request.url)
-    const testEmail = searchParams.get('email') || 'test-r2g2q4ec9@srv1.mail-tester.com'
+    const testEmail = searchParams.get('email') || 'test-tr59w0yn0@srv1.mail-tester.com'
 
     console.log(`📧 Sending test email to: ${testEmail}`)
 
