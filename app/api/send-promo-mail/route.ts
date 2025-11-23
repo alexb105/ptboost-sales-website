@@ -43,7 +43,9 @@ export async function POST(request: Request) {
       getEmailOptions({
         from: 'PTBoost <noreply@ptboost.co.uk>',
         to: [email],
-        subject: `Special Offer Just For You - ${percentageOff}% Off!`,
+        subject: percentageOff === 100 
+          ? 'Welcome Back - Reactivate Your PTBoost Subscription'
+          : `Reactivate Your Subscription - ${percentageOff}% Off`,
         replyTo: 'ptboost.info@gmail.com',
         unsubscribeUrl: unsubscribeUrl,
         tags: [{ name: 'email_type', value: 'promo' }],
@@ -238,20 +240,19 @@ export async function POST(request: Request) {
                 <!-- Header -->
                 <div class="header">
                   <div class="header-content">
-                    <h1>🎁 Special Offer Just For You!</h1>
-                    <div class="header-badge">Exclusive Discount</div>
+                    <h1>Welcome Back to PTBoost</h1>
+                    <div class="header-badge">Subscription Reactivation</div>
                   </div>
                 </div>
                 
                 <!-- Content -->
                 <div class="content">
-                  <div class="greeting">Hi ${name} 👋</div>
+                  <div class="greeting">Hi ${name},</div>
                   
                   <div class="message-box">
                     <p>
-                      <strong>We miss you!</strong><br><br>
-                      We noticed you're no longer subscribed, and we'd love to have you back. 
-                      As a special thank you for being a valued customer, we're offering you an exclusive discount to reactivate your subscription.
+                      <strong>Hi ${name},</strong><br><br>
+                      We noticed your subscription has ended. As a valued customer, we'd like to offer you a discount to reactivate your subscription and continue building your online presence.
                     </p>
                   </div>
 
@@ -262,7 +263,7 @@ export async function POST(request: Request) {
                       Your Exclusive Discount Code
                     </p>
                     <div class="code">${promoCode}</div>
-                    <div class="discount">${percentageOff}% OFF</div>
+                    <div class="discount">${percentageOff === 100 ? 'Free Trial' : `${percentageOff}% OFF`}</div>
                     <div class="price">
                       <span class="original-price">£${basePrice.toFixed(2)}</span>
                       <br>
