@@ -118,7 +118,7 @@ export async function POST(request: Request) {
       getEmailOptions({
         from: 'PTBoost <noreply@ptboost.co.uk>',
         to: [email],
-        subject: 'We've received your cancellation request',
+        subject: 'We have received your cancellation request',
         replyTo: 'ptboost.info@gmail.com',
         unsubscribeUrl: unsubscribeUrl,
         tags: [{ name: 'email_type', value: 'cancellation_request_confirmation' }],

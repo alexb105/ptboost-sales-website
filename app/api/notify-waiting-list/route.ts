@@ -578,7 +578,6 @@ export async function POST(request: Request) {
       `,
       })
     )
-    })
 
     console.log('Email sent successfully:', emailResult)
 

@@ -427,7 +427,8 @@ export async function POST(request: Request) {
           </body>
         </html>
       `,
-    })
+      })
+    )
 
     if (customerEmail.error) {
       console.error('❌ FAILED to send customer confirmation email!')

@@ -328,8 +328,7 @@ export async function DELETE(request: Request) {
             </html>
           `,
           })
-        )`,
-        })
+        )
         console.log(`Account deletion confirmation email sent successfully to: ${email}`)
       } catch (emailError) {
         console.error('Error sending account deletion confirmation email:', emailError)
