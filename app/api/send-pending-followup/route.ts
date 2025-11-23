@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { supabase } from '@/lib/supabase'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -53,10 +54,17 @@ export async function POST(request: Request) {
 
     // Send follow-up email to customer
     console.log('Sending follow-up email to:', booking.email)
-    const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'PTBoost <noreply@ptboost.co.uk>',
-      to: [booking.email],
-      subject: '⏰ Complete Your Website Order - Limited Time Offer!',
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+    const unsubscribeUrl = `${baseUrl.replace(/\/$/, '')}/account?action=unsubscribe`
+    
+    const { data: emailData, error: emailError } = await resend.emails.send(
+      getEmailOptions({
+        from: 'PTBoost <noreply@ptboost.co.uk>',
+        to: [booking.email],
+        subject: 'Complete Your Website Order - Limited Time Offer!',
+        replyTo: 'ptboost.info@gmail.com',
+        unsubscribeUrl: unsubscribeUrl,
+        tags: [{ name: 'email_type', value: 'followup' }],
       html: `
         <!DOCTYPE html>
         <html>
@@ -327,7 +335,8 @@ export async function POST(request: Request) {
           </body>
         </html>
       `,
-    })
+      })
+    )
 
     if (emailError) {
       console.error('Error sending follow-up email:', emailError)

@@ -1,6 +1,7 @@
 // email template: customer order confirmation (to buyer) and internal new order alert (to you)
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -18,11 +19,18 @@ export async function POST(request: Request) {
 
     // Send confirmation email to customer
     console.log('Attempting to send customer confirmation email...')
-    const customerEmail = await resend.emails.send({
-      from: 'PTBoost <noreply@ptboost.co.uk>',
-      to: [bookingData.email],
-      subject: '🎉 Your Website Order is Confirmed!',
-      html: `
+    const accountUrl = `${(process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/account`
+    const unsubscribeUrl = `${(process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk').replace(/\/$/, '')}/account?action=unsubscribe`
+    
+    const customerEmail = await resend.emails.send(
+      getEmailOptions({
+        from: 'PTBoost <noreply@ptboost.co.uk>',
+        to: [bookingData.email],
+        subject: 'Your Website Order is Confirmed!',
+        replyTo: 'ptboost.info@gmail.com',
+        unsubscribeUrl: unsubscribeUrl,
+        tags: [{ name: 'email_type', value: 'booking_confirmation' }],
+        html: `
         <!DOCTYPE html>
         <html>
           <head>
@@ -432,10 +440,13 @@ export async function POST(request: Request) {
 
     // Send notification email to admin
     console.log('Sending admin notification email...')
-    const { data, error } = await resend.emails.send({
-      from: 'PT Website Orders <noreply@ptboost.co.uk>',
-      to: ['ptboost.info@gmail.com'],
-      subject: `New Website Order - ${bookingData.businessName}`,
+    const { data, error } = await resend.emails.send(
+      getEmailOptions({
+        from: 'PT Website Orders <noreply@ptboost.co.uk>',
+        to: ['ptboost.info@gmail.com'],
+        subject: `New Website Order - ${bookingData.businessName}`,
+        replyTo: 'ptboost.info@gmail.com',
+        tags: [{ name: 'email_type', value: 'admin_notification' }],
       html: `
         <!DOCTYPE html>
         <html>
@@ -777,7 +788,8 @@ export async function POST(request: Request) {
           </body>
         </html>
       `,
-    })
+      })
+    )
 
     if (error) {
       console.error('❌ FAILED to send admin notification email!')

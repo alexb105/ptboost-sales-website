@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -172,10 +173,13 @@ export async function POST(request: Request) {
               if (fullBooking && process.env.RESEND_API_KEY) {
                 try {
                   console.log(`📧 Sending buyout confirmation email to customer: ${customerEmail}`)
-                  await resend.emails.send({
-                    from: 'PTBoost <noreply@ptboost.co.uk>',
-                    to: [customerEmail],
-                    subject: '🎉 Website Buyout Confirmation - Your Website is Now Yours!',
+                  await resend.emails.send(
+                    getEmailOptions({
+                      from: 'PTBoost <noreply@ptboost.co.uk>',
+                      to: [customerEmail],
+                      subject: 'Website Buyout Confirmation - Your Website is Now Yours!',
+                      replyTo: 'ptboost.info@gmail.com',
+                      tags: [{ name: 'email_type', value: 'buyout_confirmation' }],
                     html: `
                       <!DOCTYPE html>
                       <html>
@@ -494,7 +498,8 @@ export async function POST(request: Request) {
                         </body>
                       </html>
                     `,
-                  })
+                    })
+                  )
                   console.log(`✅ Buyout confirmation email sent successfully to: ${customerEmail}`)
                 } catch (emailError) {
                   console.error('❌ Failed to send buyout confirmation email to customer:', emailError)
@@ -506,10 +511,13 @@ export async function POST(request: Request) {
               if (fullBooking && process.env.RESEND_API_KEY) {
                 try {
                   console.log('📧 Sending buyout notification email to alexander.ptboost@gmail.com')
-                  await resend.emails.send({
-                    from: 'PTBoost <noreply@ptboost.co.uk>',
-                    to: ['alexander.ptboost@gmail.com'],
-                    subject: `🚀 Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,
+                  await resend.emails.send(
+                    getEmailOptions({
+                      from: 'PTBoost <noreply@ptboost.co.uk>',
+                      to: ['alexander.ptboost@gmail.com'],
+                      subject: `Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,
+                      replyTo: 'ptboost.info@gmail.com',
+                      tags: [{ name: 'email_type', value: 'admin_buyout_notification' }],
                     html: `
                       <!DOCTYPE html>
                       <html>
@@ -698,6 +706,7 @@ export async function POST(request: Request) {
                       </html>
                     `,
                   })
+                  )
                   console.log('✅ Buyout notification email sent successfully')
                 } catch (emailError) {
                   console.error('❌ Failed to send buyout notification email:', emailError)
@@ -785,11 +794,14 @@ export async function POST(request: Request) {
                 if (fullBooking && process.env.RESEND_API_KEY) {
                   try {
                     console.log(`📧 Sending buyout confirmation email to customer: ${customerEmail}`)
-                    await resend.emails.send({
-                      from: 'PTBoost <noreply@ptboost.co.uk>',
-                      to: [customerEmail],
-                      subject: '🎉 Website Buyout Confirmation - Your Website is Now Yours!',
-                      html: `
+                    await resend.emails.send(
+                      getEmailOptions({
+                        from: 'PTBoost <noreply@ptboost.co.uk>',
+                        to: [customerEmail],
+                        subject: 'Website Buyout Confirmation - Your Website is Now Yours!',
+                        replyTo: 'ptboost.info@gmail.com',
+                        tags: [{ name: 'email_type', value: 'buyout_confirmation' }],
+                        html: `
                         <!DOCTYPE html>
                         <html>
                           <head>
@@ -1104,11 +1116,12 @@ export async function POST(request: Request) {
                                 </p>
                               </div>
                             </div>
-                          </body>
-                        </html>
-                      `,
-                    })
-                    console.log(`✅ Buyout confirmation email sent successfully to: ${customerEmail}`)
+                        </body>
+                      </html>
+                    `,
+                      })
+                    )
+                  console.log(`✅ Buyout confirmation email sent successfully to: ${customerEmail}`)
                   } catch (emailError) {
                     console.error('❌ Failed to send buyout confirmation email to customer:', emailError)
                     // Don't fail the webhook if email fails
@@ -1119,11 +1132,14 @@ export async function POST(request: Request) {
                 if (fullBooking && process.env.RESEND_API_KEY) {
                   try {
                     console.log('📧 Sending buyout notification email to alexander.ptboost@gmail.com')
-                    await resend.emails.send({
-                      from: 'PTBoost <noreply@ptboost.co.uk>',
-                      to: ['alexander.ptboost@gmail.com'],
-                      subject: `🚀 Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,
-                      html: `
+                    await resend.emails.send(
+                      getEmailOptions({
+                        from: 'PTBoost <noreply@ptboost.co.uk>',
+                        to: ['alexander.ptboost@gmail.com'],
+                        subject: `Website Buyout Purchase - ${fullBooking.business_name || fullBooking.full_name}`,
+                        replyTo: 'ptboost.info@gmail.com',
+                        tags: [{ name: 'email_type', value: 'admin_buyout_notification' }],
+                        html: `
                         <!DOCTYPE html>
                         <html>
                           <head>
@@ -1300,6 +1316,7 @@ export async function POST(request: Request) {
                         </html>
                       `,
                     })
+                    )
                     console.log('✅ Buyout notification email sent successfully')
                   } catch (emailError) {
                     console.error('❌ Failed to send buyout notification email:', emailError)

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { getUnsubscribeNotificationEmail } from '@/emails/unsubscribe-notification'
+import { getEmailOptions } from '@/lib/email-helpers'
 import Stripe from 'stripe'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -170,12 +171,20 @@ export async function POST(request: Request) {
         siteUrl: process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
       })
 
-      const emailResponse = await resend.emails.send({
-        from: 'PTBoost <noreply@ptboost.co.uk>',
-        to: order.email,
-        subject: '⚠️ Your Subscription Has Been Cancelled - PTBoost',
-        html: emailHtml,
-      })
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+      const unsubscribeUrl = `${baseUrl.replace(/\/$/, '')}/account?action=unsubscribe`
+      
+      const emailResponse = await resend.emails.send(
+        getEmailOptions({
+          from: 'PTBoost <noreply@ptboost.co.uk>',
+          to: order.email,
+          subject: 'Your Subscription Has Been Cancelled - PTBoost',
+          html: emailHtml,
+          replyTo: 'ptboost.info@gmail.com',
+          unsubscribeUrl: unsubscribeUrl,
+          tags: [{ name: 'email_type', value: 'unsubscribe_notification' }],
+        })
+      )
 
       console.log('✅ Unsubscribe notification email sent:', emailResponse)
     } catch (emailError) {

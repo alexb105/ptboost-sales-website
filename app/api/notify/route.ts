@@ -2,6 +2,7 @@
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -39,10 +40,13 @@ export async function POST(request: Request) {
     }
 
     // Send notification to you (business owner)
-    await resend.emails.send({
-      from: 'PTBoost Notifications <noreply@ptboost.co.uk>',
-      to: 'ptboost.info@gmail.com',
-      subject: '🔔 New Lead: Someone Wants to Be Notified!',
+    await resend.emails.send(
+      getEmailOptions({
+        from: 'PTBoost Notifications <noreply@ptboost.co.uk>',
+        to: 'ptboost.info@gmail.com',
+        subject: 'New Lead: Someone Wants to Be Notified!',
+        replyTo: 'ptboost.info@gmail.com',
+        tags: [{ name: 'email_type', value: 'admin_notification' }],
       html: `
         <!DOCTYPE html>
         <html>
@@ -255,14 +259,22 @@ export async function POST(request: Request) {
             </div>
           </body>
         </html>
-      `
-    })
+      `,
+      })
+    )
 
     // Send confirmation email to the user
-    await resend.emails.send({
-      from: 'PTBoost <noreply@ptboost.co.uk>',
-      to: email,
-      subject: 'You\'re on the List! 🎉',
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+    const unsubscribeUrl = `${baseUrl.replace(/\/$/, '')}/account?action=unsubscribe`
+    
+    await resend.emails.send(
+      getEmailOptions({
+        from: 'PTBoost <noreply@ptboost.co.uk>',
+        to: email,
+        subject: 'You\'re on the List!',
+        replyTo: 'ptboost.info@gmail.com',
+        unsubscribeUrl: unsubscribeUrl,
+        tags: [{ name: 'email_type', value: 'waiting_list_confirmation' }],
       html: `
         <!DOCTYPE html>
         <html>
@@ -573,8 +585,9 @@ export async function POST(request: Request) {
             </div>
           </body>
         </html>
-      `
-    })
+      `,
+      })
+    )
 
     return NextResponse.json({ success: true })
   } catch (error) {

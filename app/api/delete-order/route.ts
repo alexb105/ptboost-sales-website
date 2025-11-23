@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 import { Resend } from 'resend'
 import { getAdminAccountDeletionEmail } from '@/emails/admin-account-deletion'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia',
@@ -65,12 +66,17 @@ export async function DELETE(request: Request) {
           siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ptboost.co.uk'
         })
 
-        await resend.emails.send({
-          from: 'PTBoost <noreply@ptboost.co.uk>',
-          to: booking.email,
-          subject: '⚠️ Your PTBoost Account Has Been Deleted',
-          html: emailHtml,
-        })
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+        await resend.emails.send(
+          getEmailOptions({
+            from: 'PTBoost <noreply@ptboost.co.uk>',
+            to: booking.email,
+            subject: 'Your PTBoost Account Has Been Deleted',
+            html: emailHtml,
+            replyTo: 'ptboost.info@gmail.com',
+            tags: [{ name: 'email_type', value: 'admin_account_deletion' }],
+          })
+        )
         console.log(`Admin deletion notification email sent successfully to: ${booking.email}`)
       } catch (emailError) {
         console.error('Error sending admin deletion notification email:', emailError)

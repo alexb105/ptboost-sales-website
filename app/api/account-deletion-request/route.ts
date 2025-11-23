@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -18,10 +19,14 @@ export async function POST(request: Request) {
     if (process.env.RESEND_API_KEY) {
       try {
         console.log(`Sending account deletion request confirmation to: ${email}`)
-        await resend.emails.send({
-          from: 'PTBoost <noreply@ptboost.co.uk>',
-          to: [email],
-          subject: 'Account Deletion Request Received - PTBoost',
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+        await resend.emails.send(
+          getEmailOptions({
+            from: 'PTBoost <noreply@ptboost.co.uk>',
+            to: [email],
+            subject: 'Account Deletion Request Received - PTBoost',
+            replyTo: 'ptboost.info@gmail.com',
+            tags: [{ name: 'email_type', value: 'account_deletion_request' }],
           html: `
             <!DOCTYPE html>
             <html>
@@ -299,7 +304,8 @@ export async function POST(request: Request) {
               </body>
             </html>
           `,
-        })
+          })
+        )
         console.log(`Account deletion request confirmation sent to customer: ${email}`)
       } catch (emailError) {
         console.error('Error sending customer confirmation email:', emailError)
@@ -308,10 +314,13 @@ export async function POST(request: Request) {
       // Send notification email to admin
       try {
         console.log('Sending account deletion request notification to admin')
-        await resend.emails.send({
-          from: 'PTBoost <noreply@ptboost.co.uk>',
-          to: ['alexander.ptboost@gmail.com'],
-          subject: `🚨 Account Deletion Request - ${name} (${email})`,
+        await resend.emails.send(
+          getEmailOptions({
+            from: 'PTBoost <noreply@ptboost.co.uk>',
+            to: ['alexander.ptboost@gmail.com'],
+            subject: `Account Deletion Request - ${name} (${email})`,
+            replyTo: 'ptboost.info@gmail.com',
+            tags: [{ name: 'email_type', value: 'admin_deletion_request' }],
           html: `
             <!DOCTYPE html>
             <html>
@@ -510,7 +519,8 @@ export async function POST(request: Request) {
               </body>
             </html>
           `,
-        })
+          })
+        )
         console.log('Account deletion request notification sent to admin')
       } catch (emailError) {
         console.error('Error sending admin notification email:', emailError)

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -35,10 +36,17 @@ export async function POST(request: Request) {
 
     console.log(`Sending promo mail to ${email} with code ${promoCode}, ${percentageOff}% off for ${months} months`)
 
-    const emailResult = await resend.emails.send({
-      from: 'PTBoost <noreply@ptboost.co.uk>',
-      to: [email],
-      subject: `🎁 Special Offer Just For You - ${percentageOff}% Off!`,
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+    const unsubscribeUrl = `${baseUrl.replace(/\/$/, '')}/account?action=unsubscribe`
+    
+    const emailResult = await resend.emails.send(
+      getEmailOptions({
+        from: 'PTBoost <noreply@ptboost.co.uk>',
+        to: [email],
+        subject: `Special Offer Just For You - ${percentageOff}% Off!`,
+        replyTo: 'ptboost.info@gmail.com',
+        unsubscribeUrl: unsubscribeUrl,
+        tags: [{ name: 'email_type', value: 'promo' }],
       html: `
         <!DOCTYPE html>
         <html>
@@ -306,9 +314,10 @@ export async function POST(request: Request) {
               </div>
             </div>
           </body>
-        </html>
-      `
-    })
+            </html>
+          `,
+        })
+      )
 
     if (emailResult.error) {
       console.error('Error sending promo email:', emailResult.error)

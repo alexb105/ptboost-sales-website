@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -115,12 +116,16 @@ export async function GET(request: Request) {
 
     // Send email to admin
     try {
-      const emailResponse = await resend.emails.send({
-        from: 'PTBoost Alerts <noreply@ptboost.co.uk>',
-        to: adminEmail,
-        subject: `🚨 URGENT: ${expiredSubscriptions.length} Expired Subscription${expiredSubscriptions.length === 1 ? '' : 's'} - Deactivate Website${expiredSubscriptions.length === 1 ? '' : 's'}`,
-        html: emailHtml,
-      })
+      const emailResponse = await resend.emails.send(
+        getEmailOptions({
+          from: 'PTBoost Alerts <noreply@ptboost.co.uk>',
+          to: adminEmail,
+          subject: `URGENT: ${expiredSubscriptions.length} Expired Subscription${expiredSubscriptions.length === 1 ? '' : 's'} - Deactivate Website${expiredSubscriptions.length === 1 ? '' : 's'}`,
+          html: emailHtml,
+          replyTo: 'ptboost.info@gmail.com',
+          tags: [{ name: 'email_type', value: 'admin_expired_subscription_alert' }],
+        })
+      )
 
       console.log('✅ Expiration alert email sent to admin:', emailResponse)
     } catch (emailError) {

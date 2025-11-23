@@ -1,6 +1,7 @@
 // email template: availability announcement to waiting list lead (to prospect)
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -24,10 +25,17 @@ export async function POST(request: Request) {
 
     // Send notification email
     console.log('Sending availability notification email...')
-    const emailResult = await resend.emails.send({
-      from: 'PTBoost <noreply@ptboost.co.uk>',
-      to: [email],
-      subject: '🎉 Great News! Spots Are Now Available at PTBoost',
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+    const unsubscribeUrl = `${baseUrl.replace(/\/$/, '')}/account?action=unsubscribe`
+    
+    const emailResult = await resend.emails.send(
+      getEmailOptions({
+        from: 'PTBoost <noreply@ptboost.co.uk>',
+        to: [email],
+        subject: 'Great News! Spots Are Now Available at PTBoost',
+        replyTo: 'ptboost.info@gmail.com',
+        unsubscribeUrl: unsubscribeUrl,
+        tags: [{ name: 'email_type', value: 'waiting_list_availability' }],
       html: `
         <!DOCTYPE html>
         <html>
@@ -568,6 +576,8 @@ export async function POST(request: Request) {
           </body>
         </html>
       `,
+      })
+    )
     })
 
     console.log('Email sent successfully:', emailResult)

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 import { Resend } from 'resend'
+import { getEmailOptions } from '@/lib/email-helpers'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia',
@@ -62,10 +63,14 @@ export async function DELETE(request: Request) {
     if (process.env.RESEND_API_KEY) {
       try {
         console.log(`Sending account deletion confirmation email to: ${email}`)
-        await resend.emails.send({
-          from: 'PTBoost <noreply@ptboost.co.uk>',
-          to: [email],
-          subject: 'Account Deletion Confirmation - PTBoost',
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ptboost.co.uk'
+        await resend.emails.send(
+          getEmailOptions({
+            from: 'PTBoost <noreply@ptboost.co.uk>',
+            to: [email],
+            subject: 'Account Deletion Confirmation - PTBoost',
+            replyTo: 'ptboost.info@gmail.com',
+            tags: [{ name: 'email_type', value: 'account_deletion' }],
           html: `
             <!DOCTYPE html>
             <html>
@@ -322,6 +327,8 @@ export async function DELETE(request: Request) {
               </body>
             </html>
           `,
+          })
+        )`,
         })
         console.log(`Account deletion confirmation email sent successfully to: ${email}`)
       } catch (emailError) {
