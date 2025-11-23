@@ -8,7 +8,7 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-10-29.clover',
 })
 
 // Use dedicated buyout webhook secret, fallback to main webhook secret
@@ -164,6 +164,9 @@ export async function POST(request: Request) {
                 .select('*')
                 .eq('id', bookingToUpdate.id)
                 .single()
+
+              // Get Stripe customer ID from session
+              const stripeCustomerId = session.customer as string || fullBooking?.stripe_customer_id || 'N/A'
 
               // Send confirmation email to customer
               if (fullBooking && process.env.RESEND_API_KEY) {
@@ -670,6 +673,11 @@ export async function POST(request: Request) {
                                 </div>
                                 
                                 <div class="info-row">
+                                  <div class="info-label">Stripe Customer ID:</div>
+                                  <div class="info-value">${stripeCustomerId}</div>
+                                </div>
+                                
+                                <div class="info-row">
                                   <div class="info-label">Purchase Date:</div>
                                   <div class="info-value">${new Date(fullBooking.created_at || Date.now()).toLocaleString()}</div>
                                 </div>
@@ -769,6 +777,9 @@ export async function POST(request: Request) {
                   .select('*')
                   .eq('id', booking.id)
                   .single()
+
+                // Get Stripe customer ID from session or booking
+                const stripeCustomerId = session.customer as string || fullBooking?.stripe_customer_id || 'N/A'
 
                 // Send confirmation email to customer
                 if (fullBooking && process.env.RESEND_API_KEY) {
@@ -1261,6 +1272,11 @@ export async function POST(request: Request) {
                                   <div class="info-row">
                                     <div class="info-label">Booking ID:</div>
                                     <div class="info-value">${fullBooking.id}</div>
+                                  </div>
+                                  
+                                  <div class="info-row">
+                                    <div class="info-label">Stripe Customer ID:</div>
+                                    <div class="info-value">${stripeCustomerId}</div>
                                   </div>
                                   
                                   <div class="info-row">
