@@ -746,6 +746,14 @@ export async function POST(request: Request) {
                         <span class="payment-badge">✅ Completed</span>
                       </div>
                     </div>
+                    ${bookingData.stripeCustomerId ? `
+                    <div class="detail-item" style="background: white; border-color: #10b981;">
+                      <div class="detail-label">Stripe Customer ID</div>
+                      <div class="detail-value">
+                        <div class="session-id">${bookingData.stripeCustomerId}</div>
+                      </div>
+                    </div>
+                    ` : ''}
                     ${bookingData.sessionId ? `
                     <div class="detail-item" style="background: white; border-color: #10b981;">
                       <div class="detail-label">Session ID</div>

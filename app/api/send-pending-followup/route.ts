@@ -292,7 +292,7 @@ export async function POST(request: Request) {
                   <p><strong>Your spot is still reserved!</strong> Complete your order now to lock in your £7.99/month subscription and get your custom website delivered within 24-48 hours.</p>
                 </div>
 
-                <a href="${subscriptionLink}" class="button">
+                <a href="${subscriptionLink}" class="button" style="color: white !important;">
                   Complete My Order Now →
                 </a>
 

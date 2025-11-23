@@ -189,6 +189,7 @@ export async function POST(request: Request) {
                   additionalNotes: bookingData.additional_notes,
                   sessionId: bookingData.id,
                   subscriptionPassword: bookingData.subscription_password,
+                  stripeCustomerId: bookingData.stripe_customer_id,
                 }),
               })
 

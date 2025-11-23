@@ -144,6 +144,7 @@ export async function POST(request: Request) {
           additionalNotes: booking.additional_notes,
           sessionId: bookingId,
           subscriptionPassword: booking.subscription_password,
+          stripeCustomerId: booking.stripe_customer_id,
         }),
       })
 
