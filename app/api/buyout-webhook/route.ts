@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     console.log('Amount:', session.amount_total)
 
     // Check if this is a buyout payment
-    const buyoutLinkIds = ['28EfZi2FIgWf93Xdsr0co06', '14AdRafsueO70xr3RR0co05']
+    const buyoutLinkIds = ['28EfZi2FIgWf93Xdsr0co06', '14AdRafsueO70xr3RR0co05', '4gMfZidkm49t2Fzcon0co08']
     
     // Method 1: Check success URL
     const successUrlIsBuyout = session.success_url?.includes('/website-purchased') || false
@@ -394,7 +394,7 @@ export async function POST(request: Request) {
                                   <strong>Dear ${fullBooking.full_name || 'Valued Customer'},</strong>
                                 </p>
                                 <p>
-                                  Congratulations! Your website buyout purchase has been successfully processed. You now own your website completely for a one-time payment of <strong style="color: #10b981;">£299</strong>.
+                                  Congratulations! Your website buyout purchase has been successfully processed. You now own your website completely for a one-time payment of <strong style="color: #10b981;">£895</strong>.
                                 </p>
                               </div>
 
@@ -451,7 +451,7 @@ export async function POST(request: Request) {
                                 <h2 class="section-title">Purchase Details</h2>
                                 <ul class="info-list">
                                   <li>
-                                    <p><strong>Purchase Amount:</strong> £299 (one-time payment)</p>
+                                    <p><strong>Purchase Amount:</strong> £895 (one-time payment)</p>
                                   </li>
                                   <li>
                                     <p><strong>Purchase Date:</strong> ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -999,7 +999,7 @@ export async function POST(request: Request) {
                                     <strong>Dear ${fullBooking.full_name || 'Valued Customer'},</strong>
                                   </p>
                                   <p>
-                                    Congratulations! Your website buyout purchase has been successfully processed. You now own your website completely for a one-time payment of <strong style="color: #10b981;">£299</strong>.
+                                    Congratulations! Your website buyout purchase has been successfully processed. You now own your website completely for a one-time payment of <strong style="color: #10b981;">£895</strong>.
                                   </p>
                                 </div>
 
@@ -1056,7 +1056,7 @@ export async function POST(request: Request) {
                                   <h2 class="section-title">Purchase Details</h2>
                                   <ul class="info-list">
                                     <li>
-                                      <p><strong>Purchase Amount:</strong> £299 (one-time payment)</p>
+                                      <p><strong>Purchase Amount:</strong> £895 (one-time payment)</p>
                                     </li>
                                     <li>
                                       <p><strong>Purchase Date:</strong> ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>

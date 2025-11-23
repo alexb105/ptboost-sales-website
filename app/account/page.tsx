@@ -151,7 +151,7 @@ function AccountContent() {
         setBuyoutLink(data.buyoutLink)
       } else {
         // Fallback to default if not set
-        setBuyoutLink("https://buy.stripe.com/14AdRafsueO70xr3RR0co05")
+        setBuyoutLink("https://buy.stripe.com/4gMfZidkm49t2Fzcon0co08")
       }
       if (data.subscriptionLink) {
         setSubscriptionLink(data.subscriptionLink)
@@ -159,7 +159,7 @@ function AccountContent() {
     } catch (error) {
       console.error('Error fetching payment links:', error)
       // Fallback to default on error
-      setBuyoutLink("https://buy.stripe.com/14AdRafsueO70xr3RR0co05")
+      setBuyoutLink("https://buy.stripe.com/4gMfZidkm49t2Fzcon0co08")
     }
   }
 
@@ -704,7 +704,7 @@ function AccountContent() {
                   </span>
                 ) : (
                   <>
-                    Buy out your website for a special one-time price of <span className="font-bold text-green-600">£299</span> and own it completely!
+                    Buy out your website for a special one-time price of <span className="font-bold text-green-600">£895</span> and own it completely!
                   </>
                 )}
               </CardDescription>
@@ -793,7 +793,7 @@ function AccountContent() {
                       className="flex-1 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      Buy Out for £299
+                      Buy Out for £895
                     </Button>
                     
                     <Dialog open={buyoutDialogOpen} onOpenChange={setBuyoutDialogOpen}>
@@ -814,7 +814,7 @@ function AccountContent() {
                             Own Your Website - Complete Guide
                           </DialogTitle>
                           <DialogDescription className="text-base pt-2">
-                            Everything you need to know about buying out your website for £299
+                            Everything you need to know about buying out your website for £895
                           </DialogDescription>
                         </DialogHeader>
                         
@@ -823,7 +823,7 @@ function AccountContent() {
                           <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg">
                             <div className="flex items-center gap-3 mb-2">
                               <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">£299</span>
+                                <span className="text-white font-bold text-lg">£895</span>
                               </div>
                               <div>
                                 <h3 className="font-bold text-lg text-green-900">One-Time Payment</h3>
@@ -861,7 +861,7 @@ function AccountContent() {
                                   <div>
                                     <h4 className="font-semibold mb-1">No Monthly Fees</h4>
                                     <p className="text-sm text-muted-foreground">
-                                      Stop paying £7.99/month forever. One payment of £299 and you're done.
+                                      Stop paying £7.99/month forever. One payment of £895 and you're done.
                                     </p>
                                   </div>
                                 </div>
@@ -934,7 +934,7 @@ function AccountContent() {
                                 </div>
                                 <div>
                                   <p className="font-medium">Make Payment</p>
-                                  <p className="text-sm text-muted-foreground">Complete your £299 payment securely via Stripe</p>
+                                  <p className="text-sm text-muted-foreground">Complete your £895 payment securely via Stripe</p>
                                 </div>
                               </div>
                               <div className="flex gap-3">
@@ -993,7 +993,7 @@ function AccountContent() {
                               className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                             >
                               <ShoppingCart className="mr-2 h-4 w-4" />
-                              Buy Out for £299 Now
+                              Buy Out for £895 Now
                             </Button>
                             <p className="text-xs text-center text-muted-foreground mt-2">
                               Secure payment via Stripe

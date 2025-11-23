@@ -140,7 +140,7 @@ CREATE INDEX IF NOT EXISTS idx_bookings_expiring_soon
 COMMENT ON COLUMN public.bookings.images IS 'Array of image URLs uploaded by the customer during booking';
 COMMENT ON COLUMN public.bookings.stripe_customer_id IS 'Stripe customer ID for subscription management via Customer Portal';
 COMMENT ON COLUMN public.bookings.subscription_password IS 'Unique password for customers to access subscription management portal';
-COMMENT ON COLUMN public.bookings.website_owned IS 'Indicates if customer has purchased website outright for £299';
+COMMENT ON COLUMN public.bookings.website_owned IS 'Indicates if customer has purchased website outright for £895';
 COMMENT ON COLUMN public.bookings.subscribed IS 'Current subscription status (true = active subscription)';
 COMMENT ON COLUMN public.bookings.subscription_end_date IS 'The date when the subscription will end (for canceled subscriptions that run until period end)';
 
@@ -262,7 +262,7 @@ CREATE POLICY "Allow authenticated updates" ON payment_links
 -- Add comment for documentation
 COMMENT ON COLUMN payment_links.subscription_link IS 'Stripe payment link for first-time subscribers (includes free trial)';
 COMMENT ON COLUMN payment_links.resubscription_link IS 'Stripe payment link for re-subscribing users (no free trial)';
-COMMENT ON COLUMN payment_links.buyout_link IS 'Stripe payment link for one-time website purchase (£299)';
+COMMENT ON COLUMN payment_links.buyout_link IS 'Stripe payment link for one-time website purchase (£895)';
 
 -- ============================================================================
 -- SETUP COMPLETE!

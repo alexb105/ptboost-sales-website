@@ -298,7 +298,7 @@ export function getUnsubscribeNotificationEmail(data: {
             <div class="section">
               <h2 class="section-title">📞 Alternative: Website Buyout</h2>
               <p style="margin: 0; font-size: 16px; color: #374151; line-height: 1.7; font-weight: 500;">
-                Did you know you can own your website completely for just <strong>£299</strong>? 
+                Did you know you can own your website completely for just <strong>£895</strong>? 
                 No more monthly payments, full ownership, and all source code included. 
                 Visit your account to learn more!
               </p>
