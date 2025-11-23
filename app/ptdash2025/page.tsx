@@ -535,21 +535,43 @@ export default function AdminPage() {
     }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setAuthError("")
     
-    // Store password for API calls
-    setAdminPassword(password)
-    
-    // Save to localStorage if remember me is checked
-    if (rememberMe) {
-      localStorage.setItem('adminPassword', password)
+    if (!password) {
+      setAuthError("Password is required")
+      return
     }
-    
-    // Simple client-side check (the real auth happens on the API)
-    // We'll verify this works when they make their first update
-    setIsAuthenticated(true)
+
+    try {
+      // Verify password with API
+      const response = await fetch('/api/verify-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminPassword: password })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        setAuthError(errorData.error || 'Invalid password')
+        return
+      }
+
+      // Password is valid - store for API calls
+      setAdminPassword(password)
+      
+      // Save to localStorage if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem('adminPassword', password)
+      }
+      
+      // Set authenticated state
+      setIsAuthenticated(true)
+    } catch (error) {
+      console.error('Error verifying password:', error)
+      setAuthError('Failed to verify password. Please try again.')
+    }
   }
 
   const handleLogout = () => {
